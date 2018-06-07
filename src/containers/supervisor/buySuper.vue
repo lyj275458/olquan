@@ -1,15 +1,15 @@
 <template>
 	<div class="bugSuper">
-		<div class="imgdetail" v-html="curObj.content" style="width: 100%;" v-show="memList.levelCode=='supervisor'">
+		<div class="imgdetail" v-html="curObj.content" style="width: 100%;" v-show="!isShowSuper">
 			<p style="width: 100%;">{{curObj.content}}</p>
 		</div>
-		<div class="imgdetail" v-html="curObj.inviteContent" style="width: 100%;" v-show="memList.levelCode!='supervisor'">
+		<div class="imgdetail" v-html="curObj.inviteContent" style="width: 100%;" v-show="isShowSuper">
 			<p style="width: 100%;">{{curObj.inviteContent}}</p>
 		</div>
 		<div class="sureBut">
 			<div class="outDiv">
-				<p v-show="memList.levelCode!='supervisor'" @click="openShow">立即申请</p>
-				<p v-show="memList.levelCode=='supervisor'" @click="yaoqing">立即邀请</p>
+				<p v-show="!isShowSuper" @click="openShow">立即申请</p>
+				<p v-show="isShowSuper" @click="yaoqing">立即邀请</p>
 			</div>
 			
 		</div>
@@ -55,7 +55,22 @@
 				</div>
 			</div>
 		</div>
-		
+		<div class="yaoqingImg" v-show="isShowBuyPink">
+			<div class="shareDiv">
+				
+				<div class="shareImgS">
+					<img :src="shareSuperImg" />
+				</div>
+				<div class="shareDetail">
+					<p>您还不是粉领会员，无法开通督导特权，请先升级粉领会员。</p>
+				</div>
+				<div class="sureShare">
+					<div class="shareSure">
+						<p @click="getPink">点击开通粉领会员</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -74,6 +89,8 @@
 				addSelect:0,
 				isCanBuy:-1,
 				chooseBag:false,
+				isShowBuyPink:false,
+				isShowSuper:false,
 				bagId:0,
 				shareIMg:false,
 				shareData : {
@@ -90,7 +107,7 @@
 		    
 		},
 		created: function() {
-			this.$store.commit('documentTitle','试用中心');
+			this.$store.commit('documentTitle','申请督导');
 			this.getMember();
 			this.getGiftBag()
 		},
@@ -108,7 +125,7 @@
 			//获取会员信息
 			getMember(){
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
@@ -117,16 +134,26 @@
 				this.memList=data.result
 				this.setCookie('memberId',data.result.id)
 				console.log(this.getCookie("memberId"))
-				if(this.memList.levelCode=='supervisor'){
+				
+				if(this.memList.levelCode=='supervisor' || this.memList.levelCode=='starSupervisor' || this.memList.levelCode=='highSupervisor'){
 					this.$store.commit('documentTitle','邀请督导');
+					this.isShowSuper=true;
 				}else{
 					this.$store.commit('documentTitle','申请督导');
+					this.isShowSuper=false;
 				}
+				if(this.memList.isGetStoreCommission==0){
+					
+					this.isShowBuyPink=true;
+				}else{
+					this.isShowBuyPink=false;
+				}
+				console.log(this.isShowBuyPink)
 					
 			},
 			getGiftBag(){
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getGiftBag,data,this.getGiftBagBack,this);
@@ -137,13 +164,17 @@
 			colseShare(){
 				this.shareIMg=false;
 			},
+			//点击开通粉领
+			getPink(){
+				this.$router.push({path:'/supervisor/buyPink?memberId='+this.$route.query.memberId+'&inviteId='+this.$route.query.inviteId});
+			},
 			getGiftBagBack(data){
 				this.curObj=data.result;
 				this.moreSaleImg=data.result.gifts[0].bagImage;
 				this.isCanBuy=data.result.gifts[0].bagCanBuy;
 				this.bagId=data.result.gifts[0].bagId;
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
-				//this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');
+				//this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
+				this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper?inviteId='+this.memList.accountNo);
 				this.shareData.title=this.curObj.shareTitle;
 				this.shareData.description=this.curObj.shareDesc;
 				this.shareData.picURL=this.curObj.shareLogo;
@@ -209,17 +240,20 @@
 			pointer-events: none;
 		}
 		.imgdetail{
-			padding-bottom: 1.40rem;
+			padding-bottom: 1.28rem;
 			border-radius: .08rem;
 		}
 		.sureBut{
 			position: fixed;
-			left: 0;
-			width: 100%;
+			left:50%;
+			margin-left: -3.51rem;
+			width: 7.02rem;
+			border-radius: 0.08rem;
+			bottom: .38rem;
 			background: #fff;
-			bottom: 0rem;
+			
 			.outDiv{
-				padding: 0 .30rem .50rem;
+				
 				p{
 					width: 100%;
 					background: #E50F72;

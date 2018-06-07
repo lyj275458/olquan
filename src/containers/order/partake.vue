@@ -163,6 +163,7 @@
 		},
 		created: function() {
 			this.$store.commit('documentTitle','拼团');
+			this.addRecord();
 			this.getList();
 			this.moveTime();
 			//this.locationHref();
@@ -177,6 +178,15 @@
 		},
 		
 		methods:{
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'order/partake'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			//点击产品详情
 			getGoods(id){
 				console.log(id)

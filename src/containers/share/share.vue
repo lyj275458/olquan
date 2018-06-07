@@ -274,6 +274,7 @@
 			console.log(this.getCookie('togetherRecordId'))
 			//console.log(this.$route.params.id)
 			//this.getList();
+			this.addRecord();
 			this.getMember();
 			this.getList();
 			this.moveTime();
@@ -285,6 +286,15 @@
 			 	
 		},
 		methods:{
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'share/share'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			//点击首页
 			goOne(){
 				if(this.showMember){

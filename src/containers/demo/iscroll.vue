@@ -43,10 +43,10 @@
 	    </div>
 	    
 	    <div class="todaySale" style="padding-top: 0;height: .94rem;" v-show="curObj.type==4 && curObj.freeUseSubType==3">
-	    	<div style="padding-left: .24rem;font-size: 0;padding-top: .16rem;">
+	    	<div style="padding-left: .24rem;font-size: 0;line-height: .94rem;">
 	    		<span style="font-size: .24rem;display: inline-block; color: #dddddd;">保证金 </span>
 	    		<span style="font-size: .38rem;display: inline-block;">￥{{curObj.salePrice}}</span>
-				<span class="getMoney"style="display: block; font-size: .22rem;margin-top: .10rem; color: #dddddd;">已试{{curObj.todaySoldCount}}件</span>
+				<!--<span class="getMoney"style="display: block; font-size: .22rem;margin-top: .10rem; color: #dddddd;">已试{{curObj.todaySoldCount}}件</span>-->
 	    	</div>
 			
 			<div class="countDown">
@@ -66,11 +66,11 @@
 				<span class='timeEnd'><b>{{hour}}</b> : <b>{{mint}}</b> : <b>{{secon}}</b></span>
 			</div>
 		</div>
-		<!--<div class="con" v-if="curObj.countryIcon!=null">
+		<div class="con" v-if="curObj.countryIcon!=null">
     		<img v-show="curObj.countryIcon!=null" :src="curObj.countryIcon"/>
     		<p>{{curObj.countryName}}</p>
     		<span>{{curObj.countryName}}直邮(已包税)</span>
-    	</div>-->
+    	</div>
 	    <div class="goodsName">{{curObj.productName}}
 	    	<div class="fenxiang" v-show="curObj.type==4 && curObj.freeUseSubType==3 ">
 	    		<div class="erwei" @click="getErwei(curObj.productId)">
@@ -106,7 +106,10 @@
 	    <div class="moneyDetail ">
 	    	<div style="overflow: hidden;" v-bind:class="{ 'moneyDetailSpe': curObj.tags!=null}">
 	    		<div class="moneyTop">
-		    		运费 : <span v-show="curObj.postFee!='包邮'">￥</span>{{curObj.postFee}}
+		    		运费: <span v-show="curObj.postFee!='包邮'">￥</span>{{curObj.postFee}}
+		    	</div>
+		    	<div class="moneyTop" style="margin-left: .40rem;" v-show="curObj.type==4 || curObj.type==8">
+		    		试用时间: {{curObj.freeUseDays}}天
 		    	</div>
 		    	<div class="moneyBot">
 		    		<span v-show="curObj.type==4 || curObj.type==8">已有{{curObj.soldCount}}人试用 · </span>还剩{{curObj.store}}件
@@ -159,12 +162,23 @@
 				<img :src='rowImg'/>
 			</p>
 		</div>
-		<div class="step" v-show="curObj.type==4">
+		<!--<div class="step" v-show="curObj.type==4">
 			<img :src='trystepImg' />
-		</div>
+		</div>-->
 		<!--<div class="step" v-show="curObj.type==4 && curObj.countryIcon!=null">
 			<img :src='trySixImg' />
 		</div>-->
+		<div class="stepNew" v-show="curObj.type==4">
+			<p>申请试用</p>
+			<img :src="rowmoreImgone"/>
+			<p>付保证金</p>
+			<img :src="rowmoreImgone"/>
+			<p>试用{{curObj.freeUseDays}}天</p>
+			<img :src="rowmoreImgone"/>
+			<p>试用报告</p>
+			<img :src="rowmoreImgone"/>
+			<p>退保证金</p>
+		</div>
 		<div style="width: 100%;height: .20rem;background: #f2f2f2;" v-show='curObj.commentCount>0'></div>
 		<div class="howtry" v-show='curObj.commentCount>0'>
 			<p class="tryleft" v-show="curObj.type==4">试用报告 ({{curObj.commentCount}})</p>
@@ -487,6 +501,7 @@
 				todaysaleImg:'/static/images/todaysale.png',
 				fenxiangImg:'/static/images/fenxiang.png',
 				tryImgone:'/static/images/tryOut.png',
+				rowmoreImgone:'/static/images/rowmore.png',
 				chooseNor:false,
 				shareSure:false,
 				scroeEnt:false,
@@ -541,6 +556,7 @@
 			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
 			}
+			this.addRecord();
 			this.$store.commit('documentTitle','商品详情');
 			this.getList();
 			this.getMember();
@@ -561,6 +577,15 @@
 			
 		},
 		methods:{
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'demo/iscroll'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			showCodeImg(){
 				this.pinKnowShow=true;
 			},
@@ -622,7 +647,7 @@
 			shoucang(){
 				let data={
 					objId:this.curObj.productId,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					type:1
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.doCollect,data,this.shoucangBack,this);
@@ -657,7 +682,7 @@
 			//获取会员信息
 			getMember(){
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
@@ -689,11 +714,16 @@
 				}
 			},
 			addNum(){
-				this.num +=1;
-				if(this.num>this.curObj.limitBuyCount){
-					this.num=this.curObj.limitBuyCount;
-					this.$toast('该产品最多购买'+this.num+'件');
+				if(this.curObj.type==4){
+					this.$toast('该产品最多购买1件');
+				}else{
+					this.num +=1;
+					if(this.num>this.curObj.limitBuyCount){
+						this.num=this.curObj.limitBuyCount;
+						this.$toast('该产品最多购买'+this.num+'件');
+					}
 				}
+				
 			},
 			//获取商品信息
 			getList(){
@@ -701,75 +731,84 @@
 				let data={
 					productId:this.$route.params.id,
 					//productId:140,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					viewType:this.$route.query.viewType,
 					uutype:1
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.productDetail,data,this.getListBack,this);
 			},
 			getListBack(data){
-				//console.log(data)this.getCookie("memberId")
-				if(data.code==-1){
-					this.$toast(data.message);
-					return false;
-				}
-				this.curObj=data.result;
-//				this.downTime=this.curObj.time;
-				this.getMoney=this.curObj.score1.split("￥")[1];
-				
-				this.moveTime(this.curObj.time)
-				
-				//console.log(this.curObj.type==9 && this.curObj.status!=1 && this.curObj.status!=2)
-//				console.log(this.curObj.time)
-				if(this.curObj.buyNeedScore>0){
-					this.needScroe=false;
-				}
-				if(this.curObj.isCollect==0){
-					this.showShou=false
-				}else{
-					this.showShou=true;
-				}
-				this.imgList = data.result.images.map((item, index) => ({
-				  url: 'javascript:',
-				  img: item
-				}));
-				this.showLength=this.curObj.normals.length;
-				//console.log(this.showLength);
-				if(this.showLength>0){
-					if(data.result.normals){
-						if(data.result.normals.length>0 && data.result.normals.length<2){
-							this.nomoreOne=data.result.normals[0];
-							//console.log(this.nomoreOne)
-//							this.getVlaueOne=data.result.normals[0].normses[0].valueId;
-//							this.getValueDetail();
-							
-						}else if(data.result.normals.length>1){
-							this.nomoreOne=data.result.normals[0];
-	//						console.log(this.nomoreOne)
-//							this.getVlaueOne=data.result.normals[0].normses[0].valueId;
-							this.nomoreTwo=data.result.normals[1];
-//							this.getVlaueTwo=data.result.normals[1].normses[0].valueId;
-							this.nomoreThree=data.result.normals[3]
-//							this.getValueDetail();
-						}
-						//console.log(this.nomoreThree)
+				console.log(data)
+				if(data.result.type==9 || data.result.type==4){
+						//console.log(data)this.getCookie("memberId")
+					if(data.code==-1){
+						this.$toast(data.message);
+						return false;
 					}
+					this.curObj=data.result;
+	//				this.downTime=this.curObj.time;
+					this.getMoney=this.curObj.score1.split("￥")[1];
+					
+					this.moveTime(this.curObj.time)
+					
+					//console.log(this.curObj.type==9 && this.curObj.status!=1 && this.curObj.status!=2)
+	//				console.log(this.curObj.time)
+					if(this.curObj.buyNeedScore>0){
+						this.needScroe=false;
+					}
+					if(this.curObj.isCollect==0){
+						this.showShou=false
+					}else{
+						this.showShou=true;
+					}
+					this.imgList = data.result.images.map((item, index) => ({
+					  url: 'javascript:',
+					  img: item
+					}));
+					this.showLength=this.curObj.normals.length;
+					//console.log(this.showLength);
+					if(this.showLength>0){
+						if(data.result.normals){
+							if(data.result.normals.length>0 && data.result.normals.length<2){
+								this.nomoreOne=data.result.normals[0];
+								//console.log(this.nomoreOne)
+	//							this.getVlaueOne=data.result.normals[0].normses[0].valueId;
+	//							this.getValueDetail();
+								
+							}else if(data.result.normals.length>1){
+								this.nomoreOne=data.result.normals[0];
+		//						console.log(this.nomoreOne)
+	//							this.getVlaueOne=data.result.normals[0].normses[0].valueId;
+								this.nomoreTwo=data.result.normals[1];
+	//							this.getVlaueTwo=data.result.normals[1].normses[0].valueId;
+								this.nomoreThree=data.result.normals[3]
+	//							this.getValueDetail();
+							}
+							//console.log(this.nomoreThree)
+						}
+					}
+					
+					this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1');
+					//this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+"?isShare=1");
+					this.shareData.title=this.curObj.productName;
+					this.shareData.description=this.curObj.summary;
+					this.shareData.picURL=this.curObj.image;
+					//console.log(this.getNomoreObj.store)
+					this.moreWeixinShare();//微信分享 
+					
+				}else if(data.result.type==11 || data.result.type==12){
+					window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+data.result.togetherId+'?memberId='+this.$route.query.memberId+'&isLimit=0'
+				}else{
+					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+data.result.productId;
 				}
 				
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1');
-				//this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+"?isShare=1");
-				this.shareData.title=this.curObj.productName;
-				this.shareData.description=this.curObj.summary;
-				this.shareData.picURL=this.curObj.image;
-				//console.log(this.getNomoreObj.store)
-				this.moreWeixinShare();//微信分享 
 			},
 			//获取二维码图片
 			getErwei(id){
 				this.pinKnowShow=true;
 				let data={
 					productId:id,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					type:this.curObj.type,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getTwoCodeUrl,data,this.getErweiBack,this);
@@ -799,7 +838,7 @@
 						let data={
 							num:this.num,
 							normalId:this.normalId,
-							//memberId:this.$route.query.memberId,
+//							memberId:this.$route.query.memberId,
 							productId:this.$route.params.id
 						}
 						this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addProduct,data,this.addGoodsBack,this);
@@ -808,7 +847,7 @@
 						let data={
 							num:this.num,
 							normalId:this.normalId,
-							//memberId:this.$route.query.memberId,
+//							memberId:this.$route.query.memberId,
 							type:this.curObj.type,
 							productId:this.curObj.productId
 						}
@@ -817,6 +856,7 @@
 //		  				console.log(ObjObj)
 		  				if(this.curObj.type==4){
 		  					//this.$router.push({path:'/fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId});
+//		  					this.$router.push({path:'/common/scroll?memberId='+this.$route.query.memberId});
 		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId
 		  					//window.location.href=API_HOST+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&'+'memberId='+this.getCookie("memberId")+'&type='+this.curObj.type+'&productId='+this.curObj.productId
 		  				}else{
@@ -869,7 +909,7 @@
 						productId:this.curObj.productId,
 						valueIds:this.getVlaueOne+','+this.getVlaueTwo,
 						uutype:1,
-						//memberId:this.$route.query.memberId,
+//						memberId:this.$route.query.memberId,
 						type:this.curObj.type,
 					}
 					//console.log(data)
@@ -917,7 +957,7 @@
 			getCoupon(){
 				
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					productId:this.curObj.productId,
 					page:1,
 					rows:20
@@ -934,7 +974,7 @@
 				//console.log(index)
 				this.curTargetS=index;
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					couponId:id
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.receiveCoupon,data,this.getCouponIdBack,this);
@@ -1407,6 +1447,35 @@
 				display: block;
 				height: 100%;
 				widows: 100%;
+			}
+		}
+		.stepNew{
+			font-size: .26rem;
+			height: 1.16rem;
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -moz-flex;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+			-webkit-justify-content:center;
+			justify-content:center;
+			-moz-box-pack:center;
+			-webkit--moz-box-pack:center;
+			align-items:center;
+			-webkit-align-items:center;
+			box-align:center;
+			-moz-box-align:center;
+			-webkit-box-align:center;
+			p{
+				width: .58rem;
+				height: .56rem;
+			}
+			img{
+				display: block;
+				width: .12rem;
+				height: .20rem;
+				margin: 0 .40rem;
 			}
 		}
 		.assess{

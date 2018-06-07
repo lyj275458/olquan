@@ -153,7 +153,9 @@
 		isiOS:'',
 		iosType:'',
 		obj:{},
-		LoadTrue:false
+		LoadTrue:false,
+		isPinkSureGet:false,
+		
       }
     },
     components: {
@@ -168,6 +170,7 @@
       this.getActiveDetail(this.$route.query.id);
       this.browserRedirect();
       this.showPhone();
+      this.getMember();
     },
     updated() {
 
@@ -200,6 +203,22 @@
     	getUrl(url){
     		console.log(url)
     	},
+    	//获取会员信息
+		getMember(){
+			let data={
+				memberId:this.$route.query.memberId,
+			}
+			//console.log(data)
+			this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
+		},
+		getMemberBack(data){
+			if(data.result.isShowRenewButton!=0){
+				this.isPinkSureGet=true;
+			}else{
+				this.isPinkSureGet=false;
+			}
+			
+		},
       //关闭弹窗
       colseShow() {
         this.activeTrue = false
@@ -297,15 +316,15 @@
 		}else{
 			this.classify=[]
 		}
-       	console.log(113)
-        console.log(this.classify)
+//     	console.log(113)
+//      console.log(this.classify)
         //if(this.classify.length>0){
         //this.dataObj.contentId=this.classify[0].contentId;
         //this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.findProductByContentId,this.dataObj,this.getListBack);
         //}
         this.shareData.title=this.titleTwo;
         this.shareData.description=this.description;
-        console.log(this.shareData.description)
+//      console.log(this.shareData.description)
         this.shareData.picURL=this.picURL;
         this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/newact?id='+this.$route.query.id);
         //this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/newact?id='+this.$route.query.id);
@@ -396,14 +415,18 @@
         }else if(type==14){
         	this.iosType='xsms';
         }else if(type==16){
-        	this.iosType='olbx';
+        	this.iosType='olbx';	
         }else if(type==17){
         	this.iosType='ppgl';
-        }else if(type==18){
+        }else if(type==18 || type==22){
         	this.iosType='hdlb';
         	console.log(url.substr(url.indexOf("=")+1))
         }else if(type==19){
         	this.iosType='flxf';
+        }else if(type==20){
+        	this.iosType='tmsy';
+        }else if(type==21){
+        	this.iosType='flxq';
         }else if(productId==''){
         	productId=0
         }
@@ -411,16 +434,12 @@
         if(this.iPhone){
         	
 			if(tsApp.getClientBrowser()=='wx'){
-				if(type!=18){
-					if (url != "" && url!="#") {
-			          if (url.indexOf("?") != -1) {
-			            console.log("YES")
-			            window.location.href = url + '&memberId=' + this.$route.query.memberId;
-			          } else {
-			            console.log("no")
-			            window.location.href = url + '?memberId=' + this.$route.query.memberId;
-			          }
-			        }
+				if(type==11){
+					if(this.isPinkSureGet){
+						window.location.href=USE_URL+'weixin/member/renewConfirmOrder';
+					}else{
+						window.location.href=CUR_URLBACK+'supervisor/buyPink';
+					}
 				}else{
 					window.location.href = url
 				}
@@ -428,11 +447,18 @@
 			}else{
 				if(this.isAndroid){
 					if(type!="" && type!=0){
-						if(type==18){
-							OLquan.activeJump(type,typeId,productId,image,url.substr(url.indexOf("=")+1))
+						if(type==18 || type==22){
+							OLquan.activeJump(18,typeId,productId,image,url.substr(url.indexOf("=")+1))
 						}else if(type==2){
-							console.log(productId)
-							OLquan.activeJump(type,typeId,productId,image,url)
+							
+							OLquan.activeJump(2,typeId,productId,image,url)
+						}else if(type==11) {
+							if(this.isPinkSureGet){
+								OLquan.activeJump(19,typeId,productId,image,url)
+							}else{
+								OLquan.activeJump(11,typeId,productId,image,url)
+							}
+							
 						}else{
 							OLquan.activeJump(type,typeId,productId,image,url)
 						}
@@ -444,7 +470,7 @@
 						if(type==17){
 							window.location.href="https://www.baidu.com/"+this.iosType+typeId+'&'+image
 	
-						}else if(type==2){
+						}else if(type==2 || type==21){
 							
 							window.location.href="https://www.baidu.com/"+this.iosType+productId
 							
@@ -452,10 +478,18 @@
 						}else if(type==16){
 							window.location.href="https://www.baidu.com/"+this.iosType+url
 	
-						}else if(type==18){
-							window.location.href="https://www.baidu.com/"+this.iosType+url.substr(url.indexOf("=")+1)
+						}else if(type==18 || tyoe==22){
+							window.location.href="https://www.baidu.com/18"+url.substr(url.indexOf("=")+1)
 	
-						}else if(type!=17 && type!=2 && type!=18 && type!=16){
+						}else if(type==11){
+							if(this.isPinkSureGet){
+								window.location.href="https://www.baidu.com/"+"flxf";
+							}else{
+								window.location.href="https://www.baidu.com/"+"ktfl";
+							}
+							
+	
+						}else{
 							window.location.href="https://www.baidu.com/"+this.iosType
 	
 						}
@@ -463,7 +497,7 @@
 				}
 			}
 		}else{
-			window.location.href=CUR_URLBACK+'index/index?memberId='+this.$route.query.memberId
+			window.location.href=CUR_URLBACK+'index/newIndex'
 		}
 
 
@@ -507,7 +541,9 @@
 				if(type==11){
 					this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
 				}else if(type==4 || type==8){
-					this.$router.push({path:'/try/trygoods/id/'+id+'?memberId='+this.$route.query.memberId});
+					this.$router.push({path:'/demo/demo/id/'+productId+'?memberId='+this.$route.query.memberId});
+				}else if(type==9){
+					this.$router.push({path:'/demo/iscroll/id/'+productId+'?memberId='+this.$route.query.memberId});
 				}else{
 
 					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId+'&memberId='+this.$route.query.memberId
@@ -553,6 +589,43 @@
 
         //},
       },
+//  拼团首页  拼团秒杀列表 超值拼列表 拼洋货列表  拼大牌列表 清仓拼列表  （ptlb）
+//	拼团秒杀产品详情 正常拼团产品详情  积分试用产品详情 产品详情 （cpxq）
+//	开通粉领 （ktfl）
+//	全球购列表（qjgl）
+//	家居日用首页（jzry）
+//	品牌馆（ppgl）
+//	试用中心（syzx）
+//	品牌特卖（pptm）
+//	限时购（xsms）
+//	自营超市（zycs）
+//	美妆首页（mzsy）
+//	今日上新（jzsx）
+//	活动内跳活动，优惠券活动（hdlb）
+//	小金库充值（jkcz）
+//	粉领产品详情（flxq）
+//	1 试用中心
+//	2 产品详情
+//	3 品牌特卖
+//	4 限时购
+//	5 进口超市
+//	6 进口家居馆
+//	7 全球购 
+//	8 美妆
+//	9 今日上新
+//	10 拼团
+//	11 开通粉领
+//	12 小金库充值
+//	13 粉领专享
+//	14 限时拼
+//	15 拼洋货/拼大牌/超值拼/拼大牌   productId 传 分类Id 如果没有分类Id 就传0 
+//	16保险
+//	17品牌馆
+//	18其他活动
+//	19 粉领续费
+//	20 特卖首页
+//	21 粉领产品详情
+//	22  优惠券活动
      /* destroyed() {
         window.removeEventListener('scroll', this.handleScroll)
       },*/

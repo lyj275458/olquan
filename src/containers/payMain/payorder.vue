@@ -231,6 +231,7 @@
 		},
 		created: function() {
 			this.$store.commit('documentTitle','确认订单');
+			this.addRecord();
 			this.getList();
 			this.addWeixinShare();
 		},
@@ -259,7 +260,15 @@
             
         },
 		methods:{
-			
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'payMain/payorder'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			getAddressMore(){
 				this.$router.push({path:'/payMain/address?memberId='+this.$route.query.memberId+'&isBuyGoods=1'});
 			},

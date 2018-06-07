@@ -107,7 +107,7 @@
 					<p class="solo-l">商品总额</p>
 					<p class="solo-r">￥{{prodrctFee}}</p>
 				</div>
-				<div class="soloDetail">
+				<div class="soloDetail" v-show="postFee!=0">
 					<p class="solo-l">运费</p>
 					
 					<p class="solo-r">￥{{postFee}}</p>
@@ -206,13 +206,14 @@
 				sureCheckone:true,
 				sureChecktwo:false,
 				sureCheckthree:false,
-				totalFee:0,
+				totalFee:'',
 				coffersFee:0,
 				amountFee:0,
 				payPassword:'',
 				payPasswordShow:false,
 				amountFeeShow:false,
 				coffersFeeShow:false,
+				isShowPass:false,
 				isOrderGet:false,
 				orderObj:JSON.parse(localStorage.getItem("orderObj")),
 				curObj:[],
@@ -233,12 +234,18 @@
 					'close':true
 				},
 				timeObj:{},
+				resultS:{
+					orderNO:122,
+				},
+				
 			}
 		},
 		created: function() {
 			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
 			}
+//			console.log(this.resultS.payInfo == undefined)
+			this.addRecord();
 			this.$store.commit('documentTitle','确认订单');
 			this.getList();
 			this.addWeixinShare();
@@ -249,10 +256,10 @@
 		},
 		computed: {
 			amountFeeObj(){
-				return Number(this.amountFee).toFixed(2);
+				return Number(this.amountFee);
 			},
 			coffersFeeObj(){
-				return Number(this.coffersFee).toFixed(2);
+				return Number(this.coffersFee);
 			},
             finalPriceObj(){
             	if(!this.amountFeeShow){
@@ -268,7 +275,15 @@
             
         },
 		methods:{
-			
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'fightAlone/ordersure/payorder'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			getAddressMore(){
 				this.$router.push({path:'/payMain/address?memberId='+this.$route.query.memberId+'&isBuyGoods=1'});
 			},
@@ -278,7 +293,7 @@
 					num:this.orderObj.num,
 					normalId:this.orderObj.normalId,
 					type:this.orderObj.type,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					
 					uutype:1,
 					
@@ -297,11 +312,11 @@
 					}
 					//console.log(this.curObj)
 					this.totalFee=this.curObj.totalFee;
-					this.prodrctFee=this.curObj.productsFee.toFixed(2);
+					this.prodrctFee=this.curObj.productsFee;
 					if(this.curObj.postFee==null){
 						this.curObj.postFee=0;
 					}
-					this.postFee=this.curObj.postFee.toFixed(2);
+					this.postFee=this.curObj.postFee;
 					console.log(this.$route.query.addressId);
 					if(this.$route.query.addressId != undefined){
 						this.addressId=this.$route.query.addressId
@@ -381,7 +396,11 @@
 			},
 			//提交订单
 			payOrder(){	
-					
+					if(Number(this.amountFee)==0 && Number(this.coffersFee)==0){
+						this.isShowPass=true;
+					}else{
+						this.isShowPass=false;
+					}
 					if(this.curObj.isCrossBorderProduct==1){
 						
 						if(this.addressObj.identityNo==''){
@@ -403,14 +422,18 @@
 						}
 						
 					}
-					if(!this.curObj.enabledPayPassword){
-
+					console.log( )
+					if(this.curObj.enabledPayPassword && !this.isShowPass){
+						this.payPasswordShow=true;
+						
+						
+					}else{
 						let data ={
 							productId:this.orderObj.productId,
 							num:this.orderObj.num,
 							normalId:this.orderObj.normalId,
 							type:this.orderObj.type,
-							//memberId:this.$route.query.memberId,
+//							memberId:this.$route.query.memberId,
 							addressId:this.addressId,
 							payMethod:this.payMethod,
 							memo:this.inputMemo,
@@ -427,9 +450,6 @@
 						});
 						this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.buyNowCreateOrder,data,this.payOrderBack);
 						
-					}else{
-						this.payPasswordShow=true;
-						
 					}
 					
 				
@@ -437,15 +457,21 @@
 				
 			},
 			payOrderBack(data){
+				
 				this.isOrderGet=false;
 				let _this=this;
+				
 //				console.log(this.isOrderGet)
 				setTimeout(function() {
 				    _this.$indicator.close();
 				  }, 400);
 				if(data.code==0){
-					if(!data.result.payInfo){
-						window.location.href=USE_URL+'ol/finish.html?orderPayRecordNo='+data.result.orderPayRecordNo
+					if(data.result.payInfo==undefined || data.result.payInfo=="undefined"){
+						if(this.payMethod==4 && data.result>0){
+							window.location.href=USE_URL+"ol/weixin/index/alipay?type=1&recordId="+data.result;
+						}else{
+							window.location.href=USE_URL+'ol/finish.html?orderPayRecordNo='+data.result.orderPayRecordNo;
+						}
 					}else{
 						if(this.payMethod==1){
 							this.payInfo=data.result.payInfo
@@ -455,6 +481,7 @@
 							window.location.href=USE_URL+"ol/weixin/index/alipay?type=1&recordId="+data.result;
 						}
 					}
+				
 				}else if(data.code==2){
 					window.location.href=USE_URL+"ol/finish.html?orderPayRecordNo="+data.result.orderPayRecordNo
 				}else{
@@ -473,11 +500,11 @@
 						num:this.orderObj.num,
 						normalId:this.orderObj.normalId,
 						type:this.orderObj.type,
-						//memberId:this.$route.query.memberId,
+//						memberId:this.$route.query.memberId,
 						addressId:this.addressId,
 						payMethod:this.payMethod,
 						memo:this.inputMemo,
-						payPassword:md5(this.payPassword),
+						payPwd:md5(this.payPassword),
 						amount:Number(this.amountFee),
 						coffers:Number(this.coffersFee),
 						uutype:1,

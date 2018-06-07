@@ -93,7 +93,7 @@
 					<li style="border-right: 0.01rem solid #ddd;border-bottom: 0.01rem solid #ddd;" @click="getDetailFour">
 						<img :src="tuifenImg"/>
 						<span>推荐有礼</span>
-						<span style="margin-top: .10rem;">￥15</span>
+						<span style="margin-top: .10rem;">￥100</span>
 					</li>
 					<li style="border-bottom: 0.01rem solid #ddd;">
 						<img :src="sharefenImg"/>
@@ -114,10 +114,10 @@
 					</li>
 				</ul>
 			</div>
-			<div class="getPink" @click="kaiPinkuse" v-show="listObj.levelCode=='white' || listObj.levelCode=='golden'">
+			<!--<div class="getPink" @click="kaiPinkuse" v-show="listObj.levelCode=='white' || listObj.levelCode=='golden'">
 				<p>一步到位 ￥{{fenMoney}}/年 享粉领特权</p>
 				<img  :src="getpinkImg"/>
-			</div>
+			</div>-->
 			<!--<div class="jifenUse" @click="gotoJifen">
 				<p>小积分 大用处
 					<img :src="goImg" />
@@ -208,6 +208,7 @@
 			window.addEventListener('scroll', this.handleScroll);
 		},
 		created: function() {
+			//this.getCookie('JSESSIONID')
 			this.getDetail();
 			//this.getList();
 			this.showPhone();
@@ -367,7 +368,7 @@
 			
 			getInvite(){
 				if(tsApp.getClientBrowser()=='wx'){
-					window.location.href=USE_URL+'weixin/member/memberTwoCode2?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'mobile/weixin/member/memberTwoCode2?memberId='+this.$route.query.memberId;
 				}else{
 					if(this.isAndroid){
 						OLquan.toProduct("6")
@@ -403,7 +404,8 @@
 			getDetailFour(){
 				if(this.isOpen){
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=USE_URL+'weixin/member/openStore?memberId='+this.$route.query.memberId
+						//window.location.href=USE_URL+'weixin/member/openStore?memberId='+this.$route.query.memberId
+						window.location.href=CUR_URLBACK+'supervisor/buyPink?memberId='+this.$route.query.memberId
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("1")
@@ -415,7 +417,7 @@
 					}
 				}else{
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=USE_URL+'weixin/member/openStore?memberId='+this.$route.query.memberId
+						window.location.href=CUR_URLBACK+'supervisor/buyPink?memberId='+this.$route.query.memberId
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("7")

@@ -117,6 +117,7 @@
 		created: function() {
 			this.$store.commit('documentTitle','限时秒杀');
 			this.getList();
+			this.addRecord();
 			//this.locationHref();
 		},
 		components: {
@@ -128,6 +129,15 @@
 			
 		},
 		methods:{
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'index/hotsale'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			locationHref(){
 				//
 				//window.location.reload(true)

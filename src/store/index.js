@@ -17,7 +17,7 @@ export default new Vuex.Store({
 		},
 		//控制全局loading
 		ajaxObj (state, obj) {
-			console.log(obj)
+//			console.log(obj)
 	    	state.ajaxObj = obj;
 	    },
 		applyObj(state,val){

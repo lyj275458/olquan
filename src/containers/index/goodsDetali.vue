@@ -495,6 +495,7 @@
 		created: function() {
 			this.$store.commit('documentTitle','商品详情');
 			this.getList();
+			this.addRecord();
 			//console.log(this.$route.query.isLimit)
 			if(this.$route.query.isLimit==1){
 				
@@ -514,6 +515,14 @@
 			
 		},
 		methods:{
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'index/goodsDetali'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			closeFen(){
 				this.pinFenShow=true;
 			},
@@ -608,69 +617,76 @@
 			},
 			getListBack(data){
 				//console.log(data)
-				this.curObj=data.result;
-				this.getGoods(data.result.productId);
-				if(data.result.time){
-					this.time=data.result.time;
-				}
-				
-				
-				if(this.curObj.isCollect==0){
-					this.showShou=false
-				}else{
-					this.showShou=true;
-				}
-				this.imgList = data.result.images.map((item, index) => ({
-				  url: 'javascript:',
-				  img: item
-				}));
-				this.showLength=this.curObj.normals.length
-//				console.log('11')
-//				console.log(this.showLength);
-				if(this.showLength>0){
-					if(data.result.normals){
-						if(data.result.normals.length>0 && data.result.normals.length<2){
-							this.nomoreOne=data.result.normals[0];
-							//console.log(this.nomoreOne)
-							//this.getVlaueOne=data.result.normals[0].normses[0].valueId;
-							//this.getValueDetail();
-							
-						}else if(data.result.normals.length>1){
-							this.nomoreOne=data.result.normals[0];
-							//console.log(this.nomoreOne)
-							//this.getVlaueOne=data.result.normals[0].normses[0].valueId;
-							this.nomoreTwo=data.result.normals[1];
-							//this.getVlaueTwo=data.result.normals[1].normses[0].valueId;
-							this.nomoreThree=data.result.normals[3]
-							//this.getValueDetail();
-						}
-						//console.log(this.nomoreThree)
+				if(data.result.type==11 || data.result.type==12){
+						this.curObj=data.result;
+					this.getGoods(data.result.productId);
+					if(data.result.time){
+						this.time=data.result.time;
 					}
+					
+					
+					if(this.curObj.isCollect==0){
+						this.showShou=false
+					}else{
+						this.showShou=true;
+					}
+					this.imgList = data.result.images.map((item, index) => ({
+					  url: 'javascript:',
+					  img: item
+					}));
+					this.showLength=this.curObj.normals.length
+	//				console.log('11')
+	//				console.log(this.showLength);
+					if(this.showLength>0){
+						if(data.result.normals){
+							if(data.result.normals.length>0 && data.result.normals.length<2){
+								this.nomoreOne=data.result.normals[0];
+								//console.log(this.nomoreOne)
+								//this.getVlaueOne=data.result.normals[0].normses[0].valueId;
+								//this.getValueDetail();
+								
+							}else if(data.result.normals.length>1){
+								this.nomoreOne=data.result.normals[0];
+								//console.log(this.nomoreOne)
+								//this.getVlaueOne=data.result.normals[0].normses[0].valueId;
+								this.nomoreTwo=data.result.normals[1];
+								//this.getVlaueTwo=data.result.normals[1].normses[0].valueId;
+								this.nomoreThree=data.result.normals[3]
+								//this.getValueDetail();
+							}
+							//console.log(this.nomoreThree)
+						}
+					}
+					
+					this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/goodsDetali/id/'+this.curObj.togetherId+'?isLimit='+this.$route.query.isLimit);
+					//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/goodsDetali/id/'+this.curObj.togetherId+'?isLimit='+this.$route.query.isLimit);
+					this.shareData.title=this.curObj.productName;
+					this.shareData.description=this.curObj.summary;
+					this.shareData.picURL=this.curObj.image;
+					console.log(this.shareData)
+					this.addWeixinShare();//微信分享 
+					this.isType=this.curObj.type;
+					if(this.isType==1 && this.curObj.status==null){
+						this.showSure=false;
+					}else{
+						this.showSure=true;
+					}
+					if(this.curObj.time!=null && this.curObj.status!=1){
+						this.timeSpecial=true
+					}
+					//console.log(this.isType)
+					//console.log("getNomoreObj")
+					//console.log(this.getNomoreObj)
+					let _this=this
+					_this.EndTime= _this.time + new Date().getTime();
+					setInterval(_this.getRtime,0)
+					this.getPinNum();
+				}else if(data.result.type==9 || data.result.type==4){
+					window.location.href=CUR_URLBACK+'demo/iscroll/id/'+data.result.productId
+				}else{
+					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+data.result.productId;
 				}
 				
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/goodsDetali/id/'+this.curObj.togetherId+'?isLimit='+this.$route.query.isLimit);
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/goodsDetali/id/'+this.curObj.togetherId+'?isLimit='+this.$route.query.isLimit);
-				this.shareData.title=this.curObj.productName;
-				this.shareData.description=this.curObj.summary;
-				this.shareData.picURL=this.curObj.image;
-				console.log(this.shareData)
-				this.addWeixinShare();//微信分享 
-				this.isType=this.curObj.type;
-				if(this.isType==1 && this.curObj.status==null){
-					this.showSure=false;
-				}else{
-					this.showSure=true;
-				}
-				if(this.curObj.time!=null && this.curObj.status!=1){
-					this.timeSpecial=true
-				}
-				//console.log(this.isType)
-				//console.log("getNomoreObj")
-				//console.log(this.getNomoreObj)
-				let _this=this
-				_this.EndTime= _this.time + new Date().getTime();
-				setInterval(_this.getRtime,0)
-				this.getPinNum();
 			},
 			//获取二维码图片
 			getErwei(id){

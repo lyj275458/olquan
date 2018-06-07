@@ -98,7 +98,7 @@ export default [
 		  keepAlive: false // 不需要缓存
 		}
         
-    },{//我的拼团--
+    },{//试用特卖商品详情--
         path: '/demo/iscroll/id/:id',
        
         component: resolve => {
@@ -300,7 +300,7 @@ export default [
         },
         meta: { keepAlive: true }
         
-    },{//商品详情
+    },{//拼团商品详情
         path: '/index/goodsDetali/id/:id',
         
         component: resolve => {
@@ -336,7 +336,7 @@ export default [
 		  keepAlive: true // 不需要缓存
 		}
         
-    },{//立即支付--
+    },{//拼团立即支付--
         path: '/fightAlone/ordersure/id/:id',
         
         component: resolve => {
@@ -450,6 +450,16 @@ export default [
         },
         meta: { keepAlive: true}
         
+    },{//新版试用
+        path: '/try/newCenterN',
+        
+        component: resolve => {
+            require.ensure(['../containers/try/newCenterN.vue'], () => {
+                resolve(require('../containers/try/newCenterN.vue'));
+            }, 'tryNewCenterN');
+        },
+        meta: { keepAlive: true}
+        
     },{//新版试用各种试
         path: '/try/severalTry/id/:id',
         
@@ -526,6 +536,97 @@ export default [
             require.ensure(['../containers/fightAlone/ordersure/superorder.vue'], () => {
                 resolve(require('../containers/fightAlone/ordersure/superorder.vue'));
             }, 'superOrder');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//升级粉领--
+        path: '/supervisor/buyPink',
+        
+        component: resolve => {
+            require.ensure(['../containers/supervisor/buyPink.vue'], () => {
+                resolve(require('../containers/supervisor/buyPink.vue'));
+            }, 'buyPink');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//粉领确认订单--
+        path: '/fightAlone/ordersure/pinkorder',
+        
+        component: resolve => {
+            require.ensure(['../containers/fightAlone/ordersure/pinkorder.vue'], () => {
+                resolve(require('../containers/fightAlone/ordersure/pinkorder.vue'));
+            }, 'pinkOrder');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//分享升级粉领--
+        path: '/share/pinkShare',
+        
+        component: resolve => {
+            require.ensure(['../containers/share/pinkShare.vue'], () => {
+                resolve(require('../containers/share/pinkShare.vue'));
+            }, 'pinkShare');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//个人中心
+        path: '/mine/personal',
+        
+        component: resolve => {
+            require.ensure(['../containers/mine/personal.vue'], () => {
+                resolve(require('../containers/mine/personal.vue'));
+            }, 'minePersonal');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//我的成长
+        path: '/mine/myGrow',
+        
+        component: resolve => {
+            require.ensure(['../containers/mine/myGrow.vue'], () => {
+                resolve(require('../containers/mine/myGrow.vue'));
+            }, 'myGrow');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//设置我的资料
+        path: '/mine/setUp',
+        
+        component: resolve => {
+            require.ensure(['../containers/mine/setUp.vue'], () => {
+                resolve(require('../containers/mine/setUp.vue'));
+            }, 'setUp');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//验证手机号码 以及修改手机号  修改支付密码
+        path: '/mine/setTel',
+        
+        component: resolve => {
+            require.ensure(['../containers/mine/setTel.vue'], () => {
+                resolve(require('../containers/mine/setTel.vue'));
+            }, 'setTel');
         },
         meta: {
 		  keepAlive: false // 不需要缓存

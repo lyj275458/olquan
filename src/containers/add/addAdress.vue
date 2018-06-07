@@ -287,7 +287,7 @@ export default {
 	    		name:this.userName,
 	    		mobile:this.userPhone,
 	    		uutype:1,
-	    		//memberId:this.$route.query.memberId,
+//	    		memberId:this.$route.query.memberId,
 	    		address:this.userHome,
 	    		frontServerId:this.nationalNore,
 	    		oppServerId:this.nationalNback,
@@ -303,6 +303,8 @@ export default {
     		this.$router.push({path:'/fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId+'&addressId='+data.result});
     	} else if(this.$route.query.getSuper==1){
     		this.$router.push({path:'/fightAlone/ordersure/superorder?memberId='+this.$route.query.memberId+'&addressId='+data.result});
+    	}else if(this.$route.query.getPink==1){
+    		this.$router.push({path:'/fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId+'&addressId='+data.result});
     	}else{
     		this.$router.push({path:'/payMain/address?memberId='+this.$route.query.memberId});
     	}

@@ -105,6 +105,7 @@
 		},
 		created: function() {
 			this.$store.commit('documentTitle','拼团');
+			this.addRecord();
 			this.getList();
 			this.getGoods();
 			
@@ -114,7 +115,15 @@
 			//
 		},
 		methods: {
-			
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'index/moreindex/id/'+this.togetherCategoryId,
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			//获取拼团分类
 			getList(){
 				let data={
@@ -170,6 +179,7 @@
   				this.isMore=true;
   				this.pageObj.page=1;
   				this.getGoods();
+  				this.addRecord();
   				
   			},
 			//价格筛选

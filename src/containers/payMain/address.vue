@@ -93,7 +93,7 @@
 		methods:{
 			getMemAddress(){
 				let data = {
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.memberAddresses,data,this.getMemAddressBack,this);
 			},
@@ -112,6 +112,10 @@
 		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&isBuyGoods='+this.$route.query.isBuyGoods+'&addressId='+id});
 		    	}else if(this.$route.query.getSuper){
 		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&getSuper='+this.$route.query.getSuper+'&addressId='+id});
+		    	}else if(this.$route.query.getPink){
+		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&getPink='+this.$route.query.getPink+'&addressId='+id});
+		    	}else{
+		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&addressId='+id});
 		    	}
 		    	
 		    },
@@ -121,7 +125,16 @@
 		    	this.chooseId=id;
 		    },
 		    addNew(){
-		    	this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&isBuyGoods='+this.$route.query.isBuyGoods});
+		    	if(this.$route.query.isBuyGoods){
+		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&isBuyGoods='+this.$route.query.isBuyGoods});
+		    	}else if(this.$route.query.getSuper){
+		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&getSuper='+this.$route.query.getSuper});
+		    	}else if(this.$route.query.getPink){
+		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&getPink='+this.$route.query.getPink});
+		    	}else{
+		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId});
+		    	}
+		    	
 		    },
 		    //删除地址
 		    delAddress(){
@@ -142,7 +155,7 @@
 		    chooseDefault(id,index){
 		    	this.defalutIndex=index;
 		    	let data = {
-		    		//memberId:this.getCookie("memberId"),
+//		    		memberId:this.getCookie("memberId"),
 		    		addressId:id,
 		    	}
 		    	this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.setDefaultAddress,data,this.chooseDefaultBack,this);
@@ -158,6 +171,8 @@
 		    		this.$router.push({path:'/fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId+'&addressId='+id});
 		    	}else if(this.$route.query.getSuper){
 		    		this.$router.push({path:'/fightAlone/ordersure/superorder?memberId='+this.$route.query.memberId+'&addressId='+id});
+		    	}else if(this.$route.query.getPink){
+		    		this.$router.push({path:'/fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId+'&addressId='+id});
 		    	}
 		    },
 		    //微信分享

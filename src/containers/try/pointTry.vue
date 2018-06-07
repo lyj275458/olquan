@@ -162,7 +162,7 @@
 			getFristGoods(){
 				let data ={
 					page:1,
-					rows:10
+					rows:20
 					
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getWholePointFreeUseProducts,data,this.getFristGoodsBack);

@@ -69,9 +69,19 @@
 		created: function() {
 			this.$store.commit('documentTitle','立即支付');
 			//this.addWeixinShare();
+			this.addRecord();
 			this.locationHref();
 		},
 		methods:{
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'fightAlone/ordersure/ordersure'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			locationHref(){
 				//
 				//window.location.reload(true)
@@ -113,7 +123,7 @@
 				
 				let data={
 					togetherJoinRecordId:this.$route.params.id,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					payMethod:this.payMethod,
 					isPayAnother:this.isPayAnother,
 					uutype:1

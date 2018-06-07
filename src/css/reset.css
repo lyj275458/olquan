@@ -20,7 +20,11 @@ html {
     line-height: 1;
     height: 100%;
 }
-
+body{
+	-webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+    -moz-text-size-adjust: 100% !important;
+}
 blockquote, q {
     quotes: none
 }
@@ -354,4 +358,29 @@ input::-webkit-inner-spin-button{
 #app .vux-slider > .vux-indicator, .vux-slider .vux-indicator-right{
 	bottom: -5px;
 }
-
+#app .imgdetail img{
+	display: block;
+	width: 100%;
+}
+#app .imgdetail {
+	display: flex;
+	display:-webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: -moz-flex;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -ms-flex-align:center;/* IE 10 */
+    -webkit-align-items: center;
+    -moz-align-items: center;
+    align-items: center;
+    -webkit-justify-content:center;
+	justify-content:center;
+	-moz-box-pack:center;
+	-webkit--moz-box-pack:center;
+	flex-wrap:wrap;
+	-webkit-flex-wrap:wrap;
+	-webkit-box-lines:multiple;
+	-moz-flex-wrap:wrap;
+}

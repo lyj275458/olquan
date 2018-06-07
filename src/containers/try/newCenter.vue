@@ -12,6 +12,41 @@
 			</ul>
 		</div> 
 		<swiper loop auto :list="urlList" height='3.34rem'  dots-position='center' v-show="headlinesLength>0"></swiper>
+		<div class="fixedArea" :class="searchBarFixed == true ? 'isFixed' :''">
+			<div class="chooseTop">
+				<div class="choose" @click="getIndexGoods">
+					<img :src="jingpinChoosekImg" v-show="isChooseIndex==1"/>
+					<img :src="jingpinNoImg" v-show="isChooseIndex==2"/>
+					<p v-bind:class="{ 'pSpecial': isChooseIndex==1}">精品试用</p>
+				</div>
+				<div style="margin: 0 .30rem;">
+					<p>|</p>
+				</div>
+				<div class="choose" @click="getColckGoods">
+					
+					<img :src="chooseClockImg" v-show="isChooseIndex==2"/>
+					<img :src="noChooseClockImg" v-show="isChooseIndex==1" />
+					<p v-bind:class="{ 'pSpecial': isChooseIndex==2}">整点抢试</p>
+				</div>
+			</div>
+			<div class="fanfanfan" v-show="isChooseIndex==2"  :class="searchBarFixedSpecial == true ? 'isFixedSpe' :''">
+				<ul class="listLess" v-show="showLength<=5">
+					<li v-for="(item,index) in timeObj" v-bind:class="{ 'speLi': selectLi==index}" @click="getTimeGoods(item.time,index)">
+						<p>{{item.time}}</p>
+						<p class="spePel" v-show="item.isStarted==1">抢试中</p>
+						<p class="spePel" v-show="item.isStarted!=1">预热中</p>
+					</li>
+					
+				</ul>
+				<ul class="listMore" v-show="showLength>5">
+					<li v-for="(item,index) in timeObj" v-bind:class="{ 'speLi': selectLi==index}" @click="getTimeGoods(item.time,index)">
+						<p>{{item.time}}</p>
+						<p class="spePel" v-show="item.isStarted==1">抢试中</p>
+						<p class="spePel" v-show="item.isStarted!=1">预热中</p>
+					</li>
+				</ul>
+			</div>
+		</div>
 		<!--<div class="benefit" v-show="iconObj.length>0">
 			<ul>
 				<li v-for="items in iconObj" @click='goMoreIndex(items.link,items.type)'>
@@ -26,7 +61,7 @@
 			</div>
 			
 		</div>-->
-		<div class="tuijian" v-show="newShow">
+		<!--<div class="tuijian" v-show="newShow">
 			<img :src="xianImgone"/>
 				新品首试
 			<img :src="xianImgone"/>
@@ -60,9 +95,7 @@
 									<i>查看全部</i>
 								</span>
 								<p style="color: #777;font-size: .22rem;">view all</p>
-								<!--<p class="moreImg">
-									<img :src="moreImgone" />
-								</p>-->
+								
 							</div>
 							
 						</div>
@@ -104,13 +137,13 @@
 								<img class="tryOut" :src="tryOutImg" v-show="item.percent=='100%'"/>
 							</p>
 							<p class="descript" style="color: #333;padding-top: .10rem;height: .72rem;">
-								<!--<span v-show="item.countryIcon!=null"><img style="display: inline-block;height: .18rem;width: .28rem;" :src="item.countryIcon"/></span>
-								<span style="color:#E72F7D;font-size: .22rem;">{{item.countryName}}</span>-->
+								<span v-show="item.countryIcon!=null"><img style="display: inline-block;height: .18rem;width: .28rem;" :src="item.countryIcon"/></span>
+								<span style="color:#E72F7D;font-size: .22rem;">{{item.countryName}}</span>
 								<span style="font-size: .24rem;">{{item.productName}}</span>
 							</p>
-							<!--<p class="descript" style="color: #777;">
+							<p class="descript" style="color: #777;">
 								限量{{item.dayLimitCount}}份
-							</p>-->
+							</p>
 							<p class="descript" style="font-size: .22rem; color: #777;">
 								保证金<span style="color: #E50F72;font-size: .24rem;">￥{{item.price}}</span>
 							</p>
@@ -123,9 +156,7 @@
 										<i>查看全部</i>
 									</span>
 									<p style="color: #777;font-size: .22rem;">view all</p>
-									<!--<p class="moreImg">
-										<img :src="moreImgone" />
-									</p>-->
+									
 								</div>
 							</div>
 							
@@ -133,7 +164,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div>-->
 		<!--<div class="tuijian" v-show="overSeaShow">
 			<img :src="xianImgone"/>
 				试海外
@@ -180,28 +211,69 @@
 				</div>
 			</div>
 		</div>-->
-		<div class="tuijian" style="margin-bottom: -.30rem;" v-show="normalShow">
+		<!--<div class="tuijian" style="margin-bottom: -.30rem;" v-show="normalShow">
 			<img :src="xianImgone"/>
 				精品试用
 			<img :src="xianImgone"/>
-		</div>
-		<div class="moreGoodsTry" v-for="(item,index,key) in curObj" @click="getGoods(item.productId)" v-show="normalShow">
-			<div class="moreGoodsImg">
-				<img :src="item.indexImage" />
-				<img class="tryOut" :src="tryOutImg" v-show="item.percent=='100%'"/>
+		</div>-->
+		<div v-bind:class="{ 'specialMoreGoods': isChooseIndex==1}">
+			
+			<div class="moreGoodsTry" v-for="(item,index,key) in curObj" @click="getGoods(item.productId)" v-show="isChooseIndex==1" >
+				<div class="moreGoodsImg">
+					<img :src="item.indexImage" />
+					<img class="tryOut" :src="tryOutImg" v-show="item.percent=='100%'"/>
+				</div>
+				<div class="moreGoodsName">
+					{{item.productName}}
+				</div>
+				<div class="moreGoodsDes">
+					{{item.summery}}
+				</div>
+				<div class="moreGoodsPrice">
+					<p>保证金<span>￥{{item.price}}</span></p>
+					<p style="margin-top: .04rem;">已试{{item.buyCount}}份</p>
+				</div>
 			</div>
-			<div class="moreGoodsName">
-				{{item.productName}}
-			</div>
-			<div class="moreGoodsDes">
-				{{item.summery}}
-			</div>
-			<div class="moreGoodsPrice">
-				<p>保证金<span>￥{{item.price}}</span></p>
-				<p style="margin-top: .04rem;">已试{{item.buyCount}}份</p>
-			</div>
+			
 		</div>
 		
+		<div class="timeTryGoods" v-show="isChooseIndex==2">
+			<div class="tryGoodsDetail" v-for="(item,index) in timeGoodsObj" @click="getGoods(item.productId)">
+				<div class="goodsImg">
+					<img class="goods-img" v-lazy="item.image" />
+					<img class="tryOut" :src="tryImgone" v-show="item.percent=='100%'" />
+				</div>
+				<div class="goods-detail">
+					<div class="goodsName">
+						<span v-show="item.countryIcon!=null" style="font-size: 0;display: inline-block;"><img style="display: block;height: .18rem;width: .28rem;" :src="item.countryIcon"/></span>
+						<span style="color:#E72F7D;font-size: .24rem;">{{item.countryName}}</span>
+						<span style="font-size: .28rem;color: #333;;">{{item.productName}}</span>
+					</div>
+					<div class="goodsNum" v-show="addSelect==0">
+						<div class="progress">
+							<div class="num">已试用{{item.percent}}</div>
+							<div class="porNum"v-bind:style="{width:item.percent}"></div>
+						</div>
+						<div class="uesNum">已试{{item.buyCount}}件</div>
+					</div>
+					<div class="dayTomorrow"  v-show="addSelect==1">
+						{{item.dayLimitCount}}件 | 明日{{item.dailyStartTime}}
+					</div>
+					<div class="goodsMoney">
+						保证金:<span>￥{{item.price}}</span>
+					</div>
+				</div>
+				<div class="getGoods" v-show="addSelect==0 && item.isStarted==1">
+					<span>马上试</span>
+					<img :src="tryRowImg" />
+				</div>
+				<div class="getGoods" v-show="addSelect==1 || item.isStarted==0" style="background: #FC89B2;">
+					<span>即将开始</span>
+					
+				</div>
+			</div>
+			
+		</div>
 		<div class="getBottom">
 			<div class="getIndex" @click="getIndex">
 				<div class="top">
@@ -281,6 +353,16 @@
 				goTopImg:'/static/images/goTop.png',
 				colseIcon:'/static/images/colseIcon.png',
 				tryOutImg:'/static/images/tryOut.png',
+				noChooseClockImg:'/static/images/noChooseClock.png',
+				chooseClockImg:'/static/images/chooseClock.png',
+				jingpinChoosekImg:'/static/images/jingpinChoose.png',
+				jingpinNoImg:'/static/images/jingpinNo.png',
+				tryImgone:'/static/images/tryOut.png',
+				tryRowImg:'/static/images/tryRow.png',
+				searchBarFixed:false,
+				searchBarFixedSpecial:false,
+				isChooseIndex:1,
+				addSelect:0,
 				selectLi:-1,
 				headlinesLength:0,
 				showTop:false,
@@ -296,6 +378,7 @@
 				cartNum:0,
 				iconObj:[],
 				showActive:false,
+				isChooseTime:false,
 				avtiveObj:[],
 				urlList:[],
 				imgObj:[],
@@ -307,10 +390,12 @@
 				timeObj:[],
 				timeGoodsObj:[],
 				scrollTop:0,
+				isTime:'',
 				pageObj:{
 					page:1,
 				},
 				newImg:[],
+				timeList:0,
 				shareData : {
 					'title': "OL圈 试用中心",
 					'description': "试，是一种态度。每日整点限量抢试！还有更多新品、海外产品期待您来试用体验！",
@@ -332,8 +417,9 @@
 			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
 			}
+			this.addRecord();
 			this.$store.commit('documentTitle','OL圈');
-			this.getFreeUse();
+//			this.getFreeUse();
 			this.getSpecialGoods(1);
 			this.getImgtop();
 //			this.getIcon();
@@ -351,12 +437,53 @@
 			
 			window.addEventListener('scroll', this.getTopScroll);
 			window.addEventListener('scroll', this.handleScroll);
+			window.addEventListener('scroll', this.xuanfuScroll);
 		},
 		methods:{
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'try/newCenter'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
+			//
+			getIndexGoods(){
+				this.isChooseTime=false;
+				this.isChooseIndex=1;
+				this.isMore=true;
+				this.pageObj.page=1;
+				if(this.searchBarFixed || this.searchBarFixedSpecial){
+					$('html,body').animate({scrollTop:0},1000);
+				}
+				
+			},
+			getColckGoods(){
+				console.log(this.isTime)
+				if(this.isChooseTime){
+					console.log(1)
+				}else{
+					this.isChooseIndex=2;
+					if(this.searchBarFixed || this.searchBarFixedSpecial){
+						$('html,body').animate({scrollTop:0},10);
+					}
+					this.searchBarFixed=false;
+					this.isMore=true;
+					this.pageObj.page=1;
+					
+//					this.isTime='';
+				}
+				
+//				if(this.searchBarFixed || this.searchBarFixedSpecial){
+//					$('html,body').animate({scrollTop:0},1000);
+//				}
+			},
 			//获取试用首页信息
 			getFreeUse(){
 				let data={
-//					memberId:this.getCookie("memberId"),
+//					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.freeUseNewHomePage,data,this.getFreeUseBack);
 			},
@@ -393,6 +520,9 @@
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getFreeUseProducts,data,this.getSpecialGoodsBack);
 			},
 			getSpecialGoodsBack(data){
+				this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+"try/newCenter");
+				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/center');
+				this.addWeixinShare();//微信分享 
 				if(this.goodsType==1){
 					this.curObj=data.result;
 				}
@@ -411,19 +541,38 @@
   				this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
 				var windowH=window.innerHeight;
 //				console.log(this.scrollTop + windowH)
-				if(this.scrollTop + windowH >=height-200){
-					
-		  			if(this.isMore){
-		 				this.isMore=false;
-		 				let data={
-		  					page:this.pageObj.page+1,
-		  					rows:20,
-		  					type:1,
-		  				};
-		  				this.pageObj.page=this.pageObj.page+1
-						this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getFreeUseProducts,data,this.getSpecialGoodsMoreBack);
-		 			}
+				if(this.isChooseIndex==1){
+					if(this.scrollTop + windowH >=height-200){
+						
+			  			if(this.isMore){
+			 				this.isMore=false;
+			 				let data={
+			  					page:this.pageObj.page+1,
+			  					rows:20,
+			  					type:1,
+			  				};
+			  				this.pageObj.page=this.pageObj.page+1
+							this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getFreeUseProducts,data,this.getSpecialGoodsMoreBack);
+			 			}
+					}
 				}
+				if(this.isChooseIndex==2){
+					if(this.scrollTop + windowH >=height-200){
+						
+			  			if(this.isMore){
+			 				this.isMore=false;
+			 				let data={
+			  					page:this.pageObj.page+1,
+			  					rows:20,
+			  					time:this.isTime,
+			  					wholePointDateType:this.addSelect
+			  				};
+			  				this.pageObj.page=this.pageObj.page+1
+							this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getWholePointFreeUseProducts,data,this.getSpecialGoodsMoreBack);
+			 			}
+					}
+				}
+				
 			},
 			getSpecialGoodsMoreBack(data){
 				if(data.result.length<20){
@@ -432,9 +581,39 @@
 				}else{
 					this.isMore=true;
 				}
-				for(let i=0; i<data.result.length; i++){
-					this.curObj.push(data.result[i])
+				if(this.isChooseIndex==1){
+					for(let i=0; i<data.result.length; i++){
+						this.curObj.push(data.result[i])
+					}
 				}
+				if(this.isChooseIndex==2){
+					for(let i=0; i<data.result.length; i++){
+						this.timeGoodsObj.push(data.result[i])
+					}
+				}
+				
+			},
+			//悬浮
+			xuanfuScroll(){
+				var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+//			 	console.log(scrollTop)
+			  	var offsetTop = document.querySelector('.fixedArea').offsetTop;
+			  	var offsetTopNext= document.querySelector('.fanfanfan').offsetTop;
+//			    console.log(offsetTop)	
+				if(this.isChooseIndex==1){
+					if (scrollTop > offsetTop) {
+					    this.searchBarFixed = true;
+					} else {
+					    this.searchBarFixed = false;
+					}
+				}else{
+					if (scrollTop > offsetTopNext) {
+					    this.searchBarFixedSpecial = true;
+					} else {
+					    this.searchBarFixedSpecial = false;
+					}
+				}
+				
 			},
 			//获取当天整点抢试用时间
 			getWholeTime(){
@@ -450,6 +629,8 @@
 				for(let i=0;i<data.result.length;i++){
 					if(data.result[i].isCurrentActivity==1){
 						this.selectLi=i;
+						this.timeList=data.result[i].time;
+						this.isTime=data.result[i].time;
 					}
 				}
 			},
@@ -461,7 +642,7 @@
 			getFristGoods(){
 				let data ={
 					page:1,
-					rows:10
+					rows:20
 					
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getWholePointFreeUseProducts,data,this.getFristGoodsBack);
@@ -472,10 +653,17 @@
 				
 			},
 			getTimeGoods(time,index){
+				this.isChooseTime=true;
 				this.selectLi=index;
+				this.isTime=time;
+				this.isMore=true;
+				this.pageObj.page=1;
+				if(this.searchBarFixed || this.searchBarFixedSpecial){
+					$('html,body').animate({scrollTop:document.querySelector('.timeTryGoods').offsetTop-document.querySelector('.fanfanfan').offsetTop*3},1000);
+				}
 				let data = {
 					page:1,
-					rows:10,
+					rows:20,
 					time:time
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getWholePointFreeUseProducts,data,this.getFristGoodsBack);
@@ -534,7 +722,7 @@
 		    //获取购物车产品数量
 			getcartNum(){
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.totalNum,data,this.getcartNumBack);
 			},
@@ -578,7 +766,7 @@
   			//获取试用首页轮播图
 	  		getImgtop(){
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.advers,data,this.getImgBack);
 			},
@@ -615,7 +803,7 @@
 			//点击特卖
   			getFist(){
   				//this.$router.push({path:'/index/pinkIndex?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/pinkIndex'
   				
   			},
   			gotoTop(){
@@ -634,21 +822,25 @@
   			getActiveImg(){
   				
   				let data ={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
   				}
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getDialog,data,this.getActiveImgBack);
   			},
   			getActiveImgBack(data){
   				//console.log(data)
-  				if(data.result.length>0){
-  					this.showActive=true;
-  				}else{
-  					this.showActive=false;
+  				if(data.code!=-1){
+  					if(data.result.length>0){
+	  					this.showActive=true;
+	  				}else{
+	  					this.showActive=false;
+	  				}
+	  				for(let i=0;i<data.result.length;i++){
+	  					this.$set(data.result[i],'selectM',true);
+	  				}
+	  				this.avtiveObj=data.result;
   				}
-  				for(let i=0;i<data.result.length;i++){
-  					this.$set(data.result[i],'selectM',true);
-  				}
-  				this.avtiveObj=data.result;
+  				
+  				
   				
   			},
   			colseImg(index){
@@ -665,7 +857,7 @@
   				this.avtiveUrl=url;
   				let data ={
   					dialogId:id,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
   				}
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.openDialog,data,this.getActiveBack);
   			},
@@ -682,27 +874,27 @@
   			//点击试用
   			getFistOne(){
   				//this.$router.push({path:'/try/moretry?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'try/newCenter';
   			},
   			//点击拼团
   			getFistTwo(){
   				//this.$router.push({path:'/index/newIndex?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/newIndex';
   			},
 			//点击分类
   			getDetailNex(index,id){
-  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id+'&memberId='+this.$route.query.memberId;
+  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id;
   				
   			},
   			getSearch(){
-  				window.location.href=USE_URL+'ol/weixin/index/search?memberId='+this.$route.query.memberId;
+  				window.location.href=USE_URL+'ol/weixin/index/search';
   			},
   			//跳转购物车
 			getIndex(){
-				window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'try/newCenter';
 			},
 			getOrderCate(){
-				window.location.href=CUR_URLBACK+'shopcar/ordercar?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'shopcar/ordercar';
 			},
 			getFind(){
 				window.location.href="http://live-weixin.olquan.cn"
@@ -737,6 +929,7 @@
 		destroyed () {
 		  window.removeEventListener('scroll', this.handleScroll)
 		  window.removeEventListener('scroll', this.getTopScroll);
+		  window.removeEventListener('scroll', this.xuanfuScroll);
 		},
 	}
 </script>
@@ -778,6 +971,134 @@
 				background-size: .34rem .34rem;
 			}
 		}
+		.fixedArea{
+			font-size:.30rem;
+			background: #fff;
+			.chooseTop{
+				display: flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -moz-flex;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+				-webkit-justify-content:center;
+				justify-content:center;
+				-moz-box-pack:center;
+				-webkit--moz-box-pack:center;
+				font-size: .30rem;
+				color: #333;
+				line-height: 1.20rem;
+				.choose{
+					display: flex;
+					display:-webkit-box;
+				    display: -moz-box;
+				    display: -moz-flex;
+				    display: -ms-flexbox;
+				    display: -webkit-flex;
+					-webkit-justify-content:center;
+					justify-content:center;
+					-moz-box-pack:center;
+					-webkit--moz-box-pack:center;
+					align-items:center;
+					-webkit-align-items:center;
+					box-align:center;
+					-moz-box-align:center;
+					-webkit-box-align:center;
+					img{
+						display: inline-block;
+						width: .30rem;
+						
+						height: .30rem;
+					}
+					p{
+						display: inline-block;
+						font-size: .30rem;
+						margin-left: .10rem;
+						color: #777777;
+					}
+					.pSpecial{
+						color: #333;
+					}
+				}
+			}
+			.fanfanfan {
+				padding: .38rem .80rem; background: #F7F7F7;
+				.listLess{
+					
+					display: flex;
+					display: -moz-flex;
+					display:-webkit-box;
+				    display: -moz-box;
+				    display: -ms-flexbox;
+				    display: -webkit-flex;
+					-webkit-justify-content:center;
+					justify-content:center;
+					-moz-box-pack:center;
+					-webkit--moz-box-pack:center;
+					li{
+						margin: 0 .24rem;
+						text-align: center;
+					}
+					.speLi{
+						color: #E50F72;
+						.spePel{
+							color: #E50F72;
+						}
+					}
+				}
+			.listMore{
+				font-size: 0;
+				height: .62rem;
+				overflow-x: auto;
+				overflow-y: hidden;
+				white-space: nowrap;	
+				li{
+					text-align: center;
+					display: inline-block;
+					margin: 0 .24rem;
+					font-size: .30rem;
+					
+				}
+				li:first-child{
+					margin-left: 0.05rem;
+				}
+				li:last-child{
+					margin-right: 0;
+				}
+				.speLi{
+					color: #E50F72;
+					.spePel{
+						color: #E50F72;
+					}
+				}
+			}
+				.spePel{
+					margin-top: .10rem;
+					font-size: .22rem;
+					color: #777;
+				}
+			}
+			.isFixedSpe{
+				position: fixed;
+				
+				z-index: 999;
+				width: 100%;
+				left: 0;
+				overflow-x: auto;
+				top: 0.8rem;
+				ul{
+					margin-left: -1.60rem;
+				}
+			}
+		}
+		.isFixed{
+			position: fixed;
+			width: 100%;
+			z-index: 999;
+			left: 0;
+			top: 0.80rem;
+		}
+		
 		.topmodel{
 			
 			background: #fff;
@@ -980,59 +1301,7 @@
 			.topTime{
 				
 				font-size: .30rem;
-				.listLess{
-					display: flex;
-					display: -moz-flex;
-					display:-webkit-box;
-				    display: -moz-box;
-				    display: -ms-flexbox;
-				    display: -webkit-flex;
-					-webkit-justify-content:center;
-					justify-content:center;
-					-moz-box-pack:center;
-					-webkit--moz-box-pack:center;
-					li{
-						margin: 0 .24rem;
-						text-align: center;
-					}
-					.speLi{
-						color: #E50F72;
-						.spePel{
-							color: #E50F72;
-						}
-					}
-				}
-				.listMore{
-					font-size: 0;
-					height: .62rem;
-					overflow-x: auto;
-					overflow-y: hidden;
-					white-space: nowrap;	
-					li{
-						text-align: center;
-						display: inline-block;
-						margin: 0 .24rem;
-						font-size: .30rem;
-						
-					}
-					li:first-child{
-						margin-left: 0.05rem;
-					}
-					li:last-child{
-						margin-right: 0;
-					}
-					.speLi{
-						color: #E50F72;
-						.spePel{
-							color: #E50F72;
-						}
-					}
-				}
-				.spePel{
-					margin-top: .10rem;
-					font-size: .22rem;
-					color: #777;
-				}
+				
 			}
 		}
 		.newGoods{
@@ -1134,6 +1403,9 @@
 				
 			}
 		}
+		.specialMoreGoods{
+			margin-top: -.30rem;
+		}
 		.moreGoodsTry{
 			background: #fff;
 			margin-bottom: .20rem;
@@ -1206,6 +1478,142 @@
 			}
 		}
 		
+		.timeTryGoods{
+			background: #fff;
+			.tryGoodsDetail{
+				position: relative;
+				padding: .10rem .30rem .20rem .10rem;
+				border-bottom: 0.01rem solid #E1E1E1;
+				display: flex;
+				display: -moz-flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+			    .goodsImg{
+			    	width: 2.50rem;
+			    	height: 2.50rem;
+			    	position: relative;
+			    	.goods-img{
+			    		display: block;
+			    		width: 100%;
+			    		height: 100%;
+			    	}
+			    	.tryOut{
+			    		position: absolute;
+			    		left: 50%;
+			    		margin-left: -.75rem;
+			    		top: 50%;
+			    		margin-top: -.75rem;
+			    		display: block;
+			    		width: 1.50rem;
+			    		height: 1.50rem;
+			    	}
+			    }
+			    .goods-detail{
+			    	-webkit-box-flex: 1;  
+				    -moz-box-flex: 1;                
+				    -webkit-flex: 1;      
+				    -ms-flex: 1;           
+				    flex: 1;
+				    padding-top: .18rem;
+			    	padding-left: .22rem;
+			    	.goodsName{
+			    		font-size: .28rem;
+			    		line-height: .36rem;
+			    		height: .72rem;
+			    		overflow: hidden;
+			    		color: #333;
+			    	}
+			    	.goodsNum{
+			    		font-size: .24rem;
+			    		margin-top: .32rem;
+			    		display: flex;
+			    		justify-content: space-between;
+			    		.progress{
+			    			width: 2.98rem;
+			    			height: .28rem;
+			    			position: relative;
+			    			border: .01rem solid #E50F72;
+			    			background: #FC89B2;
+			    			overflow: hidden;
+			    			border-radius: .30rem;
+			    			.num{
+			    				position: absolute;
+			    				left: 0;
+			    				top: 0;
+			    				width: 100%;
+			    				height: .30rem;
+			    				z-index: 333;
+			    				color: #fff;
+			    				line-height: .30rem;
+			    				text-align: center;
+			    				font-size: .20rem;
+			    			}
+			    			.porNum{
+			    				position: absolute;
+			    				left: 0;
+			    				top: 0;
+			    				height: 100%;
+			    				z-index: 222;
+			    				width: 60%;
+			    				
+			    				background: #E50F72;
+			    			}
+			    		}
+			    		.uesNum{
+			    			color: #E50F72;
+			    			height: .30rem;
+			    			line-height: .30rem;
+			    		}
+			    	}
+			    	.dayTomorrow{
+			    		margin-top: .32rem;
+			    		font-size: .24rem;
+			    		color: #E50F72;
+			    	}
+			    	.goodsMoney{
+			    		margin-top: .52rem;
+			    		font-size: .24rem;
+			    		color: #333;
+			    		span{
+			    			color: #E50F72;
+			    		}
+			    	}
+			    }
+			}
+			.tryGoodsDetail:last-child{
+				border-bottom: none;
+			}
+			.getGoods{
+				position: absolute;
+				right: .30rem;
+				bottom: .28rem;
+				width: 1.30rem;
+				height: .56rem;
+				display: flex;
+				justify-content: center;
+				align-items:center;
+				text-align: center;
+				background: #E50F72;
+				color: #FFF;
+				font-size: 0;
+				border-radius: .06rem;
+				span{
+					font-size: .24rem;
+					line-height: .56rem;
+					display: inline-block;
+				}
+				img{
+					margin-left: .10rem;
+					display: inline-block;
+					vertical-align: middle;
+					
+					width: .14rem;
+					height: .24rem;
+				}
+			}
+		}
 		.getBottom{
 			position: fixed;
 			border-top: 0.01rem solid #e1e1e1;

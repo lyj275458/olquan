@@ -9,8 +9,8 @@ import store from './store';
 import fastclick from 'fastclick'
 import * as CommonServer from './api/CommonServer.js'; 
 import './css/reset.css';
-import focus from './components/directive/directive.js';
-import VueAwesomeSwiper from 'vue-awesome-swiper';
+
+
 
 import loading from './components/iscroll/index.js';
 Vue.use(loading)
@@ -18,7 +18,7 @@ import search from './components/common/index.js';
 Vue.use(search)
 
 
-Vue.use(VueAwesomeSwiper)
+
 //需要有微信授权后才能访问的页面
 const authPageArr=['coupon/receive','test']
 fastclick.attach(document.body);
@@ -96,7 +96,27 @@ function urlParam(name) {
 
     } 
     return theRequest; 
-}
+};
+Vue.nextTick(function () {
+			 if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+           handleFontSize();
+       } else {
+           if (document.addEventListener) {
+               document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+           } else if (document.attachEvent) {
+               document.attachEvent("WeixinJSBridgeReady", handleFontSize);
+               document.attachEvent("onWeixinJSBridgeReady", handleFontSize);  }
+       }
+       function handleFontSize() {
+           // 设置网页字体为默认大小
+           WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize' : 0 });
+           // 重写设置网页字体大小的事件
+           WeixinJSBridge.on('menu:setfont', function() {
+               WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize' : 0 });
+           });
+       }
+	})
+
 //设置loading
 
 router.beforeEach(function (to, from, next) {

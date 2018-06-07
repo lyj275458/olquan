@@ -5,14 +5,19 @@
 	      <swiper-item style="overflow: hidden; height: 100%;" class="swiper-demo-img" v-for="(itemsSon, index) in imgList" :key="index"><img style="width: 100%;" :src="itemsSon.img" ></swiper-item>
 	    </Swiper>
 	    <div class="soldOut">
-	    	<img :src="soldImg"  class="isSold" v-show="curObj.store==0"/>
+	    	
+	    	<img :src="soldImg"  class="isSold" v-show="curObj.store==0 && curObj.type!=4"/>
+	    </div>
+	    <div class="soldOut">
+	    	
+	    	<img :src="tryImgone"  class="isSold" v-show="curObj.store==0 && curObj.type==4"/>
 	    </div>
 	    <div class="productMoney" v-show="curObj.type==9 && curObj.status!=1 && curObj.status!=2 || curObj.time==null">
 	    	<div class="erwei" @click="getErwei(curObj.productId)">
 				<img :src="erweiImg" />
 			</div>
 			<div class="moneySale">
-				￥{{curObj.salePrice}}<!--<span style="margin: 0 .05rem;font-size: .28rem;text-decoration: line-through;color: #AAAAAA;">￥{{curObj.marketPrice}}</span>--><span class="getMoney">{{curObj.score1}}</span>
+				￥{{curObj.salePrice}}<span style="margin: 0 .05rem;font-size: .28rem;text-decoration: line-through;color: #AAAAAA;">￥{{curObj.marketPrice}}</span><span class="getMoney">{{curObj.score1}}</span>
 			</div>
 	    	
 	    </div>
@@ -36,16 +41,12 @@
 			</div>
 	    	
 	    </div>
-	    <div class="con" v-show="curObj.type==4  && curObj.freeUseSubType==4">
-    		<img :src="curObj.countryIcon"/>
-    		<p>{{curObj.countryName}}</p>
-    		<span>{{curObj.countryName}}直邮(已包税)</span>
-    	</div>
+	    
 	    <div class="todaySale" style="padding-top: 0;height: .94rem;" v-show="curObj.type==4 && curObj.freeUseSubType==3">
-	    	<div style="padding-left: .24rem;font-size: 0;padding-top: .16rem;">
+	    	<div style="padding-left: .24rem;font-size: 0;line-height: .94rem;">
 	    		<span style="font-size: .24rem;display: inline-block; color: #dddddd;">保证金 </span>
 	    		<span style="font-size: .38rem;display: inline-block;">￥{{curObj.salePrice}}</span>
-				<span class="getMoney"style="display: block; font-size: .22rem;margin-top: .10rem; color: #dddddd;">已试{{curObj.todaySoldCount}}件</span>
+				<!--<span class="getMoney"style="display: block; font-size: .22rem;margin-top: .10rem; color: #dddddd;">已试{{curObj.todaySoldCount}}件</span>-->
 	    	</div>
 			
 			<div class="countDown">
@@ -56,8 +57,7 @@
 		</div>
 	    <div class="todaySale" v-show="curObj.time>0 && curObj.type==9 && curObj.status==1 || curObj.time>0 && curObj.type==9 && curObj.status==2">
 	    	<div style="padding-left: .24rem;">
-	    		<span style="font-size: .30rem;">￥</span>{{curObj.salePrice}}<!--<span class="getMoney" style="margin: 0 .05rem;text-decoration: line-through; color: #FADEE7;font-size: .28rem;">￥{{curObj.marketPrice}}</span>-->
-	    		<span class="getMoney">{{curObj.score1}}</span>
+	    		<span style="font-size: .30rem;">￥</span>{{curObj.salePrice}}<span class="getMoney" style="margin: 0 .05rem;text-decoration: line-through; color: #FADEE7;font-size: .28rem;">￥{{curObj.marketPrice}}</span><span class="getMoney">{{curObj.score1}}</span>
 	    	</div>
 			
 			<div class="countDown">
@@ -66,6 +66,11 @@
 				<span class='timeEnd'><b>{{hour}}</b> : <b>{{mint}}</b> : <b>{{secon}}</b></span>
 			</div>
 		</div>
+		<div class="con" v-if="curObj.countryIcon!=null">
+    		<img v-show="curObj.countryIcon!=null" :src="curObj.countryIcon"/>
+    		<p>{{curObj.countryName}}</p>
+    		<span>{{curObj.countryName}}直邮(已包税)</span>
+    	</div>
 	    <div class="goodsName">{{curObj.productName}}
 	    	<div class="fenxiang" v-show="curObj.type==4 && curObj.freeUseSubType==3 ">
 	    		<div class="erwei" @click="getErwei(curObj.productId)">
@@ -101,7 +106,10 @@
 	    <div class="moneyDetail ">
 	    	<div style="overflow: hidden;" v-bind:class="{ 'moneyDetailSpe': curObj.tags!=null}">
 	    		<div class="moneyTop">
-		    		运费 : <span v-show="curObj.postFee!='包邮'">￥</span>{{curObj.postFee}}
+		    		运费: <span v-show="curObj.postFee!='包邮'">￥</span>{{curObj.postFee}}
+		    	</div>
+		    	<div class="moneyTop" style="margin-left: .40rem;" v-show="curObj.type==4 || curObj.type==8">
+		    		试用时间: {{curObj.freeUseDays}}天
 		    	</div>
 		    	<div class="moneyBot">
 		    		<span v-show="curObj.type==4 || curObj.type==8">已有{{curObj.soldCount}}人试用 · </span>还剩{{curObj.store}}件
@@ -147,19 +155,33 @@
 			</div>
 		</div>
 		<div style="width: 100%;height: .20rem;background: #f2f2f2;" v-show="curObj.type==4 || curObj.type==8"></div>
-		<div class="howtry" v-show="curObj.type!=9">
+		<div class="howtry" v-show="curObj.type==4">
 			<p class="tryleft">试用流程</p>
 			<p class="tryright" @click='getTryDetail' >
 				试用说明
 				<img :src='rowImg'/>
 			</p>
 		</div>
-		<div class="step" v-show="curObj.type!=9">
+		<!--<div class="step" v-show="curObj.type==4">
 			<img :src='trystepImg' />
+		</div>-->
+		<!--<div class="step" v-show="curObj.type==4 && curObj.countryIcon!=null">
+			<img :src='trySixImg' />
+		</div>-->
+		<div class="stepNew" v-show="curObj.type==4">
+			<p>申请试用</p>
+			<img :src="rowmoreImgone"/>
+			<p>付保证金</p>
+			<img :src="rowmoreImgone"/>
+			<p>试用{{curObj.freeUseDays}}天</p>
+			<img :src="rowmoreImgone"/>
+			<p>试用报告</p>
+			<img :src="rowmoreImgone"/>
+			<p>退保证金</p>
 		</div>
 		<div style="width: 100%;height: .20rem;background: #f2f2f2;" v-show='curObj.commentCount>0'></div>
 		<div class="howtry" v-show='curObj.commentCount>0'>
-			<p class="tryleft" v-show="curObj.type!=9">试用报告 ({{curObj.commentCount}})</p>
+			<p class="tryleft" v-show="curObj.type==4">试用报告 ({{curObj.commentCount}})</p>
 			<p class="tryleft" v-show="curObj.type==9">用户评价 ({{curObj.commentCount}})</p>
 			<div class="tryright" @click="lookMore">
 				查看全部
@@ -300,7 +322,7 @@
 				</div>-->
 				
 				<div class="noMores" v-if="nomoreOne!=undefined" v-show="showLength>0">
-					<div style="border-bottom: .01rem solid #f1f1f1;">
+					<div style="border-bottom: .01rem solid #f1f1f1; padding-left: .02rem;">
 						<p class="nameClass">
 							{{nomoreOne.key}}
 						</p>
@@ -311,7 +333,7 @@
 					</div>
 				</div>
 				<div class="noMores" v-if="nomoreTwo!=undefined" v-show="showLength>1">
-					<div style="border-bottom: .01rem solid #f1f1f1;">
+					<div style="border-bottom: .01rem solid #f1f1f1; padding-left: .02rem;">
 						<p class="nameClass">
 							{{nomoreTwo.key}}
 						</p>
@@ -322,7 +344,7 @@
 					</div>
 				</div>
 				<div class="noMores" v-if="nomoreThree!=undefined" v-show="showLength>2">
-					<div style="border-bottom: .01rem solid #f1f1f1;">
+					<div style="border-bottom: .01rem solid #f1f1f1; padding-left: .02rem;">
 						<p class="nameClass">
 							{{nomoreThree.key}}
 						</p>
@@ -456,6 +478,7 @@
 				chooseImg:'/static/images/choose.png',
 				rowImg:'/static/images/rowright.png',
 				trystepImg:'/static/images/trystep.png',
+				trySixImg:'/static/images/trySix.png',
 				myIconImg:'/static/images/mineIndex.png',
 				moreSaleImg:'/static/images/moresale.png',
 				kefuImg:'/static/images/kefu.png',
@@ -477,7 +500,8 @@
 				couponrightImg:'/static/images/couponright.png',
 				todaysaleImg:'/static/images/todaysale.png',
 				fenxiangImg:'/static/images/fenxiang.png',
-				
+				tryImgone:'/static/images/tryOut.png',
+				rowmoreImgone:'/static/images/rowmore.png',
 				chooseNor:false,
 				shareSure:false,
 				scroeEnt:false,
@@ -522,17 +546,23 @@
 				secon:'',
 				EndTime:0,
 				getMoney:'',
+				showButton:false,
 				
 				
 			}
 		},
 		
 		created: function() {
+			if(this.$route.query.memberId=='undefined'){
+				this.$route.query.memberId='';
+			}
 			this.$store.commit('documentTitle','商品详情');
 			this.getList();
 			this.getMember();
 			this.gotoTop();
-			console.log(this.isShare)
+			
+			//console.log(this.isShare)
+			
 		},
 		components: {
 		    Swiper,
@@ -587,7 +617,12 @@
 			},
 			//开通粉领
 			getPink(){
-				window.location.href=USE_URL+'weixin/member/openStore?&memberId='+this.$route.query.memberId
+				if(this.showButton){
+					window.location.href=USE_URL+'weixin/member/renewConfirmOrder';
+				}else{
+					window.location.href=USE_URL+'weixin/member/openStore?&memberId='+this.$route.query.memberId;
+				}
+				
 			},
 			getScroe(){
 				this.$router.push({path:'/integral/uesget'+'?memberId='+this.$route.query.memberId});
@@ -602,7 +637,7 @@
 			shoucang(){
 				let data={
 					objId:this.curObj.productId,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					type:1
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.doCollect,data,this.shoucangBack,this);
@@ -637,7 +672,7 @@
 			//获取会员信息
 			getMember(){
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
@@ -649,6 +684,11 @@
 					this.memberlevel=false;
 				}else{
 					this.memberlevel=true;
+				}
+				if(data.result.isShowRenewButton==0){
+					this.showButton=false;
+				}else{
+					this.showButton=true;
 				}
 				//console.log(this.memberlevel)
 			},
@@ -664,18 +704,24 @@
 				}
 			},
 			addNum(){
-				this.num +=1;
-				if(this.num>this.curObj.limitBuyCount){
-					this.num=this.curObj.limitBuyCount;
-					this.$toast('该产品最多购买'+this.num+'件');
+				if(this.curObj.type==4){
+					this.$toast('该产品最多购买1件');
+				}else{
+					this.num +=1;
+					if(this.num>this.curObj.limitBuyCount){
+						this.num=this.curObj.limitBuyCount;
+						this.$toast('该产品最多购买'+this.num+'件');
+					}
 				}
+				
 			},
 			//获取商品信息
 			getList(){
+				console.log(this.$route.query.memberId)
 				let data={
 					productId:this.$route.params.id,
 					//productId:140,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					viewType:this.$route.query.viewType,
 					uutype:1
 				}
@@ -683,14 +729,17 @@
 			},
 			getListBack(data){
 				//console.log(data)this.getCookie("memberId")
-				
+				if(data.code==-1){
+					this.$toast(data.message);
+					return false;
+				}
 				this.curObj=data.result;
 //				this.downTime=this.curObj.time;
 				this.getMoney=this.curObj.score1.split("￥")[1];
 				
 				this.moveTime(this.curObj.time)
 				
-				console.log(this.curObj.type==9 && this.curObj.status!=1 && this.curObj.status!=2)
+				//console.log(this.curObj.type==9 && this.curObj.status!=1 && this.curObj.status!=2)
 //				console.log(this.curObj.time)
 				if(this.curObj.buyNeedScore>0){
 					this.needScroe=false;
@@ -705,12 +754,12 @@
 				  img: item
 				}));
 				this.showLength=this.curObj.normals.length;
-				console.log(this.showLength);
+				//console.log(this.showLength);
 				if(this.showLength>0){
 					if(data.result.normals){
 						if(data.result.normals.length>0 && data.result.normals.length<2){
 							this.nomoreOne=data.result.normals[0];
-							console.log(this.nomoreOne)
+							//console.log(this.nomoreOne)
 //							this.getVlaueOne=data.result.normals[0].normses[0].valueId;
 //							this.getValueDetail();
 							
@@ -740,7 +789,7 @@
 				this.pinKnowShow=true;
 				let data={
 					productId:id,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					type:this.curObj.type,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getTwoCodeUrl,data,this.getErweiBack,this);
@@ -749,7 +798,7 @@
 				this.erweiObj=data.result;
 			},
 			goBuything(){
-				console.log(this.normalId)
+				//console.log(this.normalId)
 				if(this.curObj.type==8 && this.memberScore<this.curObj.buyNeedScore){
 					this.scroeEnt=true;
 				}else if(this.memberlevel==true && this.curObj.type==4){
@@ -770,7 +819,7 @@
 						let data={
 							num:this.num,
 							normalId:this.normalId,
-							//memberId:this.$route.query.memberId,
+//							memberId:this.$route.query.memberId,
 							productId:this.$route.params.id
 						}
 						this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addProduct,data,this.addGoodsBack,this);
@@ -779,15 +828,16 @@
 						let data={
 							num:this.num,
 							normalId:this.normalId,
-							//memberId:this.$route.query.memberId,
+//							memberId:this.$route.query.memberId,
 							type:this.curObj.type,
 							productId:this.curObj.productId
 						}
 						localStorage.setItem('orderObj',JSON.stringify(data))
-		  				let ObjObj=JSON.parse(localStorage.getItem("orderObj"))
-		  				console.log(ObjObj)
+//		  				let ObjObj=JSON.parse(localStorage.getItem("orderObj"))
+//		  				console.log(ObjObj)
 		  				if(this.curObj.type==4){
 		  					//this.$router.push({path:'/fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId});
+		  					//this.$router.push({path:'/common/scroll?memberId='+this.$route.query.memberId});
 		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId
 		  					//window.location.href=API_HOST+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&'+'memberId='+this.getCookie("memberId")+'&type='+this.curObj.type+'&productId='+this.curObj.productId
 		  				}else{
@@ -832,7 +882,7 @@
 				
 				this.getVlaueOne=valueId;
 				this.getValueDetail();
-				console.log(123)
+				//console.log(123)
 			},
 			getValueDetail(){
 				if(this.showLength>0){
@@ -840,7 +890,7 @@
 						productId:this.curObj.productId,
 						valueIds:this.getVlaueOne+','+this.getVlaueTwo,
 						uutype:1,
-						//memberId:this.$route.query.memberId,
+//						memberId:this.$route.query.memberId,
 						type:this.curObj.type,
 					}
 					//console.log(data)
@@ -888,7 +938,7 @@
 			getCoupon(){
 				
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					productId:this.curObj.productId,
 					page:1,
 					rows:20
@@ -902,16 +952,16 @@
 			},
 			//点击立即领取
 			getCouponId(id,index){
-				console.log(index)
+				//console.log(index)
 				this.curTargetS=index;
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					couponId:id
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.receiveCoupon,data,this.getCouponIdBack,this);
 			},
 			getCouponIdBack(data){
-				console.log(this.couponObj)
+				//console.log(this.couponObj)
 				this.$toast(data.message);
 				
 				if(data.code==0){
@@ -1015,10 +1065,10 @@
 		    }
 		}
 		.con{
-			border-bottom: .01rem solid #e1e1e1;
-			padding: 0 .24rem .24rem;
+			
+			padding: .24rem .24rem 0;
 			font-size: 0;
-			height: .30rem;
+			height: .35rem;
 			overflow: hidden;
 			span{
 				display: inline-block;
@@ -1244,9 +1294,10 @@
 			.listSon{
 				line-height: .80rem;
 				position: relative;
-				-webkit-box-flex: 1;
+				/*-webkit-box-flex: 1;
 		        -ms-flex: 1;
-		        flex: 1;
+		        flex: 1;*/
+		        width: 20%;
 				padding-left: .38rem;
 				/*margin-right: .40rem ;*/
 				img{
@@ -1379,6 +1430,35 @@
 				widows: 100%;
 			}
 		}
+		.stepNew{
+			font-size: .26rem;
+			height: 1.16rem;
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -moz-flex;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+			-webkit-justify-content:center;
+			justify-content:center;
+			-moz-box-pack:center;
+			-webkit--moz-box-pack:center;
+			align-items:center;
+			-webkit-align-items:center;
+			box-align:center;
+			-moz-box-align:center;
+			-webkit-box-align:center;
+			p{
+				width: .58rem;
+				height: .56rem;
+			}
+			img{
+				display: block;
+				width: .12rem;
+				height: .20rem;
+				margin: 0 .40rem;
+			}
+		}
 		.assess{
 			padding: 0 .24rem;
 			.top{
@@ -1407,6 +1487,7 @@
 				}
 				.topImg{
 					overflow: hidden;
+					
 					color: #8c8c8c;
 					font-size:.24rem;
 					.topleft{
@@ -1711,7 +1792,7 @@
 				}
 				
 				.noMores{
-					padding: 0 .30rem;
+					padding: 0 .28rem;
 					.nameClass{
 						font-size: .26rem;
 						padding-top: .06rem;

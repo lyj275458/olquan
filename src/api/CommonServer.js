@@ -80,7 +80,17 @@ const API = {
       getGiftBag:'mobile/buySupervisor/getGiftBag',//礼包及文案信息
       newConfirmOrder:'mobile/buySupervisor/newConfirmOrder',//督导确认订单
       newCreateOrder:'mobile/buySupervisor/newCreateOrder',//加入钱江学院
-      
+      addRecord:'mobile/ir/addRecord',//添加浏览记录
+      growData:'mobile/member/growData',//我的成长
+      newGiftbags:'mobile/store/newGiftbags',//新粉领大礼包
+      judgeMobile:'mobile/member/judgeMobile',//判定手机号存不存在
+      sendCode:'mobile/code/sendCode2',//条形码
+      applyToStoreConfirm:'mobile/store/applyToStoreConfirm',//升级粉领确认订单
+      newApplyToStore:'mobile/store/newApplyToStore',//升级粉领订单
+      orderCount:'mobile/order/orderCount',//订单统计
+      openPayPassword:'mobile/member/openPayPassword',//开启/关闭支付保护
+      update:'mobile/member/update',//修改基础会员信息
+      updatePayPassword:'mobile/member/updatePayPassword',//修改支付密码
 };
 function getCookie(argument) {
     var arrCookie = document.cookie.split(";");

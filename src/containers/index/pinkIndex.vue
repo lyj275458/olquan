@@ -94,7 +94,7 @@
 							<p class="top">{{item.productName}}</p>
 							<p class="describe">{{item.summary}}</p>
 							<p class="productMoney">￥{{item.price}}
-								<i style="font-style: normal; color: #AAAAAA;font-size:.24rem;text-decoration:line-through">{{item.marketPrice}}</i> <span v-show="memberlevel" style="color: #e5006e;font-size: .26rem;">{{item.score}}</span>
+								<i v-show="memberlevel" style="font-style: normal; color: #AAAAAA;font-size:.24rem;text-decoration:line-through">{{item.marketPrice}}</i> <span v-show="memberlevel" style="color: #e5006e;font-size: .26rem;">{{item.score}}</span>
 							</p>
 							<!--<p class="botMoney">
 								<span class="left">OL圈价：￥{{item.marketPrice}}</span>
@@ -130,7 +130,7 @@
 							<p class="top">{{item.productName}}</p>
 							<p class="describe">{{item.summary}}</p>
 							<p class="productMoney">￥{{item.price}}
-								<i style="font-style: normal; color: #AAAAAA;font-size:.24rem;text-decoration:line-through">{{item.marketPrice}}</i> <span v-show="memberlevel" style="color: #e5006e;font-size: .26rem;">{{item.score}}</span>
+								<i v-show="memberlevel" style="font-style: normal; color: #AAAAAA;font-size:.24rem;text-decoration:line-through">{{item.marketPrice}}</i> <span v-show="memberlevel" style="color: #e5006e;font-size: .26rem;">{{item.score}}</span>
 							</p>
 							<!--<p class="botMoney">
 								<span class="left">OL圈价：￥{{item.marketPrice}}</span>
@@ -350,6 +350,7 @@ export default {
   			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
 			}
+			this.addRecord();
 			this.$store.commit('documentTitle','OL圈');
 			this.getMember();
 			this.shareDate();
@@ -374,6 +375,15 @@ export default {
 			
 		},
   methods: {
+  			//访问记录
+  			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'index/pinkIndex'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			//点击回到顶部
 			gotoTop(){
 				$('html,body').animate({scrollTop:0},1000);
@@ -442,22 +452,22 @@ export default {
   			//点击首页
   			getFist(){
   				//this.$router.push({path:'/index/pinkIndex?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/pinkIndex';
   			},
   			//点击试用
   			getFistOne(){
   				//this.$router.push({path:'/try/moretry?memberId='+this.$route.query.memberId});
   				//window.location.href=CUR_URLBACK+'try/moretry?memberId='+this.$route.query.memberId
-  				window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'try/newCenter';
   			},
   			//点击拼团
   			getFistTwo(){
   				//this.$router.push({path:'/index/newIndex?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/newIndex';
   			},
   			//点击分类
   			getDetailNex(index,id){
-  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id+'&memberId='+this.$route.query.memberId;
+  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id;
   				
   			},
   			//点击...详情
@@ -566,7 +576,8 @@ export default {
   			goBuy(id){
   				//window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
   				//window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId'&isLimit=0'
-  				this.$router.push({path:'/demo/iscroll/id/'+id+'?memberId='+this.$route.query.memberId+'&isShare=0'});
+				//this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0&memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0'});
   			},
   			//获取今天特卖
   			getDaySale(id){

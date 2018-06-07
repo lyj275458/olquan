@@ -266,6 +266,7 @@ export default {
 				showActive:false,
 				goTopImg:'/static/images/goTop.png',
 				showTop:false,
+				memberlevel:false,
 			}
 		},
   components: {
@@ -281,6 +282,7 @@ export default {
   			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
 			}
+  			this.addRecord();
 			this.$store.commit('documentTitle','OL圈');
 			this.getMember();
 			this.getFirst();
@@ -304,6 +306,15 @@ export default {
 			}
 		},
   methods: {
+  			//访问记录
+  			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'index/newIndex'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
   			//点击回到顶部
 			gotoTop(){
 				$('html,body').animate({scrollTop:0},1000);
@@ -332,7 +343,7 @@ export default {
   			//获取会员信息
 			getMember(){
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
@@ -343,6 +354,11 @@ export default {
 				}else{
 					this.showMember=false;
 				}
+				if(data.result.isGetStoreCommission==1){
+					this.memberlevel=true;
+				}else{
+					this.memberlevel=false;
+				}
 				console.log(this.showMember)
 				this.setCookie('memberId',data.result.id)
 				this.setCookie('iShowCenter',data.result.isGetStoreCommission)
@@ -351,25 +367,25 @@ export default {
 			//点击首页
   			getFist(){
   				//this.$router.push({path:'/index/pinkIndex?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/pinkIndex';
   			},
   			//点击试用
   			getFistOne(){
   				//this.$router.push({path:'/try/moretry?memberId='+this.$route.query.memberId});
   				//window.location.href=CUR_URLBACK+'try/moretry?memberId='+this.$route.query.memberId
-  				window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId;
+  				window.location.href=CUR_URLBACK+'try/newCenter';
   			},
   			//点击拼团
   			getFistTwo(){
   				//this.$router.push({path:'/index/newIndex?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/newIndex';
   			},
   			//点击头条
   			getTopNew(){
   				window.location.href=USE_URL+'weixin/headline/headline';
   			},
   			getSearch(){
-  				window.location.href=USE_URL+'ol/weixin/index/search?memberId='+this.$route.query.memberId;
+  				window.location.href=USE_URL+'ol/weixin/index/search';
   			},
   			//获取首页顶部分类
   			getCategory(){
@@ -447,7 +463,7 @@ export default {
 //			},
   			//点击分类
   			getDetailNex(index,id){
-  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id+'&memberId='+this.$route.query.memberId;
+  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id;
   				//http://test-mobile.olquan.cn/weixin/product/productCategoryDetail?pcatId=33
 //				$('html,body').animate({scrollTop:0},0);
 //				console.log(id)
@@ -476,12 +492,12 @@ export default {
 			},
   			//点击购买商品
   			goBuy(id){
-  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
+  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?isLimit=0'});
   				//window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+id+'?memberId='+this.getCookie("memberId")+'&isLimit=0'
   			},
   			//跳转购物车
 			getIndex(){
-				window.location.href=CUR_URLBACK+'shopcar/ordercar?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'shopcar/ordercar';
 			},
 			getFind(){
 				window.location.href="http://live-weixin.olquan.cn"
@@ -616,7 +632,7 @@ export default {
   			getActiveImg(){
   				
   				let data ={
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
   				}
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getDialog,data,this.getActiveImgBack);
   			},
@@ -647,7 +663,7 @@ export default {
   				this.avtiveUrl=url;
   				let data ={
   					dialogId:id,
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
   				}
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.openDialog,data,this.getActiveBack);
   			},
@@ -699,7 +715,7 @@ export default {
 		//获取购物车产品数量
 		getcartNum(){
 			let data={
-//				memberId:this.getCookie("memberId"),
+//				memberId:this.$route.query.memberId,
 			}
 			this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.totalNum,data,this.getcartNumBack);
 		},
@@ -735,6 +751,7 @@ export default {
  	
  	destroyed () {
 	  window.removeEventListener('scroll', this.handleScroll)
+	  window.removeEventListener('scroll', this.toplistScroll);
 	  window.removeEventListener('scroll', this.getTopScroll)
 	},
  	
