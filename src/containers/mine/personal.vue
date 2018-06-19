@@ -424,7 +424,7 @@
 		img{
 			pointer-events:none;
 		}
-		background: #F6F6F6;
+		/*background: #F6F6F6;*/
 		padding-bottom: 1.00rem;
 		.perTop{
 			background: url(../../../static/images/perBack.png) no-repeat;

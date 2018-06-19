@@ -74,7 +74,7 @@
 				<img :src="activeImg" style="height: 5.20rem; width: 5.20rem;"/>
 			</div>	
 	</div>
-	<div v-show='LoadTrue===false' style='height: 100%;width:100%;position: fixed;background: #fffff;text-align: center;z-index=111111'>
+		<div v-show='LoadTrue===false' style='width:100%;position: fixed;background: #fffff;text-align: center;z-index=111111'>
 			<span style='display:inline-block;margin:0 auto;font-size:0.30rem;margin-top: 49%;'>正在加载中......</span>
 		</div>
 	</div>
@@ -163,7 +163,7 @@
       swiperSlide,
       Swiper,
       SwiperItem,
-	 Swiperion,
+	  Swiperion,
       //commonPageTop
     },
     created: function () {
@@ -201,12 +201,12 @@
     },
     methods: {
     	getUrl(url){
-    		console.log(url)
+//  		console.log(url)
     	},
     	//获取会员信息
 		getMember(){
 			let data={
-				memberId:this.$route.query.memberId,
+//				memberId:this.$route.query.memberId,
 			}
 			//console.log(data)
 			this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
@@ -231,7 +231,7 @@
       },
       getActiveDetail(id){
       	this.LoadTrue=false
-      	console.log(id)
+//    	console.log(id)
        axios.get('http://ol-h5-preview.olquan.cn/mobile/buildblocks/getById',{
          params:{id:id}
        }).then(res => {
@@ -240,7 +240,7 @@
          this.titleTwo=res.data.result.shareTitle;
          this.description=res.data.result.memo;
          this.picURL="http://ol-quan2017.oss-cn-shanghai.aliyuncs.com/"+this.activeDetail.shareImg;
-         console.log(this.picURL)
+//       console.log(this.picURL)
          this.status=this.activeDetail.status;
          this.getFirst(res.data.result.ossDataId)
 
@@ -255,8 +255,8 @@
           params:{}
         }).then(res =>{
         this.listObj = res.data
-        console.log(this.listObj)
-          console.log(res)
+//      console.log(this.listObj)
+//        console.log(res)
           this.getFirstBack(res)
         }).catch(
           (error) => {
@@ -287,7 +287,7 @@
        this.description=this.activeDetail.memo;
        this.picURL=this.activeDetail.shareImg;
        this.status=this.activeDetail.status;*/
-       console.log(this.status)
+//     console.log(this.status)
        	if(this.status==1){
           this.activeTrue=false
         }else{
@@ -295,7 +295,7 @@
         }
         this.$store.commit('documentTitle',this.title);
         if(this.iPhone){
-        	console.log(1)
+//      	console.log(1)
 			if(tsApp.getClientBrowser()!='wx'){
 				if(this.isAndroid){
 					OLquan.activeShare(this.titleTwo,this.description,this.picURL,this.title)
@@ -370,26 +370,16 @@
       goMore(url,type,typeId,productId,image) {
 		console.log(type)
 		if(type=="" || type==undefined){
-//			if(Number(url.substr(url.indexOf("d=")+2))!=NaN){
-//				type=2;
-//				productId=Number(url.substr(url.indexOf("d=")+2))
-//				console.log(productId)
-//			}else{
-//				type="";
-//			}
-			console.log(type)
+            return;
+			
 		}else if(type==0){
-			console.log('123132')
+			return;
+			
 //			console.log(Number(url.substr(url.indexOf("d=")+2)))
 		}else if(type==1){
         	this.iosType='syzx';
         }else if(type==2){
         	this.iosType='cpxq';
-//      	if(productId==""){
-//      		console.log(1)
-//      		productId=Number(url.substr(url.indexOf("d=")+2))
-//      		console.log(productId)
-//      	}
         }else if(type==3){
         	this.iosType='pptm';
         }else if(type==4){
@@ -420,7 +410,7 @@
         	this.iosType='ppgl';
         }else if(type==18 || type==22){
         	this.iosType='hdlb';
-        	console.log(url.substr(url.indexOf("=")+1))
+//      	console.log(url.substr(url.indexOf("=")+1))
         }else if(type==19){
         	this.iosType='flxf';
         }else if(type==20){
@@ -440,6 +430,8 @@
 					}else{
 						window.location.href=CUR_URLBACK+'supervisor/buyPink';
 					}
+				}else if(type=="" || type==0 || type==undefined || type=='undefined'){
+					console.log(1)
 				}else{
 					window.location.href = url
 				}
@@ -450,7 +442,6 @@
 						if(type==18 || type==22){
 							OLquan.activeJump(18,typeId,productId,image,url.substr(url.indexOf("=")+1))
 						}else if(type==2){
-							
 							OLquan.activeJump(2,typeId,productId,image,url)
 						}else if(type==11) {
 							if(this.isPinkSureGet){
@@ -471,15 +462,12 @@
 							window.location.href="https://www.baidu.com/"+this.iosType+typeId+'&'+image
 	
 						}else if(type==2 || type==21){
-							
 							window.location.href="https://www.baidu.com/"+this.iosType+productId
-							
-	
 						}else if(type==16){
 							window.location.href="https://www.baidu.com/"+this.iosType+url
 	
-						}else if(type==18 || tyoe==22){
-							window.location.href="https://www.baidu.com/18"+url.substr(url.indexOf("=")+1)
+						}else if(type==18 || type==22){
+							window.location.href="https://www.baidu.com/hdlb"+url.substr(url.indexOf("=")+1)
 	
 						}else if(type==11){
 							if(this.isPinkSureGet){
@@ -487,11 +475,8 @@
 							}else{
 								window.location.href="https://www.baidu.com/"+"ktfl";
 							}
-							
-	
-						}else{
-							window.location.href="https://www.baidu.com/"+this.iosType
-	
+						}else if(type!=11 && type!=18 && type!=22 && type!=16 && type!=21 && type!=2 && type!=17){
+							window.location.href="https://www.baidu.com/"+this.iosType;
 						}
 					}
 				}
@@ -505,7 +490,7 @@
       },
 		
       getLunbo(url) {
-        console.log(url);
+//      console.log(url);
         if (url != "") {
           window.location.href = url;
         } else {
@@ -521,7 +506,7 @@
         this.pageObj.page = 1;
         this.isMore = true;
         this.dataObj.contentId = id;
-        console.log(this.dataObj)
+//      console.log(this.dataObj)
         let data = {
          // memberId: this.$route.query.memberId,
           contentId: id
@@ -534,9 +519,9 @@
         this.curObj = data.result;
       },*/
       goBuy(id,type,productId) {
-        console.log(id)
+//      console.log(id)
         if(this.iPhone){
-        	console.log(1)
+//      	console.log(1)
 			if(tsApp.getClientBrowser()=='wx'){
 				if(type==11){
 					this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
@@ -559,7 +544,7 @@
 				}
 			}
 		}else{
-			window.location.href=CUR_URLBACK+'index/index?memberId='+this.$route.query.memberId
+			window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId
 		}
         //window.location.href = API_HOST + 'weixin/product/newProductDetail?productId=' + id + '&memberId=' + this.getCookie("memberId")
       },
@@ -581,8 +566,8 @@
 		}
         //console.log()
         //调用共用的分享接口
-        console.log(1111)
-        console.log(this.shareData)
+//      console.log(1111)
+//      console.log(this.shareData)
         //console.log(JSON.stringify(data.result))
         this.wxShareFun(data.result, this.shareData);
         //this.locationWx(data);
@@ -636,7 +621,9 @@
 <style lang="scss" scoped>
 @import "../../../static/swiper.min.css";
 
-
+img{
+		pointer-events: none;
+	}
 /*.swiper-container{
 	width: 100%;
 	height: 3rem;

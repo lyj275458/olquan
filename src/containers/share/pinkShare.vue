@@ -121,12 +121,11 @@
 		    Clipboard,
 		},
 		created: function() {
-			this.$store.commit('documentTitle','试用中心');
+			
 			this.getMember();
 			this.getGiftBag();
-			if(this.$route.query.inviteId!='undefined'){
-				this.setCookie('inviteCode',this.$route.query.inviteId)
-			}
+			this.setCookie('inviteCode',this.$route.query.inviteId)
+			
 			
 		},
 		mounted(){
@@ -134,22 +133,22 @@
 			window.addEventListener('scroll', this.handleScroll);
 		},
 		methods:{
-			copy(){
-				var clipboard = new Clipboard('.tag-read')  
-		        clipboard.on('success', e => {  
-		         // console.log('复制成功')  
-		          this.$toast('复制成功');
-		          // 释放内存  
-		          clipboard.destroy()  
-		        })  
-		        clipboard.on('error', e => {  
-		          // 不支持复制  
-		          //console.log('该浏览器不支持自动复制')  
-		          this.$toast('复制失败');
-		          // 释放内存  
-		          clipboard.destroy()  
-		        })  
-			},
+			// copy(){
+			// 	var clipboard = new Clipboard('.tag-read')  
+		 //        clipboard.on('success', e => {  
+		 //         // console.log('复制成功')  
+		 //          this.$toast('复制成功');
+		 //          // 释放内存  
+		 //          clipboard.destroy()  
+		 //        })  
+		 //        clipboard.on('error', e => {  
+		 //          // 不支持复制  
+		 //          //console.log('该浏览器不支持自动复制')  
+		 //          this.$toast('复制失败');
+		 //          // 释放内存  
+		 //          clipboard.destroy()  
+		 //        })  
+			// },
 			openShow(){
 				this.chooseBag=true;
 			},
@@ -159,7 +158,7 @@
 			//获取会员信息
 			getMember(){
 				let data={
-//					memberId:this.$route.query.memberId,
+					//memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
@@ -169,7 +168,9 @@
 				this.setCookie('memberId',data.result.id)
 				this.shareData.title="您的好友"+this.memList.nickName+"邀请您开通OL圈粉领会员！";
 				//console.log(this.getCookie("memberId"))
-				
+				if(data.result.levelCode=='white' || data.result.levelCode=='golden'){
+					this.shareData.share=true;
+				}
 				//this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
 				this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/pinkShare?inviteId='+this.memList.accountNo);
 				
@@ -201,7 +202,7 @@
 			},
 			getGiftBag(){
 				let data={
-//					memberId:this.$route.query.memberId,
+					//memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.newGiftbags,data,this.getGiftBagBack,this);
@@ -244,8 +245,8 @@
 						
 					}
 					localStorage.setItem('pinkIdObj',JSON.stringify(data))
-	  				let ObjObj=JSON.parse(localStorage.getItem("pinkIdObj"))
-	  				console.log(this.bagId);
+	  				//let ObjObj=JSON.parse(localStorage.getItem("pinkIdObj"))
+	  				//console.log(this.bagId);
 	  				//this.$router.push({path:'/fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId+'&inviteId='+this.$route.query.inviteId});
 	  				window.location.href=CUR_URLBACK+'fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId+'&inviteId='+this.$route.query.inviteId;
 				}
@@ -288,7 +289,7 @@
 		.sureBut{
 			position: fixed;
 			width: 100%;
-			border-radius: 0.08rem;
+			
 			bottom: 0rem;
 			background: #fff;
 			

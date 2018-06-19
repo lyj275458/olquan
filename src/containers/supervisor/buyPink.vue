@@ -112,9 +112,7 @@
 		    
 		},
 		created: function() {
-			if(this.$route.query.inviteId!='undefined'){
-				this.setCookie('inviteCode',this.$route.query.inviteId)
-			}
+			this.setCookie('inviteCode',this.$route.query.inviteId)
 			
 			this.getMember();
 			this.getGiftBag()
@@ -140,24 +138,30 @@
 			},
 			getMemberBack(data){
 				this.memList=data.result
-				
+				if(data.result.levelCode=='white' || data.result.levelCode=='golden'){
+					this.shareData.share=true;
+				}
 				//this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
 				this.shareData.url=USE_URL+"weixin/auth?recId="+this.memList.id+"&view="+encodeURIComponent(CUR_URLBACK+'share/pinkShare?inviteId='+this.memList.accountNo);
 				this.shareData.title="您的好友"+this.memList.nickName+"邀请您开通OL圈粉领会员"
 				this.setCookie('memberId',data.result.id)
-				console.log(this.getCookie("memberId"))
-				if(data.result.isGetStoreCommission==1){
-					this.memberlevel=false;
+				if(this.memList.isShowRenewButton!=0){
+					window.location.href=USE_URL+'weixin/member/renewConfirmOrder';
 				}else{
-					this.memberlevel=true;
+					if(data.result.isGetStoreCommission==1){
+						this.memberlevel=false;
+					}else{
+						this.memberlevel=true;
+					}
+					if(data.result.isGetStoreCommission==1){
+						this.$store.commit('documentTitle','邀请粉领');
+						this.isShowSuper=true;
+					}else{
+						this.$store.commit('documentTitle','申请粉领');
+						this.isShowSuper=false;
+					}
 				}
-				if(data.result.isGetStoreCommission==1){
-					this.$store.commit('documentTitle','邀请粉领');
-					this.isShowSuper=true;
-				}else{
-					this.$store.commit('documentTitle','申请粉领');
-					this.isShowSuper=false;
-				}
+				
 					
 			},
 			getGiftBag(){

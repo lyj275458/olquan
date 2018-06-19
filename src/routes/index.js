@@ -333,7 +333,7 @@ export default [
             }, 'newAct');
         },
         meta: {
-		  keepAlive: true // 不需要缓存
+		  keepAlive: true // 需要缓存
 		}
         
     },{//拼团立即支付--
@@ -410,7 +410,7 @@ export default [
             }, 'getCoupon');
         },
         meta: {
-		  keepAlive: false // 需要缓存
+		  keepAlive: true // 需要缓存
 		}
         
         

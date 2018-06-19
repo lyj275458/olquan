@@ -55,7 +55,7 @@
 				<span class='timeEnd'><b>{{hour}}</b> : <b>{{mint}}</b> : <b>{{secon}}</b></span>
 			</div>
 		</div>
-	    <div class="todaySale" v-show="curObj.time>0 && curObj.type==9 && curObj.status==1 || curObj.time>0 && curObj.type==9 && curObj.status==2">
+	    <div class="todaySale" v-show="curObj.time!=null && curObj.type==9 && curObj.status==1 ||curObj.time!=null && curObj.type==9 && curObj.status==2">
 	    	<div style="padding-left: .24rem;">
 	    		<span style="font-size: .30rem;">￥</span>{{curObj.salePrice}}<span class="getMoney" style="margin: 0 .05rem;text-decoration: line-through; color: #FADEE7;font-size: .28rem;">￥{{curObj.marketPrice}}</span><span class="getMoney">{{curObj.score1}}</span>
 	    	</div>
@@ -77,7 +77,7 @@
 					<img :src="erweiImg" />
 				</div>
 	    	</div>
-	    	<div class="fenxiang" v-show="curObj.type==9 && curObj.time>0 && curObj.status==1 || curObj.type==9 && curObj.time>0 && curObj.status==2">
+	    	<div class="fenxiang" v-show="curObj.type==9 && curObj.time!=null && curObj.status==1 || curObj.type==9 && curObj.time!=null && curObj.status==2">
 	    		<div class="erwei" @click="getErwei(curObj.productId)">
 					<img :src="erweiImg" />
 				</div>
@@ -1015,9 +1015,11 @@
 			      m=check(Math.floor(t/1000/60%60));
 			      s=check(Math.floor(t/1000%60));
 			    }else{
-//			    		clearInterval(timer);
-	            //window.location.href=location.href;
-	        } 
+					d=check(0);
+					h=check(0);
+					m=check(0);
+					s=check(0);
+	        	} 
 			    function check(i){
 		 			if(i<10){
 		 				i = "0" + i; 

@@ -381,14 +381,16 @@
 		    
 		},
 		created: function() {
-			if(this.$route.query.memberId=='undefined'){
+			if(this.$route.query.memberId=='undefined' || this.$route.query.memberId==undefined){
 				this.$route.query.memberId='';
 			}
-			if(this.getCookie("inviteCode")!='undefined'){
+			if(this.getCookie("inviteCode")==undefined || this.getCookie("inviteCode")=='undefined'){
+				this.inviteCode='';
+			}else{
 				this.inviteCode=this.getCookie("inviteCode");
 			}
 			this.addRecord();
-			console.log(this.$route.query.memberId)
+			
 			this.getMember();
 			this.$store.commit('documentTitle','确认订单');
 			this.getList();
