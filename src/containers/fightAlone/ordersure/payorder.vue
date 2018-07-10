@@ -126,7 +126,7 @@
 			<div class="chooseOrder">
 				支付方式
 			</div>
-			<div class="orderWay">
+			<div class="orderWay" v-show="showWXpay==true">
 				<div class="wayLeft">
 					<img :src="weixinImg"/>
 					微信
@@ -215,6 +215,7 @@
 				coffersFeeShow:false,
 				isShowPass:false,
 				isOrderGet:false,
+				showWXpay:true,
 				orderObj:JSON.parse(localStorage.getItem("orderObj")),
 				curObj:[],
 				addressObj:[],
@@ -244,7 +245,12 @@
 			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
 			}
-//			console.log(this.resultS.payInfo == undefined)
+			if(tsApp.getClientBrowser()=='wx'){
+				this.showWXpay=true;
+			}else{
+				this.showWXpay=false;
+			}
+			console.log(this.showWXpay)
 			this.addRecord();
 			this.$store.commit('documentTitle','确认订单');
 			this.getList();
@@ -285,7 +291,7 @@
   			},
   			addRecordBack(data){},
 			getAddressMore(){
-				this.$router.push({path:'/payMain/address?memberId='+this.$route.query.memberId+'&isBuyGoods=1'});
+				this.$router.push({path:'/payMain/address?isBuyGoods=1'});
 			},
 			getList(){
 				let data={
@@ -303,12 +309,12 @@
 			},
 			getListBack(data){
 				//console.log(123)
-				if(data.code==-1){
+				if(data.code!=0){
 					this.$toast(data.message);
 				}else{
 					this.curObj=data.result;
 					if(data.result.receiveAddress==null){
-						this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&isBuyGoods=1'});
+						this.$router.push({path:'/add/addAdress?isBuyGoods=1'});
 					}
 					//console.log(this.curObj)
 					this.totalFee=this.curObj.totalFee;

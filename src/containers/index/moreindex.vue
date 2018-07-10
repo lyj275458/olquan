@@ -155,15 +155,15 @@
 			getGoodsBack(data){
 				console.log(data)
 				this.curObj=data.result;
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/newIndex');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/newIndex');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/newIndex');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/newIndex');
 				this.shareData.description="拼优惠，拼乐趣";
 				this.addWeixinShare();//微信分享 	
 			},
 			//点击购买商品
 			goBuy(id){
   				//window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.getCookie("memberId")
-  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
+  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?isLimit=0'});
   				//window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+id+'?memberId='+this.getCookie("memberId")+'&isLimit=0'
   			},
 			getShow(){

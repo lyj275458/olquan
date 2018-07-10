@@ -300,13 +300,13 @@ export default {
     addAddressBack(data){
     	//console.log(data)
     	if(this.$route.query.isBuyGoods==1){
-    		this.$router.push({path:'/fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId+'&addressId='+data.result});
+    		this.$router.push({path:'/fightAlone/ordersure/payorder?addressId='+data.result});
     	} else if(this.$route.query.getSuper==1){
-    		this.$router.push({path:'/fightAlone/ordersure/superorder?memberId='+this.$route.query.memberId+'&addressId='+data.result});
+    		this.$router.push({path:'/fightAlone/ordersure/superorder?addressId='+data.result});
     	}else if(this.$route.query.getPink==1){
-    		this.$router.push({path:'/fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId+'&addressId='+data.result});
+    		this.$router.push({path:'/fightAlone/ordersure/pinkorder?addressId='+data.result});
     	}else{
-    		this.$router.push({path:'/payMain/address?memberId='+this.$route.query.memberId});
+    		this.$router.push({path:'/payMain/address'});
     	}
     },
     //国徽面

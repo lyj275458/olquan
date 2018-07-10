@@ -76,19 +76,20 @@
 				<div class="top">
 					<img :src="indexImg" />
 				</div>
-				<div class="bot">首页</div>
+				<div class="bot">特卖</div>
+			</div>
+			<div class="getIndex" @click="getShangcheng">
+				<div class="top">
+					<img :src="find1Img" />
+				</div>
+				<div class="bot">分类</div>
 			</div>
 			<div class="getIndex">
 				<div class="top">
 					<img :src="cartImg" />
 				</div>
 				<div class="bot" style="color: #000;">购物车</div>
-			</div>
-			<div class="getIndex" @click="getFind">
-				<div class="top">
-					<img :src="findImg" />
-				</div>
-				<div class="bot">发现</div>
+				<div class="cartNum" v-show="cartNum>0">{{cartNum}}</div>
 			</div>
 			<div class="getIndex" @click="getkefu">
 				<div class="top">
@@ -166,6 +167,7 @@
 				findImg:'/static/images/icon-find.png',
 				serviceImg:'/static/images/icon-service.png',
 				myImg:'/static/images/icon-my.png',
+				find1Img:'/static/images/shangcheng.png',
 				couponObj:[],
 				getCouponList:false,
 				delGoods:false,
@@ -460,7 +462,7 @@
 							}
 						}
 					}
-					window.location.href=USE_URL+'ol/confirmOrder.html?carIds='+this.carIds.toString()+'&memberId='+this.$route.query.memberId+'&urlMark=gwc&cart=1'
+					window.location.href=USE_URL+'ol/confirmOrder.html?carIds='+this.carIds.toString()+'&urlMark=gwc&cart=1'
 				}
 				
 			},
@@ -555,25 +557,22 @@
 			//跳转产品详情
 			getGoodsDetail(id){
 				console.log(id)
-				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
+				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id;
 			},
 			//跳转首页
 			getIndex(){
-				if(this.showMember){
-					window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId;
-				}else{
-					window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId;
-				}
+				window.location.href=CUR_URLBACK+'index/pinkIndex';
+				
 			},
-			getFind(){
-				window.location.href="http://live-weixin.olquan.cn"
+			getShangcheng(){
+				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId=33';
 			},
 			//点击客服
 			getkefu(){
 				window.location.href='https://kefu.easemob.com/webim/im.html?tenantId=40231&ticket=false';	
 			},
 			getMindIndex(){
-				window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/member/membercore';
 			},
 			//点击领券
 			getCoupon(id){

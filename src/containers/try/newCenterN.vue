@@ -889,7 +889,7 @@
 				window.location.href='https://kefu.easemob.com/webim/im.html?tenantId=40231&ticket=false';	
 			},
 			getMindIndex(){
-				window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/member/membercore'+this.$route.query.memberId;
 			},
 				//微信分享 
 				  addWeixinShare:function(){

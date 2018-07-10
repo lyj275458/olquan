@@ -130,7 +130,7 @@
 			<div class="chooseOrder">
 				支付方式
 			</div>
-			<div class="orderWay">
+			<div class="orderWay" v-show="showWXpay==true">
 				<div class="wayLeft">
 					<img :src="weixinImg"/>
 					微信
@@ -252,15 +252,21 @@
 				orderSucessBak:false,
 				isShowPass:false,
 				isOrderGet:false,
+				showWXpay:true,
 				memberScore:[],
 			}
 		},
 		created: function() {
-			if(this.$route.query.memberId=='undefined'){
+			if(this.$route.query.memberId==undefined){
 				this.$route.query.memberId='';
 			}
+			if(tsApp.getClientBrowser()=='wx'){
+				this.showWXpay=true;
+			}else{
+				this.showWXpay=false;
+			}
 			this.addRecord();
-			console.log(this.$route.query.memberId)
+			console.log(this.showWXpay)
 			this.getMember();
 			this.$store.commit('documentTitle','确认订单');
 			this.getList();
@@ -314,7 +320,7 @@
 				//console.log(this.memberlevel)
 			},
 			getAddressMore(){
-				this.$router.push({path:'/payMain/address?memberId='+this.$route.query.memberId+'&getSuper=1'});
+				this.$router.push({path:'/payMain/address?getSuper=1'});
 			},
 			getList(){
 				let data={
@@ -329,7 +335,7 @@
 				}else{
 					this.curObj=data.result;
 					if(data.result.receiveAddress==null){
-						this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&getSuper=1'});
+						this.$router.push({path:'/add/addAdress?getSuper=1'});
 					}
 					console.log(this.curObj)
 					this.totalFee=this.curObj.totalFee;
@@ -491,7 +497,7 @@
 				}
 			},
 			getMine(){
-				window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/member/membercore';
 			},
 			//取消密码支付
 			removePassPay(){

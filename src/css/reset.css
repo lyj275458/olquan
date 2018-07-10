@@ -19,11 +19,15 @@ a, abbr, acronym, address, applet, audio, b, big, blockquote, body, center, cite
 html {
     line-height: 1;
     height: 100%;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 body{
 	-webkit-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
     -moz-text-size-adjust: 100% !important;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 blockquote, q {
     quotes: none
@@ -384,3 +388,12 @@ input::-webkit-inner-spin-button{
 	-webkit-box-lines:multiple;
 	-moz-flex-wrap:wrap;
 }
+#app .swiper-pagination-bullet{
+	background: #e1e1e1;
+	margin: 0 .06rem;
+}
+.swiper-pagination{
+	width: 100%;
+	top: 0;
+}
+

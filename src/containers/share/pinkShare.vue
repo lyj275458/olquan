@@ -171,7 +171,7 @@
 				if(data.result.levelCode=='white' || data.result.levelCode=='golden'){
 					this.shareData.share=true;
 				}
-				//this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
+				//this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
 				this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/pinkShare?inviteId='+this.memList.accountNo);
 				
 				
@@ -231,7 +231,7 @@
 				
 			},
 			getPinkIndex(){
-		    	window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId
+		    	window.location.href=CUR_URLBACK+'index/pinkIndex';
 		    },
 		    getPinklong(){
 		    	window.location.href=USE_URL+'weixin/member/renewConfirmOrder';
@@ -248,7 +248,7 @@
 	  				//let ObjObj=JSON.parse(localStorage.getItem("pinkIdObj"))
 	  				//console.log(this.bagId);
 	  				//this.$router.push({path:'/fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId+'&inviteId='+this.$route.query.inviteId});
-	  				window.location.href=CUR_URLBACK+'fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId+'&inviteId='+this.$route.query.inviteId;
+	  				window.location.href=CUR_URLBACK+'fightAlone/ordersure/pinkorder?inviteId='+this.$route.query.inviteId;
 				}
 			},
 			//微信分享 

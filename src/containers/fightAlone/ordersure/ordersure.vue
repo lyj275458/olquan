@@ -3,7 +3,7 @@
 		<div class="chooseOrder">
 			请选择支付方式
 		</div>
-		<div class="orderWay">
+		<div class="orderWay" v-show="showWXpay">
 			<div class="wayLeft">
 				<img :src="weixinImg"/>
 				微信
@@ -52,6 +52,7 @@
 				sureCheckone:true,
 				sureChecktwo:false,
 				sureCheckthree:false,
+				showWXpay:true,
 				payMethod:1,
 				isPayAnother:0,
 				payInfo:{},
@@ -67,6 +68,11 @@
 			}
 		},
 		created: function() {
+			if(tsApp.getClientBrowser()=='wx'){
+				this.showWXpay=true;
+			}else{
+				this.showWXpay=false;
+			}
 			this.$store.commit('documentTitle','立即支付');
 			//this.addWeixinShare();
 			this.addRecord();

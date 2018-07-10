@@ -9,7 +9,7 @@
 		</div>
 		<div v-bind:class="{ 'specialFide': seachShow==true}">
 			<div class="search">
-				<div class="searchIndex" style="padding: .20rem .30rem .20rem .30rem;">
+				<div class="searchIndex" style="padding: .10rem .30rem;">
 					<div class="searchBod">
 						<img :src="seachFindShare" />
 						<input placeholder="达人、标题、产品" v-model="searchCode" @click="getSearch"/>
@@ -28,9 +28,7 @@
 			
 		</div>
 		<div class="newContent" v-for="(item,index) in curObj">
-			<div class="newCent_top">
-				{{item.title}}
-			</div>
+			
 			<div class="newCent_bot">
 				<div class="newCent_headImg">
 					<img :src="item.logo" />
@@ -43,13 +41,33 @@
 					<img :src="shareMoreShare" />
 				</div>
 			</div>
+			<div class="newCent_top">
+				{{item.title}}
+			</div>
 			<div class="newCent_descript">
-				{{item.content}}
+				<p v-bind:class="{'spenewCent_descript':item.selectM==false}">
+					{{item.content}}
+				</p>
+				<p style="color: #507daf;margin-top: .10rem;" @click="lookMore(index)" v-show="item.selectM==false">全文</p>
 			</div>
-			<div class="newScaleImg">
-				<img v-for="(itemSon,index) in item.fileDtos" v-if="itemSon.type==1" :src="itemSon.linkUrl" v-bind:class="{ 'speScalImg': item.fileDtos.length<=2}" @click="getScalImgNew(item.fileDtos,index)" />
-				<img v-for="(itemSon,index) in item.fileDtos" v-if="itemSon.type==2" :src="pinkShare" v-bind:class="{ 'speScalImg': item.fileDtos.length<=2}" @click="getVideoNew(itemSon.linkUrl)" />
-			</div>
+			<ul class="newScaleImg" @click="conseLog">
+				<li v-for="(itemSon,index) in item.fileDtos" v-if="itemSon.type==1" v-bind:class="{ 'speScalImg': item.fileDtos.length<=2}">
+					
+					<p @click="getScalImgNew(item.fileDtos,index)"><img :src="itemSon.linkUrl"/></p>
+					
+				</li>
+				<li v-for="(itemSon,index) in item.fileDtos" v-if="itemSon.type==2" v-bind:class="{ 'speScalImg': item.fileDtos.length<=2}">
+					<p @click="getVideoNew(itemSon.linkUrl,item.productImage)">
+						<img  :src="item.productImage"/>
+						<img class="SpeImgBofang" :src="bofangImg"/>
+					</p>
+				</li>
+			</ul>
+			<!--<div class="newScaleImg">
+				
+				
+				<img :src="pinkShare" @click="ceshi"/>
+			</div>-->
 			<div class="prodtctList">
 				<div class="productDescrip" @click="getGoodsDetail(item.productType,item.productId)">
 					<div class="prodtctImg">
@@ -80,7 +98,7 @@
 				<div class="top">
 					<img :src="find1Img" />
 				</div>
-				<div class="bot">商城</div>
+				<div class="bot">分类</div>
 			</div>
 			<div class="getIndex" @click="getIndex">
 				<div class="top">
@@ -128,9 +146,9 @@
 			</div>
 		</div>
 		<!--图片放大-->
-		<div class="scalImg" v-show="scalImg" @click="colseScalImg" @touchmove.prevent>
+		<div class="scalImg" v-show="scalImg" @click="colseScalImg">
 			
-			<div style="width: 100%;height:100%; overflow: hidden;padding-bottom: 1.50rem;">
+			<div class="speScale">
 				<swiper :options="swiperOption" ref="imgOverview">
 				  <swiper-slide v-for="(img, index) in previewImg">
 				    <p class="swiper-zoom-container">
@@ -156,20 +174,15 @@
 					   autoplay
 					   height=""
 					   controls
+					   :poster="posterNew"
 					   id="myMusic"
 					   ref="myVideo"
 					   class="videoPost"
 					   :src="videoUrl" 
 	  				    v-show="videoShow"
 					   >
-					<source :src="videoUrl" type="video/mp4"></source>
-					<source :src="videoUrl" type="video/ogg"></source>
-					<source :src="videoUrl" type="video/webm"></source>
 			</video>
-				
-			
-		
-	</div>
+				</div>
 	
 	
 	
@@ -200,6 +213,8 @@
 				find1Img:'/static/images/shangcheng.png',
 				serviceImg:'/static/images/icon-service.png',
 				myImg:'/static/images/icon-my.png',
+				bofangImg:'/static/images/bofang.png',
+				posterNew:'',
 				videoUrl:'',
 				erweiObj:'',
 				showShare:false,
@@ -214,6 +229,7 @@
 				cartNum:0,
 				pageObj:{
 					page:1,
+					row:10
 				},
 				searchCode:'',
 				
@@ -236,9 +252,6 @@
 			      notNextTick: true,
 			    },
 			    previewImg:[
-			    	'/static/images/index.png',
-			    	'/static/images/index.png',
-			    	'/static/images/index.png',
 			    	
 			    ],
 			    
@@ -262,7 +275,7 @@
 			this.getcartNum();
 			this.addWeixinShare();
 			
-			this.$store.commit('documentTitle','发现');
+			this.$store.commit('documentTitle','OL圈');
 //			newFinds
 			
 			
@@ -282,24 +295,35 @@
 			window.addEventListener('scroll', this.hotSaleScroll);
 		},
 		methods:{
-		    getVideoNew(url){
-		    	
+			lookMore(index){
+				this.curObj[index].selectM=true;
+			},
+		    getVideoNew(url,poster){
+		    	this.posterNew=poster;
 		    	this.videoUrl=url;
 		    	this.videoShow=true;
+		    	this.$nextTick(function () {
+		    		this.$refs.myVideo.play();
+			       
+			    })
+		    	
+
 		    },
 		    bofang(){
-		    	console.log(event.target.children)
+//		    	console.log(event.target.children)
 		    	this.$refs.myVideo.play();
 		    },
 		    colseVideo(){
 		    	this.$refs.myVideo.pause();
+		    	this.videoUrl='';
+		    	this.posterNew='';
 		    	this.videoShow=false;
 		    	
 		    },
 			//获取购物车产品数量
 			getcartNum(){
 				let data={
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.totalNum,data,this.getcartNumBack);
 			},
@@ -310,9 +334,9 @@
 			newFind(){
 				let data={
 					keyword:this.searchCode,
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					page:1,
-	  				rows:20,
+	  				rows:10,
 					
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.newFinds,data,this.newFindBack,this);
@@ -322,12 +346,12 @@
 				if(data.code==-1){
 					this.$toast(data.message);
 				}else{
-					this.curObj=data.result;
-					if(data.result.length<20){
-						this.isMore=false;
-					}else{
-						this.isMore=true;
+					for(let i=0; i<data.result.length;i++){
+						this.$set(data.result[i],'selectM',false);
 					}
+					this.curObj=data.result;
+//					console.log(this.curObj)
+					
 					
 					
 				}
@@ -349,19 +373,31 @@
 		    ceshi(){
 		    	this.scalImg=true;
 		    },
+		    conseLog(){
+		    	console.log(1)
+		    },
 		    //放大图片
 		    getScalImgNew(item,index){
 //		    	console.log(item)
-		    	this.previewImg=item;
-				  console.log(index)
-				  this.$refs.imgOverview.swiper.slideTo(index, 50, false);
-		    	this.scalImg=true;
+				this.$nextTick(function(){
+					
+					this.scalImg=true;
+				    this.previewImg=item;
+//				    this.show(index)
+					this.$refs.imgOverview.swiper.slideTo(index, 50, false);
+			    	
+				})
+		    	
 		    },
 		    colseScalImg(){
-		    	this.scalImg=false;
+		    	this.$nextTick(function(){
+					this.scalImg=false;
+					this.previewImg=[];
+			    })
+		    	
 		    },
 		    show (index) {
-		      this.$refs.previewer.show(index)
+		      this.$refs.imgOverview.swiper.slideTo(index, 50, false);
 		    },
 		    //打开和关闭分享提示
 		    getHowShareNew(){
@@ -377,7 +413,7 @@
 		    		//window.location.href=CUR_URLBACK+'demo/iscroll/id/'+productId+'?isShare=0&type='+type;
 		    		this.$router.push({path:'/demo/iscroll/id/'+productId+'?isShare=0&type='+ type});
 		    	}else {
-		    		window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId;
+		    		window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId+'&type='+type;
 		    	}
 		    },
 		    //获取商品二维码图片
@@ -385,7 +421,7 @@
 		    	this.pinKnowShow=true;
 				let data={
 					productId:productId,
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					type:type,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getTwoCodeUrl,data,this.getGoodsShareBack,this);
@@ -400,7 +436,7 @@
 		    searchEnterFun(){
 		    	let data={
 					keyword:this.searchCode,
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					page:1,
 	  				rows:20,
 					
@@ -435,19 +471,20 @@
 //			  this.offsetTop = document.querySelector('.topmodel').offsetTop;
 //				console.log(this.offsetTop)
 			  this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-				//console.log(this.scrollTop)
+//				console.log(this.scrollTop)
 				
 				
 			  var windowH=window.innerHeight;
+			 // console.log(this.scrollTop + windowH >=height-200)
 			  if(this.scrollTop + windowH >=height-200){
 			  	
 			  	if(this.isMore){
 	 				this.isMore=false;
 	 				let data={
 	 					keyword:this.searchCode,
-						memberId:this.$route.query.memberId,
+//						memberId:this.$route.query.memberId,
 	  					page:this.pageObj.page+1,
-	  					rows:20,
+	  					rows:10,
 	  					
 	  				};
 	  				this.pageObj.page=this.pageObj.page+1
@@ -457,15 +494,15 @@
 	 			
 			},
 			getListMoreBack(data){
-				if(data.result.length<20){
+				if(data.result.length<10){
 					this.isMore=false;
 					
 				}else{
 					this.isMore=true;
 				}
 				
-				
 				for(let i=0; i<data.result.length; i++){
+					this.$set(data.result[i],'selectM',false);
 					this.curObj.push(data.result[i])
 				}
 				//console.log(this.curObj)
@@ -524,7 +561,7 @@
 	.findIndex{
 		
 		padding-bottom: 1.00rem;
-		padding-top: .96rem;
+		padding-top: .80rem;
 		.indexTop{
 			position: fixed;
 			left: 0;
@@ -545,16 +582,17 @@
 				justify-content:center;
 				-moz-box-pack:center;
 				-webkit--moz-box-pack:center;
-				padding-top: .10rem;
-				padding-bottom: .10rem;
+				
+				height: .80rem;
 				border-bottom: 0.01rem solid #E1E1E1;
 				li{
 					margin: 0 .30rem;
-					line-height: .72rem;
+					line-height: .80rem;
 				}
 				.speLiFind{
 					color: #E50F72;
-					border-bottom: .04rem solid #E50F72;
+					font-size: .36rem;
+					border-bottom: .05rem solid #E50F72;
 					
 				}
 			}
@@ -579,7 +617,7 @@
 				.cancleCode{
 					position: absolute;
 					right: 1.32rem;
-					top: .38rem;
+					top: .28rem;
 					
 					img{
 						display: block;
@@ -601,7 +639,7 @@
 			    flex: 1;
 				background: #EFEDED;
 				overflow: hidden;
-				border-radius: .06rem;
+				border-radius: .30rem;
 				font-size:.24rem;
 				color: #aaa;
 				display: flex;
@@ -657,12 +695,18 @@
 			background: #fff;
 			margin-bottom: .20rem;
 			.newCent_top{
+				padding-left: 1.00rem;
+				font-weight: 700;
 				color: #333333;
 				font-size: .30rem;
+				line-height: .36rem;
+				max-height: .72rem;
+				overflow: hidden;
+			    margin-bottom: .21rem;
 			}
 			.newCent_bot{
 				max-width: 100%;
-				margin-top: .26rem;
+				
 				margin-bottom: .18rem;
 				position: relative;
 				font-size: 0rem;
@@ -685,6 +729,7 @@
 					font-size: .24rem;
 					color: #333333;
 					.newCent_name{
+						font-size: .28rem;
 						line-height: .52rem;
 					}
 				}
@@ -710,14 +755,34 @@
 				margin-bottom: .28rem;
 				
 			}
+			.spenewCent_descript{
+				overflow: hidden;
+			    max-height: 1.06rem;
+			    text-overflow: ellipsis;
+			    display: -webkit-box;
+			    -webkit-line-clamp: 3;
+			    -webkit-box-orient: vertical;
+			}
 			.newScaleImg{
+				cursor:pointer;
 				position: relative;
 				left: 0;
 				top: 0;
 				z-index: 122;
 				font-size: 0;
+				display: flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+			    display: -moz-flex;
+				flex-wrap: wrap;
+				-webkit-flex-wrap:wrap;
+			    -webkit-box-lines:multiple;
+			    -moz-flex-wrap:wrap;
 				padding-left: 1.00rem;
-				img{
+				li{
+					cursor:pointer;
 					position: relative;
 					left: 0;
 					top: 0;
@@ -727,14 +792,52 @@
 					height: 1.90rem;
 					margin-right: .10rem;
 					margin-bottom: .10rem;
+					display: flex;
+					display:-webkit-box;
+				    display: -moz-box;
+				    display: -ms-flexbox;
+				    display: -webkit-flex;
+				    display: -moz-flex;
+				    -webkit-box-pack: center;
+				    -moz-box-pack: center;
+				    -ms-flex-align:center;
+				    -webkit-align-items: center;
+				    -moz-align-items: center;
+				    align-items: center;
+				    justify-content: center;
+			    	-moz-box-pack: center;
+			    	-webkit--moz-box-pack: center;
+					overflow: hidden;
+					p{
+						width: 100%;
+						height: 100%;
+						cursor:pointer;
+						position: relative;
+						.SpeImgBofang{
+							position: absolute;
+							width: .94rem;
+							height: .94rem;
+							left: 50%;
+							margin-left: -.47rem;
+							margin-top: -.47rem;
+							top: 50%;
+						}
+					}
+					img{
+						cursor:pointer;
+						display: block;
+						width: 100%;
+						
+						border-radius: 0.06rem;
+					}
 				}
-				img:nth-child(3){
+				li:nth-child(3){
 					margin-right: 0;
 				}
-				img:nth-child(6){
+				li:nth-child(6){
 					margin-right: 0;
 				}
-				img:nth-child(9){
+				li:nth-child(9){
 					margin-right: 0;
 				}
 				.speScalImg{
@@ -784,10 +887,11 @@
 			    .prodtctDescript{
 			    		font-size: .26rem;
 			    		color: #333;
-			    		padding-top: .34rem;
+			    		padding-top: .16rem;
 			    	.productName{
-			    		margin-bottom: .18rem;
+			    		
 			    		width: 3.7rem;
+			    		line-height:.62rem;
 					    overflow: hidden;
 					    white-space: nowrap;
 					    text-overflow: ellipsis;
@@ -971,7 +1075,7 @@
 		.videoPost{
 			width: 100%;
 	    	height: 5.00rem;
-	    	background: #fff;
+	    	
 	    	position: fixed;
 	    	z-index: 1000;
 	    	top: 50%;
@@ -997,13 +1101,24 @@
 		    -webkit-align-items: center;
 		    -moz-align-items: center;
 		    align-items: center;
+		    .speScale{
+		    	width: 100%;
+		    	height:100%; 
+		    	overflow: hidden;
+		    	padding-bottom: 1.50rem;
+		    	display: flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+		    }
 		    .baocunImg{
 		    	position: fixed;
 		    	background: #fff;
 		    	bottom: 0;
 		    	left: 0;
 		    	width: 100%;
-		    	line-height: 1.40rem;
+		    	line-height: 1.00rem;
 		    	text-align: center;
 		    	font-size: .36rem;
 		    	color: #333;
@@ -1037,7 +1152,7 @@
 			left: 0;
 			top: 0;
 			width: 100%;
-			z-index: 99;
+			z-index: 989;
 			height: 100%;
 		}
 		.pinKnow{

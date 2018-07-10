@@ -69,6 +69,9 @@
 				<div class="sure">点击右上角分享拼团</div>
 			</div>
 		</div>
+		<div class="stop" @touchmove.prevent>
+			<p>拼团功能已暂停服务</p>
+		</div>
 	</div>
 </template>
 
@@ -122,8 +125,8 @@
 				if(data.result){
 					this.curObj=data.result;
 					this.shareData.picURL=this.curObj.productImage;
-					this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.params.id);
-					//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.params.id);
+					this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.params.id);
+					//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.params.id);
 					this.shareData.title='【OL圈拼团】我花了'+this.curObj.togetherPrice+'元买了'+this.curObj.productName;
 					this.shareData.description=this.curObj.productDesc;
 				}else{
@@ -139,14 +142,14 @@
 				//console.log(this.curObj[0].isSuccess)
 			},
 			shareFriend(){
-				window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'index/newIndex';
 			},
 			colseSure(){
 				this.shareSure=false;
 			},
 			goDetail(id){
 				console.log(id);
-				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
+				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id;
 			},
 			getDetail(id){
 				console.log(id)
@@ -345,6 +348,31 @@
 			}
 		}
 	}
+	.stop{
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0,0,0,.5);
+			z-index: 999;
+			color: #fff;
+			text-align: center;
+			line-height:.72rem;
+			font-size: .36rem;
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: -moz-flex;
+		    -webkit-align-items: center;
+		    -moz-align-items: center;
+		    align-items: center;
+			p{
+				width: 100%;
+			}
+		}
 	.shareDetail{
 		position: absolute;
 		width: 100%;

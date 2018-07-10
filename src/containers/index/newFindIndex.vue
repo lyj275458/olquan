@@ -46,10 +46,23 @@
 			<div class="newCent_descript">
 				{{item.content}}
 			</div>
-			<div class="newScaleImg">
-				<img v-for="(itemSon,index) in item.fileDtos" v-if="itemSon.type==1" :src="itemSon.linkUrl" v-bind:class="{ 'speScalImg': item.fileDtos.length<=2}" @click="getScalImgNew(item.fileDtos,index)" />
-				<img v-for="(itemSon,index) in item.fileDtos" v-if="itemSon.type==2" :src="pinkShare" v-bind:class="{ 'speScalImg': item.fileDtos.length<=2}" @click="getVideoNew(itemSon.linkUrl)" />
-			</div>
+			<ul class="newScaleImg">
+				<li v-for="(itemSon,index) in item.fileDtos" v-if="itemSon.type==1" v-bind:class="{ 'speScalImg': item.fileDtos.length<=2}">
+					
+					<p @click="getScalImgNew(item.fileDtos,index)"><img :src="itemSon.linkUrl"/></p>
+					
+				</li>
+				<li v-for="(itemSon,index) in item.fileDtos" v-if="itemSon.type==2" v-bind:class="{ 'speScalImg': item.fileDtos.length<=2}">
+					<p @click="getVideoNew(itemSon.linkUrl)">
+						<img  :src="pinkShare"/>
+					</p>
+				</li>
+			</ul>
+			<!--<div class="newScaleImg">
+				
+				
+				<img :src="pinkShare" @click="ceshi"/>
+			</div>-->
 			<div class="prodtctList">
 				<div class="productDescrip" @click="getGoodsDetail(item.productType,item.productId)">
 					<div class="prodtctImg">
@@ -130,7 +143,7 @@
 		<!--图片放大-->
 		<div class="scalImg" v-show="scalImg" @click="colseScalImg" @touchmove.prevent>
 			
-			<div style="width: 100%;height:100%; overflow: hidden;padding-bottom: 1.50rem;">
+			<div class="speScale">
 				<swiper :options="swiperOption" ref="imgOverview">
 				  <swiper-slide v-for="(img, index) in previewImg">
 				    <p class="swiper-zoom-container">
@@ -352,16 +365,23 @@
 		    //放大图片
 		    getScalImgNew(item,index){
 //		    	console.log(item)
-		    	this.previewImg=item;
-				  console.log(index)
-				  this.$refs.imgOverview.swiper.slideTo(index, 50, false);
-		    	this.scalImg=true;
+				this.$nextTick(function(){
+					this.scalImg=true;
+				    this.previewImg=item;
+//				    this.show(index)
+					this.$refs.imgOverview.swiper.slideTo(index, 50, false);
+			    	
+				})
+		    	
 		    },
 		    colseScalImg(){
-		    	this.scalImg=false;
+		    	this.$nextTick(function(){
+					this.scalImg=false;
+			    })
+		    	
 		    },
 		    show (index) {
-		      this.$refs.previewer.show(index)
+		      this.$refs.imgOverview.swiper.slideTo(index, 50, false);
 		    },
 		    //打开和关闭分享提示
 		    getHowShareNew(){
@@ -716,8 +736,18 @@
 				top: 0;
 				z-index: 122;
 				font-size: 0;
+				display: flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+			    display: -moz-flex;
+				flex-wrap: wrap;
+				-webkit-flex-wrap:wrap;
+			    -webkit-box-lines:multiple;
+			    -moz-flex-wrap:wrap;
 				padding-left: 1.00rem;
-				img{
+				li{
 					position: relative;
 					left: 0;
 					top: 0;
@@ -727,14 +757,41 @@
 					height: 1.90rem;
 					margin-right: .10rem;
 					margin-bottom: .10rem;
+					display: flex;
+					display:-webkit-box;
+				    display: -moz-box;
+				    display: -ms-flexbox;
+				    display: -webkit-flex;
+				    display: -moz-flex;
+				    -webkit-box-pack: center;
+				    -moz-box-pack: center;
+				    -ms-flex-align:center;
+				    -webkit-align-items: center;
+				    -moz-align-items: center;
+				    align-items: center;
+				    justify-content: center;
+			    	-moz-box-pack: center;
+			    	-webkit--moz-box-pack: center;
+					overflow: hidden;
+					p{
+						width: 100%;
+						height: 100%;
+						
+					}
+					img{
+						display: block;
+						width: 100%;
+						height: 100%;
+						border-radius: 0.06rem;
+					}
 				}
-				img:nth-child(3){
+				li:nth-child(3){
 					margin-right: 0;
 				}
-				img:nth-child(6){
+				li:nth-child(6){
 					margin-right: 0;
 				}
-				img:nth-child(9){
+				li:nth-child(9){
 					margin-right: 0;
 				}
 				.speScalImg{
@@ -971,7 +1028,7 @@
 		.videoPost{
 			width: 100%;
 	    	height: 5.00rem;
-	    	background: #fff;
+	    	
 	    	position: fixed;
 	    	z-index: 1000;
 	    	top: 50%;
@@ -997,6 +1054,17 @@
 		    -webkit-align-items: center;
 		    -moz-align-items: center;
 		    align-items: center;
+		    .speScale{
+		    	width: 100%;
+		    	height:100%; 
+		    	overflow: hidden;
+		    	padding-bottom: 1.50rem;
+		    	display: flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+		    }
 		    .baocunImg{
 		    	position: fixed;
 		    	background: #fff;

@@ -248,8 +248,8 @@
 			
 			//分析链接
 			getUrl(){
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'integral/uesget');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'integral/uesget');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'integral/uesget');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'integral/uesget');
 				this.addWeixinShare();//微信分享	
 			},
 			//悬浮
@@ -285,7 +285,7 @@
 			getDetailOne(){
 				if(this.iPhone){
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=CUR_URLBACK+'try/center?memberId='+this.$route.query.memberId;
+						window.location.href=CUR_URLBACK+'try/newCenter';
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("2")
@@ -295,7 +295,7 @@
 						}
 					}
 				}else{
-					window.location.href=CUR_URLBACK+'try/center?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'try/newCenter';
 				}
 				
 				
@@ -303,7 +303,7 @@
 			getDetailTwo(){
 				if(this.iPhone){
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId;
+						window.location.href=CUR_URLBACK+'index/newIndex';
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("3")
@@ -313,7 +313,7 @@
 						}
 					}
 				}else{
-					window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'index/newIndex';
 				}
 				
 				
@@ -321,7 +321,7 @@
 			getDetailThree(){
 				if(this.iPhone){
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=USE_URL+'ol/withdraw.html?memberId='+this.$route.query.memberId
+						window.location.href=USE_URL+'ol/withdraw.html';
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("4")
@@ -331,18 +331,18 @@
 						}
 					}
 				}else{
-					window.location.href=USE_URL+'ol/withdraw.html?memberId='+this.$route.query.memberId
+					window.location.href=USE_URL+'ol/withdraw.html';
 				}
 				
 				
 			},
 			gotoZhuan(){
-				window.location.href=CUR_URLBACK+'mine/index?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'mine/index';
 			},
 			getDetailFour(){
 				if(this.iPhone){
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=USE_URL+'weixin/member/memberTwoCode2?memberId='+this.$route.query.memberId
+						window.location.href=USE_URL+'weixin/member/memberTwoCode2';
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("6")
@@ -352,7 +352,7 @@
 						}
 					}
 				}else{
-					window.location.href=USE_URL+'weixin/member/memberTwoCode2?memberId='+this.$route.query.memberId
+					window.location.href=USE_URL+'weixin/member/memberTwoCode2';
 				}
 				
 				
@@ -360,7 +360,7 @@
 			getDetailFive(){
 				if(this.iPhone){
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=CUR_URLBACK+'index/index?memberId='+this.$route.query.memberId
+						window.location.href=CUR_URLBACK+'index/index';
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("5")
@@ -370,7 +370,7 @@
 						}
 					}
 				}else{
-					window.location.href=CUR_URLBACK+'index/index?memberId='+this.$route.query.memberId
+					window.location.href=CUR_URLBACK+'index/index';
 				}
 				
 			},

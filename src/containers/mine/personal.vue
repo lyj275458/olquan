@@ -317,7 +317,7 @@
 			},
 			//我的推广海报
 			getMycode(){
-				window.location.href=USE_URL+'mobile/weixin/member/memberTwoCode2?memberId='+this.$route.query.memberId;
+				window.location.href=USE_URL+'mobile/weixin/member/memberTwoCode2';
 			},
 			//邀请粉领
 			getInvitedPink(){
@@ -409,7 +409,7 @@
 				window.location.href='https://kefu.easemob.com/webim/im.html?tenantId=40231&ticket=false';	
 			},
 //			getMindIndex(){
-//				window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.$route.query.memberId;
+//				window.location.href=USE_URL+'weixin/member/membercore'+this.$route.query.memberId;
 //			},
 		},
 		destroyed () {

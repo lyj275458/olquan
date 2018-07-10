@@ -4,6 +4,7 @@
 	    <Swiper :aspect-ratio="1/1" loop auto  dots-position='center' ref="swiper" >
 	      <swiper-item style="overflow: hidden; height: 100%;" class="swiper-demo-img" v-for="(itemsSon, index) in imgList" :key="index"><img style="width: 100%;" :src="itemsSon.img" ></swiper-item>
 	    </Swiper>
+	   
 	    <div class="soldOut">
 	    	
 	    	<img :src="soldImg"  class="isSold" v-show="curObj.store==0 && curObj.type!=4"/>
@@ -154,6 +155,25 @@
 				</p>
 			</div>
 		</div>
+		<div class="shareBot" v-show="curObj.promotionAward!=0 && memList.levelCode!='white'">
+			<div class="topMessage">
+				<p>分享奖励</p>
+			</div>
+			<div class="cenMessage">
+				<p>邀请白领首次试用可获得<span>{{curObj.promotionAward}}元</span>奖励</p>
+			</div>
+			<div class="botMessage">
+				<div style="position: relative;">
+					<p @click="getErwei(curObj.productId)" style="position: absolute;right: .30rem;">海报邀请</p>
+				</div>
+				<div style="position: relative;">
+					<p @click="shareShare" style="position: absolute;left: .30rem;">分享邀请</p>
+				</div>
+			</div>
+		</div>
+		
+			
+		
 		<div style="width: 100%;height: .20rem;background: #f2f2f2;" v-show="curObj.type==4 || curObj.type==8"></div>
 		<div class="howtry" v-show="curObj.type==4">
 			<p class="tryleft">试用流程</p>
@@ -162,6 +182,9 @@
 				<img :src='rowImg'/>
 			</p>
 		</div>
+		
+			
+		
 		<!--<div class="step" v-show="curObj.type==4">
 			<img :src='trystepImg' />
 		</div>-->
@@ -256,11 +279,16 @@
 					<span v-show='showShou==true'style="font-size: .20rem; display: block;color: #939393; margin-top: .10rem;">已收藏</span>
 				</li>
 			</ul>
-			<div class="trytouse" @click="buyGoods" v-show="curObj.type==4 && curObj.status!=1">
-				<div class="notPink">
+			<div class="trytouse" v-show="curObj.type==4 && curObj.status!=1">
+				<div class="notPink" v-show="curObj.isApply==0" @click="buyGoods">
 					<p>申请试用</p>
 				</div>
-				
+				<div class="notPink" v-show="curObj.isApply!=0 && curObj.canGoPlusBuy==1" @click="buyGoods">
+					<p>已试用 去购买</p>
+				</div>
+				<div class="notPink" v-show="curObj.isApply!=0 && curObj.canGoPlusBuy!=1">
+					<p style="background: #bdbcbc;">已试用</p>
+				</div>
 			</div>
 			<div class="trytouse" v-show="curObj.type==9 && memberlevel==false && curObj.status!=1">
 				<div class="addCart" @click="buyGoods">
@@ -384,15 +412,30 @@
 					<p class="tiBright" @click="getScroe">如何获得积分</p>
 				</div>
 			</div>
-			<div class="tishi"  v-show="levelEnt">
+			
+		</div>
+		<div class="tishiback" v-show="levelEnt || scroeEnt"></div>
+		<div class="tishi"  v-show="scroeEnt">
 				
-				<div class="tiCen">
-					您还不是粉领会员，是否开通粉领会员
-				</div>
-				<div class="tiBots">
-					<p class="tiBleft" @click='getlevel'>取消</p>
-					<p class="tiBright" @click="getPink">开通粉领</p>
-				</div>
+			<div class="tiCen">
+				您还不是粉领会员，是否开通粉领会员
+			</div>
+			<div class="tiBots">
+				<p class="tiBleft" @click='getCon'>取消</p>
+				<p class="tiBright" @click="getScroe">开通粉领</p>
+			</div>
+		</div>
+		<div class="tishi" v-show="levelEnt">
+				
+			<div class="tiCen">
+				<p>
+					完成试用下单请先绑定手机号码，是否前往绑定
+				</p>
+				
+			</div>
+			<div class="tiBots">
+				<p class="tiBleft" @click='getlevel'>否</p>
+				<p class="tiBright" @click="getPink">去绑定</p>
 			</div>
 		</div>
 		<div class="pinKnow" v-show="pinKnowShow" @click="showImg"></div>
@@ -410,11 +453,16 @@
 					<img :src="fenxiangImg"/>
 					<p class="share">点击右上角分享</p>
 					<div class="descript">
-						<span style="font-size: .36rem;">赚</span>
-						<span style="margin-left: -.20rem;margin-bottom: -.08rem;">{{getMoney}}</span>
+						<span v-show="curObj.type!=4" style="font-size: .36rem;">赚</span>
+						<span v-show="curObj.type==4" style="font-size: .36rem;">￥</span>
+						<span v-show="curObj.type!=4" style="margin-left: -.20rem;margin-bottom: -.08rem;">{{getMoney}}</span>
+						<span v-show="curObj.type==4" style="margin-left: -.20rem;margin-bottom: -.08rem;">{{curObj.promotionAward}}</span>
 					</div>
-					<p class="moreDes">
+					<p class="moreDes" v-show="curObj.type!=4">
 						只要你的好友通过你的链接购买此商品，你就能赚到<span style="color: #E50F72;">{{getMoney}}</span>元利润哦~
+					</p>
+					<p class="moreDes" v-show="curObj.type==4">
+						邀请白领首次试用可获得<span style="color: #E50F72;">{{curObj.promotionAward}}</span>元奖励
 					</p>
 					<div class="sureBut">确定</div>
 					
@@ -511,6 +559,7 @@
 				nomoreTwo:[],
 				nomoreThree:[],
 				couponObj:[],
+				memList:[],
 				showShou:false,
 				getNomoreObj:[],
 				addSelect:-1,
@@ -533,6 +582,7 @@
 				showLength:0,
 				isAddGoods:false,
 				getCouponList:false,
+				isHasMobile:false,
 				getVlaueOne:'',
 				getVlaueTwo:'',
 				chooseNormal:{
@@ -556,10 +606,11 @@
 			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
 			}
+			this.getMember();
 			this.addRecord();
 			this.$store.commit('documentTitle','商品详情');
-			this.getList();
-			this.getMember();
+			
+			
 			this.gotoTop();
 			
 			//console.log(this.isShare)
@@ -586,9 +637,8 @@
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
   			},
   			addRecordBack(data){},
-			showCodeImg(){
-				this.pinKnowShow=true;
-			},
+  			
+			
 			showImg(){
 				this.pinKnowShow=false;
 			},
@@ -600,7 +650,7 @@
 			getTryDetail(){
 				//this.$router.push({path:'/rule/trydetail'+'?memberId='+this.getCookie("memberId")});
 				//window.location.href=CUR_URLBACK+'rule/trydetail'+'?memberId='+this.getCookie("memberId");
-				window.location.href=USE_URL+'/weixin/protocol/protocol?code=freeUseDesc'
+				window.location.href=USE_URL+'/weixin/protocol/protocol?code=freeUseDesc';
 
 			},
 			//积分不足
@@ -619,30 +669,36 @@
 			},
 			//更多特卖
 			getPinkIndex(){
-				this.$router.push({path:'/index/pinkIndex'+'?memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/index/pinkIndex'});
 			},
 			//我的
 			getMineIndex(){
-				window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/member/membercore';
 			},
-			//开通粉领
+			//绑定手机号
 			getPink(){
+//				if(this.showButton){
+//					window.location.href=USE_URL+'weixin/member/renewConfirmOrder';
+//				}else{
+//					window.location.href=USE_URL+'weixin/member/openStore';
+//				}
+				//window.location.href=USE_URL+'weixin/member/boundMobile';
+				this.$router.push({path:'/mine/setTel'});
+			},
+			getScroe(){
 				if(this.showButton){
 					window.location.href=USE_URL+'weixin/member/renewConfirmOrder';
 				}else{
-					window.location.href=USE_URL+'weixin/member/openStore?&memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'supervisor/buyPink?inviteId='+this.$route.query.inviteId;
 				}
-				
-			},
-			getScroe(){
-				this.$router.push({path:'/integral/uesget'+'?memberId='+this.$route.query.memberId});
+//				this.$router.push({path:'/integral/uesget'});
 			},
 			//点击客服
 			getkefu(){
 				window.location.href='https://kefu.easemob.com/webim/im.html?tenantId=40231&ticket=false';	
 			},
 			getshop(){
-				window.location.href=USE_URL+'weixin/sellerShop/sellerShop?sellerId='+this.curObj.sellerId+'&memberId='+this.curObj.memberId;
+				window.location.href=USE_URL+'weixin/sellerShop/sellerShop?sellerId='+this.curObj.sellerId;
 			},
 			shoucang(){
 				let data={
@@ -688,8 +744,15 @@
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
 			},
 			getMemberBack(data){
+				this.getList();
+				this.memList=data.result
 				this.memberScore=data.result.score;
-				
+				console.log(data.result.mobile.length)
+				if(data.result.mobile==""){
+					this.isHasMobile=true;
+				}else{
+					this.isHasMobile=false;
+				}
 				if(data.result.isGetStoreCommission==1){
 					this.memberlevel=false;
 				}else{
@@ -733,7 +796,8 @@
 					//productId:140,
 //					memberId:this.$route.query.memberId,
 					viewType:this.$route.query.viewType,
-					uutype:1
+					uutype:1,
+					type:this.$route.query.type
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.productDetail,data,this.getListBack,this);
 			},
@@ -765,7 +829,10 @@
 					  url: 'javascript:',
 					  img: item
 					}));
-					this.showLength=this.curObj.normals.length;
+					if(this.curObj.normals!=null){
+						this.showLength=this.curObj.normals.length;
+					}
+					
 					//console.log(this.showLength);
 					if(this.showLength>0){
 						if(data.result.normals){
@@ -788,8 +855,8 @@
 						}
 					}
 					
-					this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1');
-					//this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+"?isShare=1");
+					//this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1');
+					this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1&type='+this.$route.query.type +'&inviteId='+this.memList.accountNo);
 					this.shareData.title=this.curObj.productName;
 					this.shareData.description=this.curObj.summary;
 					this.shareData.picURL=this.curObj.image;
@@ -797,9 +864,9 @@
 					this.moreWeixinShare();//微信分享 
 					
 				}else if(data.result.type==11 || data.result.type==12){
-					window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+data.result.togetherId+'?memberId='+this.$route.query.memberId+'&isLimit=0'
+					window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+data.result.togetherId+'?isLimit=0'
 				}else{
-					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+data.result.productId;
+					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+data.result.productId+'&type='+data.result.type;
 				}
 				
 			},
@@ -816,12 +883,14 @@
 			getErweiBack(data){
 				this.erweiObj=data.result;
 			},
+			shareShare(){
+				
+				this.shareSure=true;
+			},
 			goBuything(){
 				//console.log(this.normalId)
 				if(this.curObj.type==8 && this.memberScore<this.curObj.buyNeedScore){
 					this.scroeEnt=true;
-				}else if(this.memberlevel==true && this.curObj.type==4){
-					this.levelEnt=true;
 				}else if(this.curObj.status==1){
 					this.$toast('活动尚未开始，敬请期待');
 				}else if(this.curObj.time==0){
@@ -857,10 +926,10 @@
 		  				if(this.curObj.type==4){
 		  					//this.$router.push({path:'/fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId});
 //		  					this.$router.push({path:'/common/scroll?memberId='+this.$route.query.memberId});
-		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId
+		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder';
 		  					//window.location.href=API_HOST+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&'+'memberId='+this.getCookie("memberId")+'&type='+this.curObj.type+'&productId='+this.curObj.productId
 		  				}else{
-		  					window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&'+'memberId='+this.$route.query.memberId+'&type='+this.curObj.type+'&productId='+this.curObj.productId
+		  					window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&type='+this.curObj.type+'&productId='+this.curObj.productId
 		  				}
 						//console.log(data)
 						
@@ -880,8 +949,47 @@
 //				this.addSelectTwo=-1;
 //				this.getVlaueTwo='';
 //				this.getVlaueOne='';
-				this.chooseNor=true;
-				this.showHeigth=true;
+//				console.log(this.memList)
+				if(this.curObj.type==4){
+					if(this.curObj.isApply!=1){
+						if(this.memberlevel && this.curObj.freeUseSubType!=1 && this.curObj.type==4){
+							this.scroeEnt=true;
+	//						console.log(1)
+						}else{
+							if(this.isHasMobile){
+								this.levelEnt=true;
+							}else{
+								this.chooseNor=true;
+								this.showHeigth=true;
+							}
+						}
+					}else{
+						window.location.href=CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=0&type=9';
+					}
+				}else{
+					this.chooseNor=true;
+					this.showHeigth=true;
+				}
+				
+//				if(this.memberlevel && this.curObj.freeUseSubType!=1){
+//					this.scroeEnt=true;
+//					console.log(1)
+//				}else{
+//					if(this.isHasMobile){
+//						this.levelEnt=true;
+//					}else{
+//						if(this.curObj.isApply==0){
+//							this.chooseNor=true;
+//							this.showHeigth=true;
+//						}else{
+//							//this.$router.push({path:'/demo/iscroll/id/'+this.curObj.productId+'?isShare=0&type=9&memberId=894559'});
+//							window.location.href=CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=0&type=9';
+//						}
+//					}
+//				}
+				
+				
+				
 //				this.getValueDetail();
 				//window.location.href='http://test-mobile.olquan.cn/ol/confirmOrder1.html?num='+this.$route.query.num+'&'+'normalId='+'&'+'memberId='+this.getCookie("memberId")+'&'+'togetherId='+this.$route.query.togetherId +'&'+'togetherRecordId='+this.$route.query.id
 			},
@@ -949,6 +1057,12 @@
 			//点击分享
 			colseShare(){
 				this.shareSure=false;
+			},
+			openShareTwo(){
+				
+			},
+			getNewShare(){
+				this.shareSure=true;
 			},
 			openShare(){
 				this.shareSure=true;
@@ -1416,6 +1530,52 @@
 				}
 			}
 		
+		}
+		.shareBot{
+			background: #F2F2F2;
+			padding-top: .20rem;
+			.topMessage{
+				background: #fff;
+				width: 100%;
+				padding-bottom: .34rem;
+				padding-top: .30rem;
+				text-align: center;
+				font-size: .32rem;
+				color: #333;
+			}
+			.cenMessage{
+				background: #fff;
+				color: #333333;
+				padding-bottom: .40rem;
+				text-align: center;
+				font-size: .26rem;
+				span{
+					color: #E50F72;
+				}
+			}
+			.botMessage{
+				padding-bottom: .30rem;
+				background: #fff;
+				display:-webkit-box;
+				display: flex;
+				display: -webkit-flex;
+				display: -moz-box;
+				display: -moz-flex;
+				display: -ms-flexbox;
+				div{
+					width: 50%;
+					height: .54rem;
+					font-size: .28rem;
+					color: #E50F72;
+					p{
+						line-height: .52rem;
+						text-align: center;
+						width: 1.68rem;
+						border-radius: .54rem;
+						border: 0.01rem solid #E50F72;
+					}
+				}
+			}
 		}
 		.howtry{
 			overflow: hidden;
@@ -1918,24 +2078,33 @@
 				}
 			}
 		}
+		.tishiback{
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			left: 0;
+			top: 0;
+			background: rgba(0,0,0,.5);
+		}
 		.tishi{
 			position: fixed;
 			width: 5.00rem;
-			height: 2.00rem;
+			height: 2.50rem;
 			background: #fff;
 			left: 50%;
 			margin-left: -2.50rem;
 			top:50%;
-			margin-top: -1.50rem;
-			z-index: 444;
+			margin-top: -1.25rem;
+			z-index: 99999;
 			border-radius: .10rem;
 			border: 0.01rem solid #e5e5e5;
 			overflow: hidden;
 			
 			.tiCen{
-				line-height: 1.00rem;
+				padding: .20rem .50rem;
+				line-height: .56rem;
 				text-align: center;
-				font-size: .26rem;
+				font-size: .28rem;
 				border-bottom: .01rem solid #f2f2f2;
 			}
 			.tiBots{
@@ -1951,7 +2120,7 @@
 				.tiBright{
 					float: left;
 					width: 59.5%;
-					color: #08c1f6;
+					color: #E50F72;
 				}
 			}
 			

@@ -87,8 +87,8 @@
 						this.shareData.title=this.curObj.shareTitle;
 						this.shareData.description=this.curObj.shareDescription;
 						this.shareData.picURL=this.curObj.shareIcon;
-						this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'coupon/getcoupon/id/'+this.curObj.activityId);
-						//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'coupon/getcoupon/id/'+this.curObj.activityId);
+						this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'coupon/getcoupon/id/'+this.curObj.activityId);
+						//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'coupon/getcoupon/id/'+this.curObj.activityId);
 						console.log(this.shareData);
 						this.addWeixinShare();//微信分享 
 					}
@@ -117,12 +117,12 @@
 				if(this.iPhone){
 		        	if(tsApp.getClientBrowser()=='wx'){
 		        		if(data.result.type==11 || data.result.type==12){
-		        			window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+data.result.togetherId+'?memberId='+this.$route.query.memberId+'&isLimit=0'
+		        			window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+data.result.togetherId+'?isLimit=0'
 		        			
 		        		}else if(data.result.type==4 || data.result.type==9){
 							this.$router.push({path:'/demo/iscroll/id/'+data.result.productId});
 						}else{
-		        			window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+data.result.productId+'&memberId='+this.$route.query.memberId
+		        			window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+data.result.productId
 		        		}
 		        	}else{
 						if(this.isAndroid){
@@ -133,7 +133,7 @@
 						}
 					}
 				}else{
-					window.location.href=CUR_URLBACK+'index/index?memberId='+this.$route.query.memberId
+					window.location.href=CUR_URLBACK+'index/newIndex'
 				}
 				
 			},

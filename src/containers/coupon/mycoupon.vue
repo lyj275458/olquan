@@ -154,11 +154,11 @@
 			useCouponBack(data){
 				console.log(data)
 				if(data.result.type==11 || data.result.type==12){
-					this.$router.push({path:'/index/goodsDetali/id/'+data.result.togetherId+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
+					this.$router.push({path:'/index/goodsDetali/id/'+data.result.togetherId+'?isLimit=0'});
 				}else if(data.result.type==4 || data.result.type==9){
 					this.$router.push({path:'/demo/iscroll/id/'+data.result.productId});
 				}else{
-					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+data.result.productId+'&memberId='+this.$route.query.memberId
+					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+data.result.productId;
 				}
 			},
 			destroyed () {

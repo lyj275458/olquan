@@ -121,8 +121,8 @@
 				}
 				console.log(this.curObj)
 				console.log(this.shareData);
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'fightAlone/mygoods');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'fightAlone/mygoods');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'fightAlone/mygoods');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'fightAlone/mygoods');
 				//console.log(data)
 				//console.log(this.curObj[0].isSuccess)
 				this.addWeixinShare();//微信分享 	
@@ -197,21 +197,21 @@
 				if(payStatus==0){
 					console.log(payStatus)
 				}else{
-					this.$router.push({path:'/order/detail/id/'+id+'?memberId='+memberId});
+					this.$router.push({path:'/order/detail/id/'+id});
 				}
 			},
 			getFriend(id,memberId){
 				console.log(memberId)
-				this.$router.push({path:'/order/partake/id/'+id+'?memberId='+memberId});
+				this.$router.push({path:'/order/partake/id/'+id});
 			},
 			goDetail(id){
-				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
+				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id
 
 			},
 			//点击去支付
 			goOrder(id){
 				console.log(id)
-				this.$router.push({path:'/fightAlone/ordersure/ordersure/id/'+id+'?memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/fightAlone/ordersure/ordersure/id/'+id});
 				//window.location.href=CUR_URLBACK+'fightAlone/ordersure/id/'+id+'?memberId='+this.$route.query.memberId;
 			},
 				//微信分享 

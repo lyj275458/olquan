@@ -270,7 +270,7 @@
   			},
   			addRecordBack(data){},
 			getAddressMore(){
-				this.$router.push({path:'/payMain/address?memberId='+this.$route.query.memberId+'&isBuyGoods=1'});
+				this.$router.push({path:'/payMain/address?isBuyGoods=1'});
 			},
 			getList(){
 				let data={
@@ -289,7 +289,7 @@
 			getListBack(data){
 				this.curObj=data.result;
 				if(data.result.receiveAddress==null){
-					this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&isBuyGoods=1'});
+					this.$router.push({path:'/add/addAdress?isBuyGoods=1'});
 				}
 				console.log(this.curObj)
 				this.totalFee=this.curObj.totalFee;

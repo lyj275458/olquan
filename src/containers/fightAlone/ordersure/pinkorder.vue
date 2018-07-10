@@ -23,17 +23,17 @@
 					<!--<p class="sendNum" v-show="!isSendFlag" style="background: #fff; color: #999;" @click="getCode">{{sendCodeText}}</p>-->
 				</div>
 				<div class="telNum">
-					<input placeholder="请输入你的手机号" :maxlength="11" v-model="telNumber" pattern="[0-9]*" v-on:input ="clearMoreCode()"/>
+					<input placeholder="请输入你的手机号" :maxlength="11" v-model="telNumber" pattern="[0-9]*" v-on:input ="clearMoretelNum()"/>
 					<p class="sendNum" @click="getCode">发送验证码</p>
 					<!--<p class="sendNum" v-show="!isSendFlag" style="background: #fff; color: #999;" @click="getCode">{{sendCodeText}}</p>-->
 				</div>
 				<div class="telNum">
-					<input placeholder="请输入验证码" pattern="[0-9]*" v-model="codeNum" v-on:input ="clearMoreCode()" />
+					<input placeholder="请输入验证码" pattern="[0-9]*" v-model="codeNum" v-on:input ="clearMorecodeNum()" />
 					
 				</div>
 				<div class="telNum">
-					<input placeholder="邀请码" pattern="[0-9]*" style="color: #333333;" v-model="inviteCode" v-on:input ="clearMoreCode()"/>
-					<p class="chooseSure">选填</p>
+					<input readonly="readonly" placeholder="邀请码" style="color: #333333;" v-model="inviteCode"/>
+					<!--<p class="chooseSure">必填</p>-->
 				</div>
 			</div>
 		</div>
@@ -61,7 +61,7 @@
 			</div>
 			<div class="peopleName">
 				<p class="left">收件人手机号</p>
-				<input class="right" placeholder="默认上面手机号" pattern="[0-9]*" v-model="getGifTel"  v-on:input ="clearMoreCode()"/>
+				<input class="right" placeholder="默认上面手机号" pattern="[0-9]*" v-model="getGifTel"  v-on:input ="clearMoregetGifTel()"/>
 			</div>
 			<div class="chooseCityList">
 		   		<div class="left">
@@ -191,7 +191,7 @@
 			<div class="chooseOrder">
 				支付方式
 			</div>
-			<div class="orderWay">
+			<div class="orderWay" v-show="showWXpay">
 				<div class="wayLeft">
 					<img :src="weixinImg"/>
 					微信
@@ -288,6 +288,7 @@
 				
 			</div>
 		</div>
+		
 	</div>
 </template>
 
@@ -369,6 +370,7 @@
 		    	getCodeSure:false,
 		    	isShowPass:false,
 		    	isOrderGet:false,
+		    	showWXpay:true,
 		    	memberScore:[],
 			}
 		},
@@ -381,6 +383,11 @@
 		    
 		},
 		created: function() {
+			if(tsApp.getClientBrowser()=='wx'){
+				this.showWXpay=true;
+			}else{
+				this.showWXpay=false;
+			}
 			if(this.$route.query.memberId=='undefined' || this.$route.query.memberId==undefined){
 				this.$route.query.memberId='';
 			}
@@ -389,6 +396,7 @@
 			}else{
 				this.inviteCode=this.getCookie("inviteCode");
 			}
+			
 			this.addRecord();
 			
 			this.getMember();
@@ -499,10 +507,7 @@
 		  		for(let i=0;i<this.arr.length;i++){
 		  			if(this.prov==this.arr[i].id){
 		  				this.cityList=this.arr[i].childreList;
-		  				
 		  				this.city=this.cityId;
-		  				
-						
 		  				break;
 		  			}
 		  		}
@@ -515,9 +520,6 @@
 		  				this.districtList=this.cityList[i].childreList;
 		  				
 		  				this.district=this.districtId
-		  				
-						
-		  				
 		  			}
 		  			
 		  		}
@@ -594,13 +596,13 @@
 		    },
 		    //去特卖
 		    getPinkIndex(){
-		    	window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId
+		    	window.location.href=CUR_URLBACK+'index/pinkIndex'
 		    },
 		    getTrycenter(){
-		    	window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId
+		    	window.location.href=CUR_URLBACK+'try/newCenter'
 		    },
 			getAddressMore(){
-				this.$router.push({path:'/payMain/address?memberId='+this.$route.query.memberId+'&getPink=1'});
+				this.$router.push({path:'/payMain/address?getPink=1'});
 			},
 			getList(){
 				let data={
@@ -719,6 +721,10 @@
 			},
 			//提交订单
 			payOrder(){
+				if(this.inviteCode=='' || this.inviteCode==undefined){
+					this.$toast('请输入邀请码');
+					return false;
+				}
 				if(Number(this.amountFee)==0 && Number(this.coffersFee)==0){
 					this.isShowPass=true;
 				}else{
@@ -746,7 +752,7 @@
 				if(this.getGifTel==''){
 					this.getGifTel=this.telNumber;
 				}
-				console.log(this.memberScore.enabledPayPassword)
+				//console.log(this.memberScore.enabledPayPassword)
 				if(this.memberScore.enabledPayPassword && !this.isShowPass){
 						this.payPasswordShow=true;
 						
@@ -788,7 +794,7 @@
 				setTimeout(function() {
 				    _this.$indicator.close();
 				  }, 400);
-				console.log(this.totalFee)
+//				console.log(this.totalFee)
 				if(data.code==0){
 					
 					
@@ -816,7 +822,7 @@
 				}
 			},
 			getMine(){
-				//window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.$route.query.memberId;
+				//window.location.href=USE_URL+'weixin/member/membercore'+this.$route.query.memberId;
 			},
 			//取消密码支付
 			removePassPay(){
@@ -853,9 +859,17 @@
 			//只能输入数字
 			clearMoreCode(){
 				this.imgCode = this.imgCode.replace(/[^\d]/g,'');
+			},
+			clearMoretelNum(){
 				this.telNumber = this.telNumber.replace(/[^\d]/g,'');
+			},
+			clearMoregetGifTel(){
 				this.getGifTel = this.getGifTel.replace(/[^\d]/g,'');
+			},
+			clearMorecodeNum(){
 				this.codeNum = this.codeNum.replace(/[^\d]/g,'');
+			},
+			clearMoreinviteCode(){
 				this.inviteCode = this.inviteCode.replace(/[^\d]/g,'');
 			},
 			//余额

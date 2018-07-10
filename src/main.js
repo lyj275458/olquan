@@ -16,12 +16,17 @@ import loading from './components/iscroll/index.js';
 Vue.use(loading)
 import search from './components/common/index.js';
 Vue.use(search)
-
-
+import videoImg from './components/page/index.js';
+Vue.use(videoImg)
+//import VideoPlayer from 'vue-video-player'
+//require('video.js/dist/video-js.css')
+//require('vue-video-player/src/custom-theme.css')
+//Vue.use(VideoPlayer)
+fastclick.attach(document.body);
 
 //需要有微信授权后才能访问的页面
 const authPageArr=['coupon/receive','test']
-fastclick.attach(document.body);
+
 Vue.use(comFun)
 Vue.use(VueRouter)
 Vue.use(VueLazyload, {
@@ -205,6 +210,8 @@ Vue.prototype.wxShareFun = function(wconfig,data) {
      
       wx.ready(function() {
                 //alert(JSON.stringify(data))
+                
+               
                 if(data.hide){
 	                	wx.hideMenuItems({
 	                    menuList: ['menuItem:openWithQQBrowser','menuItem:openWithSafari','menuItem:copyUrl','menuItem:share:qq','menuItem:share:QZone']

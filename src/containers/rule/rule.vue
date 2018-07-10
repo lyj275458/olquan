@@ -1,47 +1,11 @@
 <template>
-	<div class="rule">
-		<div class="step">
-			<p class="stepDetail">
-				<img  :src="oneImg"/>
-				<span>支付开团/参团</span>
-			</p>
-			<p class="stepNext">
-				<img :src="rowtopImg"/>
-			</p>
-			
-			<p class="stepDetail">
-				<img  :src="twoImg"/>
-				<span>邀请拼团</span>
-			</p>
-			<p class="stepNext">
-				<img :src="rowtopImg"/>
-			</p>
-			<p class="stepDetail">
-				<img  :src="threeImg"/>
-				<span>人满成团/不满退款</span>
-			</p>
+	<div>
+		<div>
+		    <canvas id="canvas"style="width: 6.40rem;"></canvas>
 		</div>
-		<div style="border-bottom: .02rem solid #f2f2f2;"></div>
-		<ul class="explain">
-					<li>
-						1、开团送积分，OL圈会员开团支付成功，平台赠送团长拼团商品价格的等数量积分。
-					</li>
-					<li>
-						2、拼团成功之后可以在商品有库存的情况下，多次邀请会员参与拼团。平台根据参团会员购买商品数量赠送商品价格*购买数量的积分给团长。
-					</li>
-					<li>
-						3、团长拼团成功后，申请退货退款的，则获得的所有积分全部退回。并且继续邀请的参团不再赠送积分。
-					</li>
-					<li>
-						4、拼团有效期是自开团时刻起24小时内，如果距离商品失效时间小于24小时，则以商品的结束时间为准。
-					</li>
-					<li>
-						5、超过成团有效期24小时，未达成相应参团人数的团，则该拼团失败。开团及参团的会员支付金额按原路返回至您的支付账户。
-					</li>
-					<li>
-						6、在拼团有效期24小时内，商品已提前售罄，若还未拼团成功的，则该拼团失败。
-					</li>
-				</ul>
+		<div>
+		    <img id="img" style="width:6.40rem;" src="#" alt="">
+		</div>
 	</div>
 </template>
 

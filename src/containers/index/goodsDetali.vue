@@ -403,6 +403,9 @@
 			</div>
 		</div>
 		<!--优惠券弹窗-->
+		<div class="stop" @touchmove.prevent>
+			<p>拼团功能已暂停服务</p>
+		</div>
 	</div>
 </template>
 
@@ -549,14 +552,14 @@
 				this.scroeEnt=false;
 			},
 			getScroe(){
-				this.$router.push({path:'/integral/uesget'+'?memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/integral/uesget'});
 			},
 			//点击客服
 			getkefu(){
 				window.location.href='https://kefu.easemob.com/webim/im.html?tenantId=40231&ticket=false';	
 			},
 			getshop(){
-				window.location.href=USE_URL+'weixin/sellerShop/sellerShop?sellerId='+this.curObj.sellerId+'&memberId='+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/sellerShop/sellerShop?sellerId='+this.curObj.sellerId;
 			},
 			
 //			getScroll(){
@@ -658,8 +661,8 @@
 						}
 					}
 					
-					this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/goodsDetali/id/'+this.curObj.togetherId+'?isLimit='+this.$route.query.isLimit);
-					//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/goodsDetali/id/'+this.curObj.togetherId+'?isLimit='+this.$route.query.isLimit);
+					this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/goodsDetali/id/'+this.curObj.togetherId+'?isLimit='+this.$route.query.isLimit);
+					//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/goodsDetali/id/'+this.curObj.togetherId+'?isLimit='+this.$route.query.isLimit);
 					this.shareData.title=this.curObj.productName;
 					this.shareData.description=this.curObj.summary;
 					this.shareData.picURL=this.curObj.image;
@@ -733,7 +736,7 @@
 			//点击去拼团
 			pinGoBuy(id){
 				//console.log(id)
-				this.$router.push({path:'/share/share?id='+id+'&memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/share/share?id='+id});
 			},
 			//点击更多拼团
 			getMorePin(){
@@ -767,7 +770,7 @@
 							this.$toast('请选择规格');
 						}else{
 							//console.log(data)
-							window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&type=1'+'&normalId='+this.normalId+'&'+'memberId='+this.$route.query.memberId+'&productId='+this.curObj.productId+'&urlMark=ljgm'
+							window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&type=1'+'&normalId='+this.normalId+'&productId='+this.curObj.productId+'&urlMark=ljgm'
 						}
 						
 					}
@@ -776,7 +779,7 @@
 							this.$toast('请选择规格');
 						}else{
 							//console.log(data)
-							window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&type='+this.isType+'&normalId='+this.normalId+'&'+'memberId='+this.$route.query.memberId+'&'+'togetherId='+this.curObj.togetherId
+							window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&type='+this.isType+'&normalId='+this.normalId+'&'+'togetherId='+this.curObj.togetherId
 						}
 						
 						//window.location.href=API_HOST+'ol/confirmOrder1.html?num='+this.num+'&type='+this.isType+'&normalId='+this.normalId+'&'+'memberId='+this.$route.query.memberId+'&'+'togetherId='+this.curObj.togetherId
@@ -2084,6 +2087,31 @@
 					}
 				
 				}
+			}
+		}
+		.stop{
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0,0,0,.5);
+			z-index: 999;
+			color: #fff;
+			text-align: center;
+			line-height:.72rem;
+			font-size: .36rem;
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: -moz-flex;
+		    -webkit-align-items: center;
+		    -moz-align-items: center;
+		    align-items: center;
+			p{
+				width: 100%;
 			}
 		}
 	}

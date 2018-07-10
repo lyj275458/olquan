@@ -175,10 +175,10 @@ export default {
   				console.log(type)
   				if(type==1){
   					//this.$router.push({path:'/index/moreindex/id/'+id+'?memberId='+this.getCookie("memberId")});
-  					window.location.href=CUR_URLBACK+'index/moreindex/id/'+id+'?memberId='+this.$route.query.memberId
+  					window.location.href=CUR_URLBACK+'index/moreindex/id/'+id;
   				}else if(type==2){
   					//this.$router.push({path:'/index/hotsale?memberId='+this.getCookie("memberId")});
-  					window.location.href=CUR_URLBACK+'index/hotsale?memberId='+this.$route.query.memberId
+  					window.location.href=CUR_URLBACK+'index/hotsale';
   				}
   				//
   			},
@@ -224,7 +224,7 @@ export default {
 			},
   			//点击购买商品
   			goBuy(id){
-  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
+  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?isLimit=0'});
   				//window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+id+'?memberId='+this.getCookie("memberId")+'&isLimit=0'
   			},
   			
@@ -301,8 +301,8 @@ export default {
 			getFirstBack(data){
 				//console.log(data)
 				this.listObj=data.result;
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/index');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/index');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/index');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/index');
 				this.shareData.description="拼优惠，拼乐趣";
 				
 				//this.shareData.picURL=this.pinpinImg;
@@ -324,14 +324,14 @@ export default {
 			for(let i=0;i<this.imgObj.banners.length;i++){
 					
 				if(this.imgObj.banners[i].url== "#" || this.imgObj.banners[i].url==""){
-					this.imgObj.banners[i].url=CUR_URLBACK+'index/index?memberId='+this.$route.query.memberId
+					this.imgObj.banners[i].url=CUR_URLBACK+'index/index'
 				}else{
 					if(this.imgObj.banners[i].url.indexOf("?")!=-1){
 						console.log("YES")
-						this.imgObj.banners[i].url=this.imgObj.banners[i].url+'&memberId='+this.$route.query.memberId
+						this.imgObj.banners[i].url=this.imgObj.banners[i].url;
 					}else{
 						console.log("no")
-						this.imgObj.banners[i].url=this.imgObj.banners[i].url+'?memberId='+this.$route.query.memberId;
+						this.imgObj.banners[i].url=this.imgObj.banners[i].url;
 					}
 				}
 			}
@@ -345,7 +345,7 @@ export default {
 		},
 		geDetail(id){
 			//console.log(id)
-			window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
+			window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id
 		},
 
 			//微信分享 

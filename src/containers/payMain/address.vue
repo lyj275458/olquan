@@ -109,13 +109,13 @@
 		    },
 		    upData(id){
 		    	if(this.$route.query.isBuyGoods){
-		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&isBuyGoods='+this.$route.query.isBuyGoods+'&addressId='+id});
+		    		this.$router.push({path:'/add/addAdress?isBuyGoods='+this.$route.query.isBuyGoods+'&addressId='+id});
 		    	}else if(this.$route.query.getSuper){
-		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&getSuper='+this.$route.query.getSuper+'&addressId='+id});
+		    		this.$router.push({path:'/add/addAdress?getSuper='+this.$route.query.getSuper+'&addressId='+id});
 		    	}else if(this.$route.query.getPink){
-		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&getPink='+this.$route.query.getPink+'&addressId='+id});
+		    		this.$router.push({path:'/add/addAdress?getPink='+this.$route.query.getPink+'&addressId='+id});
 		    	}else{
-		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&addressId='+id});
+		    		this.$router.push({path:'/add/addAdress?addressId='+id});
 		    	}
 		    	
 		    },
@@ -126,13 +126,13 @@
 		    },
 		    addNew(){
 		    	if(this.$route.query.isBuyGoods){
-		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&isBuyGoods='+this.$route.query.isBuyGoods});
+		    		this.$router.push({path:'/add/addAdress?isBuyGoods='+this.$route.query.isBuyGoods});
 		    	}else if(this.$route.query.getSuper){
-		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&getSuper='+this.$route.query.getSuper});
+		    		this.$router.push({path:'/add/addAdress?getSuper='+this.$route.query.getSuper});
 		    	}else if(this.$route.query.getPink){
-		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId+'&getPink='+this.$route.query.getPink});
+		    		this.$router.push({path:'/add/addAdress?getPink='+this.$route.query.getPink});
 		    	}else{
-		    		this.$router.push({path:'/add/addAdress?memberId='+this.$route.query.memberId});
+		    		this.$router.push({path:'/add/addAdress'});
 		    	}
 		    	
 		    },
@@ -168,11 +168,11 @@
 		    },
 		    chooseAddressId(id){
 		    	if(this.$route.query.isBuyGoods){
-		    		this.$router.push({path:'/fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId+'&addressId='+id});
+		    		this.$router.push({path:'/fightAlone/ordersure/payorder?addressId='+id});
 		    	}else if(this.$route.query.getSuper){
-		    		this.$router.push({path:'/fightAlone/ordersure/superorder?memberId='+this.$route.query.memberId+'&addressId='+id});
+		    		this.$router.push({path:'/fightAlone/ordersure/superorder?addressId='+id});
 		    	}else if(this.$route.query.getPink){
-		    		this.$router.push({path:'/fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId+'&addressId='+id});
+		    		this.$router.push({path:'/fightAlone/ordersure/pinkorder?addressId='+id});
 		    	}
 		    },
 		    //微信分享

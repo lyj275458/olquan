@@ -90,7 +90,7 @@
 						<span>购物送积分</span>
 						<span style="margin-top: .10rem;">双倍</span>
 					</li>
-					<li style="border-right: 0.01rem solid #ddd;border-bottom: 0.01rem solid #ddd;" @click="getDetailFour">
+					<li style="border-right: 0.01rem solid #ddd;border-bottom: 0.01rem solid #ddd;">
 						<img :src="tuifenImg"/>
 						<span>推荐有礼</span>
 						<span style="margin-top: .10rem;">￥100</span>
@@ -234,7 +234,7 @@
 					}	
 				}else{
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=USE_URL+'weixin/member/openStore?&memberId='+this.$route.query.memberId
+						window.location.href=USE_URL+'weixin/member/openStore';
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("1")
@@ -297,9 +297,9 @@
 			goIndex(){
 				if(tsApp.getClientBrowser()=='wx'){
 					if(this.showFen){
-						window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId;
+						window.location.href=CUR_URLBACK+'index/pinkIndex';
 					}else{
-						window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId;
+						window.location.href=CUR_URLBACK+'index/newIndex';
 					}
 					//window.location.href=USE_URL+'ol/weixin/index/modelVM?code=index&memberId='+this.$route.query.memberId
 				}else{
@@ -331,7 +331,7 @@
 			goBuy(id){
 				console.log(id);
 				if(tsApp.getClientBrowser()=='wx'){
-					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
+					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id
 				}else{
 					if(this.isAndroid){
 						OLquan.toModules(id)
@@ -368,7 +368,7 @@
 			
 			getInvite(){
 				if(tsApp.getClientBrowser()=='wx'){
-					window.location.href=CUR_URLBACK+'mobile/weixin/member/memberTwoCode2?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'mobile/weixin/member/memberTwoCode2';
 				}else{
 					if(this.isAndroid){
 						OLquan.toProduct("6")
@@ -383,7 +383,7 @@
 			getDetailOne(){
 				if(this.showFen){
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId+'&v='+new Date().getTime()
+						window.location.href=CUR_URLBACK+'try/newCenter';
 					}else{
 						if(this.isAndroid){
 							//OLquan.toProduct("9")
@@ -405,7 +405,7 @@
 				if(this.isOpen){
 					if(tsApp.getClientBrowser()=='wx'){
 						//window.location.href=USE_URL+'weixin/member/openStore?memberId='+this.$route.query.memberId
-						window.location.href=CUR_URLBACK+'supervisor/buyPink?memberId='+this.$route.query.memberId
+						window.location.href=CUR_URLBACK+'supervisor/buyPink';
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("1")
@@ -417,7 +417,7 @@
 					}
 				}else{
 					if(tsApp.getClientBrowser()=='wx'){
-						window.location.href=CUR_URLBACK+'supervisor/buyPink?memberId='+this.$route.query.memberId
+						window.location.href=CUR_URLBACK+'supervisor/buyPink';
 					}else{
 						if(this.isAndroid){
 							OLquan.toProduct("7")
@@ -430,7 +430,7 @@
 			},
 			gotoJifen(){
 				//console.log(CUR_URLBACK+'integral/uesget?memberId='+this.getCookie("memberId"))
-				window.location.href=CUR_URLBACK+'integral/uesget?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'integral/uesget';
 				//this.$router.push({path:'/integral/uesget?memberId='+this.getCookie("memberId")});
 			},
 			getDetail(){
@@ -444,8 +444,8 @@
 				this.listObj=data.result;
 				this.time=this.listObj.validTime.split("至")[1];
 				console.log(this.time)
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'mine/index?isCheck=1');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'mine/index');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'mine/index?isCheck=1');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'mine/index');
 				if(this.listObj.isGetStoreCommission){
 					this.showFen=true;
 				}else{

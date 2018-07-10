@@ -11,7 +11,7 @@
 				<p class="listItem" v-show="memberlevel" v-bind:class="{ 'specialList': addSelectOne}" @click="getFistOne">试用</p>
 				<p class="listItem" v-bind:class="{ 'specialList': addSelectTwo}" @click="getFistTwo">拼团</p>
 				<li class="listItem" v-bind:class="{ 'specialList': index==addIndex}" v-for="(itemSon,index) in cateObj" @click='getDetailNex(index,itemSon.catId)'>{{itemSon.name}}</li>
-				<!--<Seacrh></Seacrh>-->
+				
 			</div>
 			
 			
@@ -333,10 +333,10 @@ export default {
   				//console.log(type)
   				if(type==1){
   					//this.$router.push({path:'/index/moreindex/id/'+id+'?memberId='+this.$route.query.memberId});
-  					window.location.href=CUR_URLBACK+'index/moreindex/id/'+id+'?memberId='+this.$route.query.memberId
+  					window.location.href=CUR_URLBACK+'index/moreindex/id/'+id;
   				}else if(type==2){
   					//this.$router.push({path:'/index/hotsale?memberId='+this.$route.query.memberId});
-  					window.location.href=CUR_URLBACK+'index/hotsale?memberId='+this.$route.query.memberId
+  					window.location.href=CUR_URLBACK+'index/hotsale';
   				}
   				//
   			},
@@ -420,10 +420,10 @@ export default {
   					if(id!=""){
 						if(id.indexOf("?")!=-1){
 							//console.log("YES")
-							window.location.href=USE_URL+id+'&memberId='+this.$route.query.memberId;
+							window.location.href=USE_URL+id;
 						}else{
 							//console.log("no")
-							window.location.href=USE_URL+id+'?memberId='+this.$route.query.memberId;
+							window.location.href=USE_URL+id;
 						}
 					}
   				}else if(type==29){
@@ -432,10 +432,10 @@ export default {
   					if(id!=""){
 						if(id.indexOf("?")!=-1){
 							//console.log("YES")
-							window.location.href=id+'&memberId='+this.$route.query.memberId;
+							window.location.href=id;
 						}else{
 							//console.log("no")
-							window.location.href=id+'?memberId='+this.$route.query.memberId;
+							window.location.href=id;
 						}
 					}
   				}
@@ -448,10 +448,10 @@ export default {
 				if(id!="" && id!="#"){
 					if(id.indexOf("?")!=-1){
 						//console.log("YES")
-						window.location.href=id+'&memberId='+this.$route.query.memberId;
+						window.location.href=id;
 					}else{
 						//console.log("no")
-						window.location.href=id+'?memberId='+this.$route.query.memberId;
+						window.location.href=id;
 					}
 				}else{
 					console.log(1)
@@ -507,7 +507,7 @@ export default {
 				window.location.href='https://kefu.easemob.com/webim/im.html?tenantId=40231&ticket=false';	
 			},
 			getMindIndex(){
-				window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/member/membercore';
 			},
   			//加载更多
   			handleScroll () {
@@ -586,8 +586,8 @@ export default {
 			getFirstBack(data){
 				//console.log(data)
 				this.listObj=data.result;
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/newIndex');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/newIndex');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/newIndex');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/newIndex');
 				this.shareData.description="拼优惠，拼乐趣";
 				
 				//this.shareData.picURL=this.pinpinImg;
@@ -670,10 +670,10 @@ export default {
   			getActiveBack(data){
 				if(this.avtiveUrl.indexOf("?")!=-1){
 					//console.log("YES")
-					window.location.href=this.avtiveUrl+'&memberId='+this.$route.query.memberId;
+					window.location.href=this.avtiveUrl;
 				}else{
 					//console.log("no")
-					window.location.href=this.avtiveUrl+'?memberId='+this.$route.query.memberId;
+					window.location.href=this.avtiveUrl;
 				}
   			},
 		getImgtop(){
@@ -697,10 +697,10 @@ export default {
 				}else{
 					if(this.imgObj.banners[i].url.indexOf("?")!=-1){
 						//console.log("YES")
-						this.imgObj.banners[i].url=this.imgObj.banners[i].url+'&memberId='+this.$route.query.memberId;
+						this.imgObj.banners[i].url=this.imgObj.banners[i].url;
 					}else{
 						//console.log("no")
-						this.imgObj.banners[i].url=this.imgObj.banners[i].url+'?memberId='+this.$route.query.memberId;
+						this.imgObj.banners[i].url=this.imgObj.banners[i].url;
 					}
 				}
 			}
@@ -725,7 +725,7 @@ export default {
 		},
 		geDetail(id){
 			//console.log(id)
-			window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
+			window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id;
 		},
 
 			//微信分享 

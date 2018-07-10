@@ -609,30 +609,30 @@
 			},
 			//更多特卖
 			getPinkIndex(){
-				this.$router.push({path:'/index/pinkIndex'+'?memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/index/pinkIndex'});
 			},
 			//我的
 			getMineIndex(){
-				window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/member/membercore';
 			},
 			//开通粉领
 			getPink(){
 				if(this.showButton){
 					window.location.href=USE_URL+'weixin/member/renewConfirmOrder';
 				}else{
-					window.location.href=USE_URL+'weixin/member/openStore?&memberId='+this.$route.query.memberId;
+					window.location.href=USE_URL+'weixin/member/openStore';
 				}
 				
 			},
 			getScroe(){
-				this.$router.push({path:'/integral/uesget'+'?memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/integral/uesget'});
 			},
 			//点击客服
 			getkefu(){
 				window.location.href='https://kefu.easemob.com/webim/im.html?tenantId=40231&ticket=false';	
 			},
 			getshop(){
-				window.location.href=USE_URL+'weixin/sellerShop/sellerShop?sellerId='+this.curObj.sellerId+'&memberId='+this.curObj.memberId;
+				window.location.href=USE_URL+'weixin/sellerShop/sellerShop?sellerId='+this.curObj.sellerId;
 			},
 			shoucang(){
 				let data={
@@ -776,7 +776,7 @@
 					}
 				}
 				
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1');
 				//this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+"?isShare=1");
 				this.shareData.title=this.curObj.productName;
 				this.shareData.description=this.curObj.summary;
@@ -838,10 +838,10 @@
 		  				if(this.curObj.type==4){
 		  					//this.$router.push({path:'/fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId});
 		  					//this.$router.push({path:'/common/scroll?memberId='+this.$route.query.memberId});
-		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId
+		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder'
 		  					//window.location.href=API_HOST+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&'+'memberId='+this.getCookie("memberId")+'&type='+this.curObj.type+'&productId='+this.curObj.productId
 		  				}else{
-		  					window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&'+'memberId='+this.$route.query.memberId+'&type='+this.curObj.type+'&productId='+this.curObj.productId
+		  					window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&type='+this.curObj.type+'&productId='+this.curObj.productId
 		  				}
 						//console.log(data)
 						

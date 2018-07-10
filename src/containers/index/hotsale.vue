@@ -155,7 +155,7 @@
 			//点击马上抢
 			getBuyGood(id){
 				//window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=1'
-				this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=1'});
+				this.$router.push({path:'/index/goodsDetali/id/'+id+'?isLimit=1'});
 			},
 			getToday(){
 				this.type=1;
@@ -250,8 +250,8 @@
 				console.log(123)
 				this.curObj=data.result;
 				console.log(data.result)
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/hotsale');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/hotsale');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/hotsale');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/hotsale');
 				this.tryWeixinShare();//微信分享 	
 			},
 			//加载更多

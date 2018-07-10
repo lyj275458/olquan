@@ -176,7 +176,7 @@ export default {
 		goBuy(id){
 			console.log(id)
 				//window.location.href='http://ol-site.olquan.com/weixin/product/newProductDetail?productId=7755&memberId=949574'
-			window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
+			window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id
 		},
 		goUrl(){
 			this.$nextTick(() => {

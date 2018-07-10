@@ -143,7 +143,7 @@
 			//点击产品
 			gototry(id){
 				console.log(id)
-				this.$router.push({path:'/try/trygoods/id/'+id+'?memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/try/trygoods/id/'+id});
 				//window.location.href=CUR_URLBACK+'try/trygoods/id/'+id+'?memberId='+this.getCookie("memberId");
 			},
 			moreTrygoods(){

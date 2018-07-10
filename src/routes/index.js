@@ -98,6 +98,18 @@ export default [
 		  keepAlive: false // 不需要缓存
 		}
         
+    },{//我的拼团--
+        path: '/common/ticket',
+       
+        component: resolve => {
+            require.ensure(['../containers/common/ticket.vue'], () => {
+                resolve(require('../containers/common/ticket.vue'));
+            }, 'commonTicket');
+        },
+        meta: {
+		  keepAlive: true // 不需要缓存
+		}
+        
     },{//试用特卖商品详情--
         path: '/demo/iscroll/id/:id',
        
@@ -627,6 +639,45 @@ export default [
             require.ensure(['../containers/mine/setTel.vue'], () => {
                 resolve(require('../containers/mine/setTel.vue'));
             }, 'setTel');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//发现
+        path: '/index/findIndex',
+        
+        component: resolve => {
+            require.ensure(['../containers/index/findIndex.vue'], () => {
+                resolve(require('../containers/index/findIndex.vue'));
+            }, 'findIndex');
+        },
+        meta: {
+		  keepAlive: true // 不需要缓存
+		}
+        
+        
+    },{//申请经理
+        path: '/manager/invite',
+        
+        component: resolve => {
+            require.ensure(['../containers/manager/invite.vue'], () => {
+                resolve(require('../containers/manager/invite.vue'));
+            }, 'managerInvite');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//经理管理
+        path: '/manager/agreement',
+        
+        component: resolve => {
+            require.ensure(['../containers/manager/agreement.vue'], () => {
+                resolve(require('../containers/manager/agreement.vue'));
+            }, 'managerAgreement');
         },
         meta: {
 		  keepAlive: false // 不需要缓存

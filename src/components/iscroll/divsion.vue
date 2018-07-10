@@ -46,7 +46,7 @@
 			//获取会员信息
 			getMember(){
 				let data={
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
@@ -62,17 +62,17 @@
 				this.showGo=!this.showGo
 			},
 			getIndex(){
-				window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId;
+				window.location.href=CUR_URLBACK+'index/pinkIndex';
 			},
 			getUseMore(){
 //				this.$router.push({path:'/try/center?memberId='+this.getCookie("memberId")});
-				window.location.href=CUR_URLBACK+'try/center?memberId='+this.$route.query.memberId;
+				window.location.href=CUR_URLBACK+'try/newCenter';
 			},
 			getMindIndex(){
-				window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/member/membercore';
 			},
 			getCar(){
-				window.location.href=CUR_URLBACK+'shopcar/ordercar?memberId='+this.$route.query.memberId;
+				window.location.href=CUR_URLBACK+'shopcar/ordercar';
 			},
 			//点击回到顶部
 			gotoTop(){

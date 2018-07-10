@@ -191,6 +191,9 @@
 				<li v-show="showTrue" class="special">没有更多了</li>
 			</ul>
 		</div>
+		<div class="stop" @touchmove.prevent>
+			<p>拼团功能已暂停服务</p>
+		</div>
 	</div>
 </template>
 
@@ -298,31 +301,31 @@
 			//点击首页
 			goOne(){
 				if(this.showMember){
-					window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'index/pinkIndex';
 				}else{
-					window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'index/newIndex';
 				}
 				//window.location.href=USE_URL+'ol/weixin/index/modelVM?code=index&memberId='+this.getCookie("memberId");
 			},
 			//点击拼团
 			goTwo(){
-				window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId;
+				window.location.href=CUR_URLBACK+'index/newIndex';
 			},
 			//点击粉领专享
 			goThree(){
-				window.location.href=CUR_URLBACK+'mine/index?memberId='+this.$route.query.memberId;
+				window.location.href=CUR_URLBACK+'mine/index';
 			},
 			//点击试用中心
 			goFour(){
 				if(this.showMember){
-					window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'try/newCenter';
 				}else{
 					this.$toast('试用中心仅粉领可用');
 				}
 			},
 			//点击品牌特卖
 			goFive(){
-				window.location.href=USE_URL+'ol/weixin/index/indexRecommendBrand?memberId='+this.$route.query.memberId
+				window.location.href=USE_URL+'ol/weixin/index/indexRecommendBrand';
 			},
 			//获取会员信息
 			getMember(){
@@ -378,15 +381,15 @@
 				this.shareData.picURL=this.curObj.productImage;
 				this.showMoney=this.curObj.normals.length;
 				console.log(this.showMoney)
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.query.id);
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.query.id);
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.query.id);
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.query.id);
 				this.shareData.title='【OL圈拼团】我花了'+this.curObj.togetherPrice+'元买了'+this.curObj.productName;
 				this.shareData.description=this.curObj.productDesc;
 				this.addWeixinShare();//微信分享
 			},
 			//点击购买商品
   			goBuy(id){
-  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
+  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?isLimit=0'});
   				//window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'
   			},
 			//获取产品相关推荐
@@ -441,7 +444,7 @@
 			//点击相关产品
 			getPordcut(id){
 				console.log(id)
-				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
+				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id;
 			},
 			getRtime(){
 				
@@ -484,9 +487,10 @@
 				this.shareSure=false;
 			},
 			buyGoods(){
+				this.$toast('拼团功能已经暂停服务');
 				//console.log(id);
-				this.chooseNor=true;
-				this.showHeigth=true;
+//				this.chooseNor=true;
+//				this.showHeigth=true;
 				//window.location.href='http://test-mobile.olquan.cn/ol/confirmOrder1.html?num='+this.$route.query.num+'&'+'normalId='+'&'+'memberId='+this.getCookie("memberId")+'&'+'togetherId='+this.$route.query.togetherId +'&'+'togetherRecordId='+this.$route.query.id
 			},
 			closeShow(){
@@ -569,14 +573,14 @@
 					this.$toast('请选择规格');
 				}else{
 					//console.log(data)
-					window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&type='+this.curObj.type+'&normalId='+this.normalId+'&'+'memberId='+this.$route.query.memberId+'&'+'togetherId='+this.curObj.togetherId +'&'+'togetherRecordId='+this.$route.query.id
+					window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&type='+this.curObj.type+'&normalId='+this.normalId+'&'+'togetherId='+this.curObj.togetherId +'&'+'togetherRecordId='+this.$route.query.id
 				}
 				
 
 			},
 			goGood(id){
 				console.log(id)
-				this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
+				this.$router.push({path:'/index/goodsDetali/id/'+id+'?isLimit=0'});
 				//window.location.href=API_HOST+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.getCookie("memberId")
 			},
 				//微信分享 
@@ -1195,6 +1199,31 @@
 					}
 				}
 			}
+		}
+	}
+	.stop{
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0,0,0,.5);
+		z-index: 999;
+		color: #fff;
+		text-align: center;
+		line-height:.72rem;
+		font-size: .36rem;
+		display: flex;
+		display:-webkit-box;
+	    display: -moz-box;
+	    display: -ms-flexbox;
+	    display: -webkit-flex;
+	    display: -moz-flex;
+	    -webkit-align-items: center;
+	    -moz-align-items: center;
+	    align-items: center;
+		p{
+			width: 100%;
 		}
 	}
 }

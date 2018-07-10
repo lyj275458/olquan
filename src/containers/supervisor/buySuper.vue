@@ -166,14 +166,14 @@
 			},
 			//点击开通粉领
 			getPink(){
-				this.$router.push({path:'/supervisor/buyPink?memberId='+this.$route.query.memberId+'&inviteId='+this.$route.query.inviteId});
+				this.$router.push({path:'/supervisor/buyPink?inviteId='+this.$route.query.inviteId});
 			},
 			getGiftBagBack(data){
 				this.curObj=data.result;
 				this.moreSaleImg=data.result.gifts[0].bagImage;
 				this.isCanBuy=data.result.gifts[0].bagCanBuy;
 				this.bagId=data.result.gifts[0].bagId;
-				//this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
+				//this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
 				this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper?inviteId='+this.memList.accountNo);
 				this.shareData.title=this.curObj.shareTitle;
 				this.shareData.description=this.curObj.shareDesc;
@@ -205,7 +205,7 @@
 	  				let ObjObj=JSON.parse(localStorage.getItem("bagIdObj"))
 	  				console.log(this.bagId);
 	  				//this.$router.push({path:'/fightAlone/ordersure/superorder?memberId='+this.$route.query.memberId});
-	  				window.location.href=CUR_URLBACK+'fightAlone/ordersure/superorder?memberId='+this.$route.query.memberId;
+	  				window.location.href=CUR_URLBACK+'fightAlone/ordersure/superorder';
 				}
 			},
 			//微信分享 
@@ -245,15 +245,13 @@
 		}
 		.sureBut{
 			position: fixed;
-			left:50%;
-			margin-left: -3.51rem;
-			width: 7.02rem;
+			width: 100%;
 			border-radius: 0.08rem;
-			bottom: .38rem;
+			bottom: 0;
 			background: #fff;
 			
 			.outDiv{
-				
+				padding:0 .30rem .50rem;
 				p{
 					width: 100%;
 					background: #E50F72;

@@ -91,6 +91,12 @@ const API = {
       openPayPassword:'mobile/member/openPayPassword',//开启/关闭支付保护
       update:'mobile/member/update',//修改基础会员信息
       updatePayPassword:'mobile/member/updatePayPassword',//修改支付密码
+      newFinds:'mobile/find/finds',//发现
+      boundMobile:'mobile/member/boundMobile',//绑定手机号
+      canSubmitApply:'mobile/memberInvite/canSubmitApply',//判断是否可以提交申请督导
+      submitApply:'mobile/memberInvite/submitApply',//提交申请总监邀请经理
+      inviteRecords:'mobile/memberInvite/inviteRecords',//会员申请列表
+      doAudit:'mobile/memberInvite/doAudit',//是否拒绝督导申请
 };
 function getCookie(argument) {
     var arrCookie = document.cookie.split(";");

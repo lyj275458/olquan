@@ -130,25 +130,25 @@
 				console.log(type)
 				if(type==2){
 					//this.$router.push({path:'/try/moretry'+'?memberId='+this.getCookie("memberId")});
-					window.location.href=CUR_URLBACK+'try/moretry?memberId='+this.$route.query.memberId
+					window.location.href=CUR_URLBACK+'try/moretry';
 				}else if(type==3){
 					window.location.href=USE_URL+'weixin/protocol/protocol?code=freeUseDesc';
 				}else if(type==4){
-					window.location.href=USE_URL+'ol/buy-zd.html?memberId'+this.$route.query.memberId;
+					window.location.href=USE_URL+'ol/buy-zd.html';
 				}else if(type==1){
 					//this.$router.push({path:'/try/detailtry/id/'+id+'?memberId='+this.$route.query.memberId});
-					window.location.href=CUR_URLBACK+'try/detailtry/id/'+id+'?memberId='+this.$route.query.memberId
+					window.location.href=CUR_URLBACK+'try/detailtry/id/'+id;
 				}
 			},
 			//点击我的试用
 			getTry(){
-				window.location.href=USE_URL+'weixin/member/freeUseCore?mmm='+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/member/freeUseCore';
 			},
 			//点击列表商品
 			gototry(id){
 				console.log(id)
 				//window.location.href=CUR_URLBACK+'try/trygoods/id/'+id+'?memberId='+this.$route.query.memberId;
-				this.$router.push({path:'/try/trygoods/id/'+id+'?memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/try/trygoods/id/'+id});
 				//this.$router.push({path:'/demo/iscroll/id/'+id+'?memberId='+this.$route.query.memberId});
 			},
 			
@@ -189,8 +189,8 @@
 				//console.log(data)
 				this.curObj=data.result;
 				
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/center');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/center');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/center');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/center');
 				this.addWeixinShare();//微信分享 	
 			},
 			handleScroll () {

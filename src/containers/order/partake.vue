@@ -103,6 +103,9 @@
 				<li v-show="showTrue" class="special">没有更多了</li>
 			</ul>
 		</div>
+		<div class="stop" @touchmove.prevent>
+			<p>拼团功能已暂停服务</p>
+		</div>
 	</div>
 </template>
 
@@ -190,29 +193,29 @@
 			//点击产品详情
 			getGoods(id){
 				console.log(id)
-				this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
+				this.$router.push({path:'/index/goodsDetali/id/'+id+'?isLimit=0'});
 				//window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
 			},
 			//点击首页
 			goOne(){
 				if(this.getCookie("iShowCenter")==1){
-					window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'index/pinkIndex';
 				}else{
-					window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'index/newIndex';
 				}
 			},
 			//点击拼团
 			goTwo(){
-				window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId;
+				window.location.href=CUR_URLBACK+'index/newIndex';
 			},
 			//点击粉领专享
 			goThree(){
-				window.location.href=CUR_URLBACK+'mine/index?memberId='+this.$route.query.memberId;
+				window.location.href=CUR_URLBACK+'mine/index';
 			},
 			//点击试用中心
 			goFour(){
 				if(this.getCookie("iShowCenter")==1){
-					window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId;
+					window.location.href=CUR_URLBACK+'try/newCenter';
 				}else{
 					this.$toast('试用中心仅粉领可用');
 				}
@@ -220,7 +223,7 @@
 			},
 			//点击品牌特卖
 			goFive(){
-				window.location.href=USE_URL+'ol/weixin/index/indexRecommendBrand?memberId='+this.$route.query.memberId
+				window.location.href=USE_URL+'ol/weixin/index/indexRecommendBrand';
 			},
 			getList(){
 				//this.setCookie('togetherRecordId',this.$route.params.id);
@@ -242,7 +245,7 @@
 				//console.log(this.curObj.productId);
 				this.shareData.picURL=this.curObj.productImage;
 				
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.params.id);
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'share/share?id='+this.$route.params.id);
 				//this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+"share/share?id="+this.$route.params.id);
 				this.shareData.title='【OL圈拼团】我花了'+this.curObj.togetherPrice+'元买了'+this.curObj.productName;
 				this.shareData.description=this.curObj.productDesc;
@@ -254,7 +257,7 @@
 			},
 			//点击购买商品
   			goBuy(id){
-  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
+  				this.$router.push({path:'/index/goodsDetali/id/'+id+'?isLimit=0'});
   				//window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'
   			},
 			//获取产品相关推荐
@@ -274,7 +277,7 @@
 			//点击相关产品
 			getPordcut(id){
 				//console.log(id)
-				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
+				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id;
 			},
 			locationHref(){
 				//
@@ -291,7 +294,7 @@
 				
 			},
 			detailOrder(){
-				window.location.href=CUR_URLBACK+'/weixin/product/newProductDetail?productId='+this.curObj.productId+'&memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'/weixin/product/newProductDetail?productId='+this.curObj.productId;
 			},
 			getRtime(){
 				//console.log(this.time)
@@ -691,6 +694,31 @@
 						
 					}
 				}
+			}
+		}
+		.stop{
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0,0,0,.5);
+			z-index: 999;
+			color: #fff;
+			text-align: center;
+			line-height:.72rem;
+			font-size: .36rem;
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: -moz-flex;
+		    -webkit-align-items: center;
+		    -moz-align-items: center;
+		    align-items: center;
+			p{
+				width: 100%;
 			}
 		}
 		.content{

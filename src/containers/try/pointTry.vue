@@ -223,9 +223,9 @@
 			//查看商品详情
 			getGoods(id){
 				if(this.addSelect==1){
-					this.$router.push({path:'/demo/iscroll/id/'+id+'?memberId='+this.$route.query.memberId+'&isShare=0&viewType=1'});
+					this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0&viewType=1'});
 				}else{
-					this.$router.push({path:'/demo/iscroll/id/'+id+'?memberId='+this.$route.query.memberId+'&isShare=0'});
+					this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0'});
 				}
 				
 			},

@@ -5,7 +5,7 @@
 				<!--轮播图-->
 				<div v-if="item.modelSampleCode==='advertisingFigure'" v-show="item.contents.length>0">
 					<Swiper :aspect-ratio="9/16" loop auto  dots-position='center' ref="swiper" >
-				      <swiper-item style="overflow: hidden; height: 100%;" class="swiper-demo-img" v-for="(itemsSon, index) in item.contents" :key="index"><img style="width: 100%;" :src="itemsSon.image" @click="goMore(itemsSon.url,itemsSon.type,itemsSon.typeId,itemsSon.productId,itemsSon.image)">
+				      <swiper-item style="overflow: hidden; height: 100%;" class="swiper-demo-img" v-for="(itemsSon, index) in item.contents" :key="index"><img style="width: 100%;" :src="itemsSon.image" @click="goMore(itemsSon.url,itemsSon.type,itemsSon.typeId,itemsSon.productId,itemsSon.image,itemSon.productType)">
 				      </swiper-item>
 				    </Swiper>
         		</div>
@@ -23,19 +23,19 @@
 				</swiper>
 				<!--等分图片-->
 				<div class="img" v-else-if="item.modelSampleCode==='f5'">
-		            <div  v-if="item.contents.length==2"  v-for="itemSon in item.contents" style="width:50%" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image)">
+		            <div  v-if="item.contents.length==2"  v-for="itemSon in item.contents" style="width:50%" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image,itemSon.productType)">
 		              <img  :src='itemSon.image' />
 		            </div>
-		            <div  v-if="item.contents.length==3" v-for="itemSon in item.contents" style="width: 33.3%;" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image)" >
+		            <div  v-if="item.contents.length==3" v-for="itemSon in item.contents" style="width: 33.3%;" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image,itemSon.productType)" >
 		              <img  :src='itemSon.image'/>
 		            </div>
-		            <div v-if="item.contents.length==1"  v-for="itemSon in item.contents" style="width: 100%;" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image)">
+		            <div v-if="item.contents.length==1"  v-for="itemSon in item.contents" style="width: 100%;" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image,itemSon.productType)">
 		              <img  :src='itemSon.image'/>
 		            </div>
-		            <div v-if="item.contents.length==4" v-for="itemSon in item.contents"  style="width:25%;" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image)">
+		            <div v-if="item.contents.length==4" v-for="itemSon in item.contents"  style="width:25%;" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image,itemSon.productType)">
 		              <img  :src='itemSon.image'/>
 		            </div>
-		            <div v-if="item.contents.length==5" v-for="itemSon in item.contents"  style="width: 20%;" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image)">
+		            <div v-if="item.contents.length==5" v-for="itemSon in item.contents"  style="width: 20%;" @click="goMore(itemSon.url,itemSon.type,itemSon.typeId,itemSon.productId,itemSon.image,itemSon.productType)">
 		              <img  :src='itemSon.image'/>
 		            </div>
 		        </div>
@@ -232,14 +232,14 @@
       getActiveDetail(id){
       	this.LoadTrue=false
 //    	console.log(id)
-       axios.get('http://ol-h5-preview.olquan.cn/mobile/buildblocks/getById',{
+       axios.get(API_HOST+"mobile/buildblocks/getById",{
          params:{id:id}
        }).then(res => {
          this.activeDetail=res.data.result
          this.title=res.data.result.name;
          this.titleTwo=res.data.result.shareTitle;
          this.description=res.data.result.memo;
-         this.picURL="http://ol-quan2017.oss-cn-shanghai.aliyuncs.com/"+this.activeDetail.shareImg;
+         this.picURL="https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/"+this.activeDetail.shareImg;
 //       console.log(this.picURL)
          this.status=this.activeDetail.status;
          this.getFirst(res.data.result.ossDataId)
@@ -251,7 +251,7 @@
     )
       },
       getFirst(id) {
-        axios.get('http://ol-quan2017.oss-cn-shanghai.aliyuncs.com/buildblocks_data/'+id,{
+        axios.get('https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/buildblocks_data/'+id,{
           params:{}
         }).then(res =>{
         this.listObj = res.data
@@ -326,8 +326,8 @@
         this.shareData.description=this.description;
 //      console.log(this.shareData.description)
         this.shareData.picURL=this.picURL;
-        this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/newact?id='+this.$route.query.id);
-        //this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/newact?id='+this.$route.query.id);
+        this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/newact?id='+this.$route.query.id);
+        //this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/newact?id='+this.$route.query.id);
         this.addWeixinShare();//微信分享
 //		 let myscroll=new IScroll("#issc",{
 //				mouseWheel:true,
@@ -367,7 +367,7 @@
 	        //console.log(this.Pc);
 	      }
 	    },
-      goMore(url,type,typeId,productId,image) {
+      goMore(url,type,typeId,productId,image,productType) {
 		console.log(type)
 		if(type=="" || type==undefined){
             return;
@@ -433,25 +433,30 @@
 				}else if(type=="" || type==0 || type==undefined || type=='undefined'){
 					console.log(1)
 				}else{
-					window.location.href = url
+					if(type==2 || type==21){
+						window.location.href = url + "?type=" + productType;
+					}else{
+						window.location.href = url
+					}
+					
 				}
 				
 			}else{
 				if(this.isAndroid){
 					if(type!="" && type!=0){
 						if(type==18 || type==22){
-							OLquan.activeJump(18,typeId,productId,image,url.substr(url.indexOf("=")+1))
+							OLquan.activeJump(18,typeId,productId,image,url.substr(url.indexOf("=")+1),productType)
 						}else if(type==2){
-							OLquan.activeJump(2,typeId,productId,image,url)
+							OLquan.activeJump(2,typeId,productId,image,url,productType)
 						}else if(type==11) {
 							if(this.isPinkSureGet){
-								OLquan.activeJump(19,typeId,productId,image,url)
+								OLquan.activeJump(19,typeId,productId,image,url,productType)
 							}else{
-								OLquan.activeJump(11,typeId,productId,image,url)
+								OLquan.activeJump(11,typeId,productId,image,url,productType)
 							}
 							
 						}else{
-							OLquan.activeJump(type,typeId,productId,image,url)
+							OLquan.activeJump(type,typeId,productId,image,url,productType)
 						}
 					}
 				}
@@ -462,7 +467,7 @@
 							window.location.href="https://www.baidu.com/"+this.iosType+typeId+'&'+image
 	
 						}else if(type==2 || type==21){
-							window.location.href="https://www.baidu.com/"+this.iosType+productId
+							window.location.href="https://www.baidu.com/"+this.iosType+productId+"&"+productType
 						}else if(type==16){
 							window.location.href="https://www.baidu.com/"+this.iosType+url
 	
@@ -524,14 +529,14 @@
 //      	console.log(1)
 			if(tsApp.getClientBrowser()=='wx'){
 				if(type==11){
-					this.$router.push({path:'/index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId+'&isLimit=0'});
+					this.$router.push({path:'/index/goodsDetali/id/'+id+'&isLimit=0'});
 				}else if(type==4 || type==8){
-					this.$router.push({path:'/demo/demo/id/'+productId+'?memberId='+this.$route.query.memberId});
+					this.$router.push({path:'/demo/demo/id/'+productId});
 				}else if(type==9){
-					this.$router.push({path:'/demo/iscroll/id/'+productId+'?memberId='+this.$route.query.memberId});
+					this.$router.push({path:'/demo/iscroll/id/'+productId});
 				}else{
 
-					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId+'&memberId='+this.$route.query.memberId
+					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId
 				}
 			}else{
 				if(this.isAndroid){
@@ -544,7 +549,7 @@
 				}
 			}
 		}else{
-			window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId
+			window.location.href=CUR_URLBACK+'index/newIndex'
 		}
         //window.location.href = API_HOST + 'weixin/product/newProductDetail?productId=' + id + '&memberId=' + this.getCookie("memberId")
       },

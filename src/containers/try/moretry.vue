@@ -100,7 +100,7 @@
 		methods:{
 			gototry(id){
 				console.log(id)
-				this.$router.push({path:'/try/trygoods/id/'+id+'?memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/try/trygoods/id/'+id});
 				//this.$router.push({path:'/demo/iscroll/id/'+id+'?memberId='+this.getCookie("memberId")});
 				//window.location.href=CUR_URLBACK+'try/trygoods/id/'+id+'?memberId='+this.getCookie("memberId");
 			},
@@ -110,26 +110,26 @@
 			//点击特卖
   			getFist(){
   				//this.$router.push({path:'/index/pinkIndex?memberId='+this.getCookie("memberId")});
-  				window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/pinkIndex';
   				
   			},
   			//点击试用
   			getFistOne(){
   				//this.$router.push({path:'/try/moretry?memberId='+this.getCookie("memberId")});
-  				window.location.href=CUR_URLBACK+'try/moretry?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'try/moretry';
   			},
   			//点击拼团
   			getFistTwo(){
   				//this.$router.push({path:'/index/newIndex?memberId='+this.getCookie("memberId")});
-  				window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/newIndex';
   			},
   			//点击分类
   			getDetailNex(index,id){
-  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id+'&memberId='+this.$route.query.memberId;
+  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id;
   				
   			},
   			getSearch(){
-  				window.location.href=USE_URL+'ol/weixin/index/search?memberId='+this.$route.query.memberId;
+  				window.location.href=USE_URL+'ol/weixin/index/search';
   			},
   			//获取首页顶部分类
   			getCategory(){
@@ -174,8 +174,8 @@
 				this.curObj=data.result.productDtos;
 				
 //				console.log(this.nowTime)
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/moretry');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/moretry');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/moretry');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/moretry');
 				this.tryWeixinShare();//微信分享
 			},
 			getAct(index,type,id){

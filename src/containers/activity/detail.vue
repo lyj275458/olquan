@@ -225,8 +225,8 @@
 				this.shareData.title=this.title;
 				this.shareData.description=this.description;
 				this.shareData.picURL=this.picURL;
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/detail?code='+this.$route.query.code);
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/detail?code='+this.$route.query.code);
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/detail?code='+this.$route.query.code);
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'activity/detail?code='+this.$route.query.code);
 				//console.log(this.urlList)
 				this.addWeixinShare();//微信分享 	
 				
@@ -240,10 +240,10 @@
 				if(id!=""){
 					if(id.indexOf("?")!=-1){
 						console.log("YES")
-						window.location.href=id+'&memberId='+this.$route.query.memberId;
+						window.location.href=id;
 					}else{
 						console.log("no")
-						window.location.href=id+'?memberId='+this.$route.query.memberId;
+						window.location.href=id;
 					}
 				}
 				
@@ -348,7 +348,7 @@
 			},
 			goBuy(id){
 				//console.log(id)
-				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.getCookie("memberId")
+				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id
 			},
 
 			//微信分享 

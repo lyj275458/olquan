@@ -141,7 +141,7 @@
 				if(data.result.levelCode=='white' || data.result.levelCode=='golden'){
 					this.shareData.share=true;
 				}
-				//this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
+				//this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
 				this.shareData.url=USE_URL+"weixin/auth?recId="+this.memList.id+"&view="+encodeURIComponent(CUR_URLBACK+'share/pinkShare?inviteId='+this.memList.accountNo);
 				this.shareData.title="您的好友"+this.memList.nickName+"邀请您开通OL圈粉领会员"
 				this.setCookie('memberId',data.result.id)
@@ -214,7 +214,7 @@
 	  				let ObjObj=JSON.parse(localStorage.getItem("pinkIdObj"))
 	  				console.log(this.bagId);
 	  				//this.$router.push({path:'/fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId});
-	  				window.location.href=CUR_URLBACK+'fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId;
+	  				window.location.href=CUR_URLBACK+'fightAlone/ordersure/pinkorder';
 				}
 			},
 			//微信分享 

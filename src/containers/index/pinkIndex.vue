@@ -1,7 +1,7 @@
 <template>
 	<div class="index">
 		<!--<Linking></Linking>-->
-		<div class="search" @click="getSearch">
+		<!--<div class="search" @click="getSearch">
 			<div class="searchIcon"></div>
 		</div>
 		<div class="topmodel">
@@ -10,7 +10,20 @@
 				<p class="listItem" v-show="memberlevel" v-bind:class="{ 'specialList': addSelectOne}" @click="getFistOne">试用</p>
 				<p class="listItem" v-bind:class="{ 'specialList': addSelectTwo}"  @click="getFistTwo">拼团</p>
 				<p class="listItem" v-bind:class="{ 'specialList': index==addIndex}" v-for="(itemSon,index) in cateObj" @click='getDetailNex(index,itemSon.catId)'>{{itemSon.name}}</p>
-				<!--<Seacrh></Seacrh>-->
+				
+			</div>
+		</div>-->
+		<div class="indexTop">
+			<ul>
+				<li class="speLiFind">特卖</li>
+				<li @click="getTryIndex">试用</li>
+				<li @click="getFindeIndex">发现</li>
+			</ul>
+		</div>
+		<div class="searchIndex" @click="getSearch">
+			<div class="searchBox">
+				<img :src="seachFindShare" />
+				<input placeholder="搜索" disabled />
 			</div>
 		</div>
 		<div v-show="detailShow">
@@ -21,7 +34,7 @@
 		      </swiper-item>
 		      
 		    </Swiper>-->
-			<div class="benefit" v-show="iconObj.length>0">
+			<!--<div class="benefit" v-show="iconObj.length>0">
 				<ul>
 					<li v-for="items in iconObj" @click='goMoreIndex(items.link,items.type)'>
 						<p><img :src="items.iconImage"/></p>
@@ -29,7 +42,7 @@
 					</li>
 					
 				</ul>
-			</div>
+			</div>-->
 			<div style="width: 100%;height: .10rem;background: #f7f7f7;" v-show="headlinesLength>0 || showBottom"></div>
 			<div class="topNew" v-show="headlinesLength>0" @click="getTopNew">
 				<swiper loop auto height="30px" direction="vertical" :interval=2000 class="text-scroll" :show-dots="false">
@@ -45,12 +58,15 @@
 				<img v-lazy="item.image"/>
 				<p class="specialZhe"></p>
 			</div>
-			<div class="dayTomorrow" v-show="tomorrowLength>0 || todayLength>0">
+			<div class="dayTomorrow"  :class="searchBarFixed == true ? 'speDayTomorrow' :''">
 				<span @click="chooseDay" v-bind:class="{ 'chooseDay': dayTrue==true}">今日特卖</span>
 				<span style="color: #333; text-align: center;margin: 0 .15rem;"> | </span>
+				<span @click="chooseHotSale" v-bind:class="{ 'chooseDay': hotSaleTrue==true}">热门特卖</span>
+				<span style="color: #333; text-align: center;margin: 0 .15rem;"> | </span>
 				<span @click="chooseTomorrow" v-bind:class="{ 'chooseDay': tomorrowTrue==true}">明日预告</span>
+				
 			</div>
-			<div class="cent" v-show="dayTrue">
+			<div class="cent">
 				<div class="hotSale" v-for='item in todayObj'>
 					<div class="hotProduct">
 						<div @click="goBuy(item.productId)">
@@ -81,73 +97,13 @@
 					</div>
 				</div>
 			</div>
-			<div class="cent" v-show="tomorrowTrue">
-				<div class="hotSale" v-for='item in tomorrowObj' style="margin-bottom: 0;">
-					<div class="hotProduct">
-						<div @click="goBuy(item.productId)">
-							
-							<div style="position: relative;">
-								<img v-lazy="item.productImage"/>
-								<p class="specialZhe"></p>
-							</div>
-							
-							<p class="top">{{item.productName}}</p>
-							<p class="describe">{{item.summary}}</p>
-							<p class="productMoney">￥{{item.price}}
-								<i v-show="memberlevel" style="font-style: normal; color: #AAAAAA;font-size:.24rem;text-decoration:line-through">{{item.marketPrice}}</i> <span v-show="memberlevel" style="color: #e5006e;font-size: .26rem;">{{item.score}}</span>
-							</p>
-							<!--<p class="botMoney">
-								<span class="left">OL圈价：￥{{item.marketPrice}}</span>
-								<span class="right" >{{item.score}}</span>
-							</p>-->
-							<div class="buyGoods" v-show="!memberlevel">立即购买</div>
-						</div>
-						
-						<div class="getassess" v-show="memberlevel" @click="getassess(item.productId)" style="right: .98rem;" >
-							<img :src="productComment02"/>
-						</div>
-						<div class="getassess" v-show="memberlevel" @click="goBuy(item.productId)" style="right: .30rem;">
-							<img :src="productShare01"/>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="tuijian" v-show="hotObj.length>0 && getSale" style="margin-top: -.20rem;">
+			
+			<!--<div class="tuijian" v-show="hotObj.length>0 && getSale" style="margin-top: -.20rem;">
 				<img :src="xianImgone"/>
 					热门特卖
 				<img :src="xianImgone"/>
-			</div>
-			<div class="cent">
-				<div class="hotSale" v-for='item in hotObj'>
-					<div class="hotProduct">
-						<div @click="goBuy(item.productId)">
-							<div style="position: relative;">
-								<img v-lazy="item.productImage"/>
-								<p class="specialZhe"></p>
-							</div>
-							
-							
-							<p class="top">{{item.productName}}</p>
-							<p class="describe">{{item.summary}}</p>
-							<p class="productMoney">￥{{item.price}}
-								<i v-show="memberlevel" style="font-style: normal; color: #AAAAAA;font-size:.24rem;text-decoration:line-through">{{item.marketPrice}}</i> <span v-show="memberlevel" style="color: #e5006e;font-size: .26rem;">{{item.score}}</span>
-							</p>
-							<!--<p class="botMoney">
-								<span class="left">OL圈价：￥{{item.marketPrice}}</span>
-								<span class="right" >{{item.score}}</span>
-							</p>-->
-							<div class="buyGoods" v-show="!memberlevel">立即购买</div>
-						</div>
-						
-						<div class="getassess" v-show="memberlevel" @click="getassess(item.productId)" style="right: .98rem;" >
-							<img :src="productComment02"/>
-						</div>
-						<div class="getassess" v-show="memberlevel" @click="goBuy(item.productId)" style="right: .30rem;">
-							<img :src="productShare01"/>
-						</div>
-					</div>
-				</div>
-			</div>
+			</div>-->
+			
 			
 		</div>
 		<!--<div class="tuijian" v-show="hotObj.length>0 && getHotSale"  style="background: #f7f7f7;margin-top: -.20rem;">
@@ -181,7 +137,7 @@
 					</div>
 				</div>
 			</div>-->
-			<div class="noMore" v-show="noMoreGoods">—— &nbsp;更多特卖，未完待续 &nbsp; ——</div>
+			<div class="noMore" v-show="showMoreNone">—— &nbsp;松开切换到下一场次 &nbsp; ——</div>
 		<!--<div class="moreSale">
 			<div class="saleProduct" v-for="(item,index) in moreSaleObj">
 				<div class="productDetail" @click="goBuy(item.productId)">
@@ -213,6 +169,12 @@
 				</div>
 				<div class="bot" style="color: #000;">特卖</div>
 			</div>
+			<div class="getIndex" @click="getShangcheng">
+				<div class="top">
+					<img :src="find1Img" />
+				</div>
+				<div class="bot">分类</div>
+			</div>
 			<div class="getIndex" @click="getIndex">
 				<div class="top">
 					<img :src="cartImg" />
@@ -220,12 +182,7 @@
 				<div class="bot">购物车</div>
 				<div class="cartNum" v-show="cartNum>0">{{cartNum}}</div>
 			</div>
-			<div class="getIndex" @click="getFind">
-				<div class="top">
-					<img :src="findImg" />
-				</div>
-				<div class="bot">发现</div>
-			</div>
+			
 			<div class="getIndex" @click="getkefu">
 				<div class="top">
 					<img :src="serviceImg" />
@@ -266,7 +223,7 @@ import $ from 'jquery';
 import axios from 'axios'
 
 var time;
-
+var timeNew;
 
 
 export default {
@@ -278,7 +235,10 @@ export default {
 				showBottom:false,
 				dayTrue:true,
 				tomorrowTrue:false,
+				hotSaleTrue:false,
 				addSelectTwo:false,
+				searchBarFixed:false,
+				isGetTomorrow:false,
 				addIndex:null,
 				wordImg:'/static/images/word.png',
 				productComment:'/static/images/producComment.png',
@@ -288,7 +248,8 @@ export default {
 				gopinjiaImg:'/static/images/getassess.png',
 				index01Img:'/static/images/icon-index02.png',
 				cartImg:'/static/images/icon-cart.png',
-				findImg:'/static/images/icon-find.png',
+				seachFindShare:'/static/images/seachFind.png',
+				find1Img:'/static/images/shangcheng.png',
 				serviceImg:'/static/images/icon-service.png',
 				myImg:'/static/images/icon-my.png',
 				chaIconImg:'/static/images/chaIcon.png',
@@ -334,7 +295,14 @@ export default {
 				noMoreGoods:false,
 				goTopImg:'/static/images/goTop.png',
 				showTop:false,
-				
+				scrollTopN:'',
+				windowHeightN:'',
+				scrollHeightN:'',
+				scrollTopMore:'',
+				isHotMore:true,
+				todayOrTom:1,
+				isHotOrday:1,
+				showMoreNone:false,
 			}
 		},
   components: {
@@ -354,25 +322,28 @@ export default {
 			this.$store.commit('documentTitle','OL圈');
 			this.getMember();
 			this.shareDate();
-			this.getCategory();
+//			this.getCategory();
 			this.getImgtop();
-			this.getIcon();
-			//this.gethotSale();
+//			this.getIcon();
+			
 			this.getDaySale(1);
 			//this.getMoreSale();
 			this.getcartNum();
 			this.getActiveImg();
+			
 		},
   mounted(){
   			window.addEventListener('scroll', this.hotSaleScroll);
   			window.addEventListener('scroll', this.moreSaleScroll);
   			window.addEventListener('scroll', this.getTopScroll);
 			window.addEventListener('scroll', this.handleScroll);
-			
-			
+			window.addEventListener('scroll', this.xuanfuScroll);
+//			window.addEventListener('scroll', this.newFunction);
 		},
 		wacth:{
 			
+			
+   
 		},
   methods: {
   			//访问记录
@@ -384,6 +355,8 @@ export default {
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
   			},
   			addRecordBack(data){},
+
+		   
 			//点击回到顶部
 			gotoTop(){
 				$('html,body').animate({scrollTop:0},1000);
@@ -414,14 +387,14 @@ export default {
 					this.memberlevel=false;
 				}
 				this.setCookie('memberId',data.result.id)
-				console.log(this.getCookie("memberId"))
+//				console.log(this.getCookie("memberId"))
 				//console.log(this.memberlevel)
 			},
 			shareDate(){
-				this.shareData.url="http://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/pinkIndex');
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/pinkIndex');
+				this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/pinkIndex');
+				//this.shareData.url="https://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'index/pinkIndex');
 				
-				console.log(this.shareData)
+//				console.log(this.shareData)
 				this.addWeixinShare();//微信分享 
 			},
   			//获取首页顶部分类
@@ -437,18 +410,24 @@ export default {
   				
   			},
   			//获取首页ICON
-  			getIcon() {
-		        axios.get(API_HOST+'mobile/product/icon/list',{
-		          params:{}
-		        }).then(res =>{
-		           this.iconObj = res.data.result;
-		           //console.log(this.iconObj)
-			    }).catch(
-		          (error) => {
-		    	      this.$toast(res.data.message);
-		          }
-		        )
+//			getIcon() {
+//		        axios.get(API_HOST+'mobile/product/icon/list',{
+//		          params:{}
+//		        }).then(res =>{
+//		           this.iconObj = res.data.result;
+//		           //console.log(this.iconObj)
+//			    }).catch(
+//		          (error) => {
+//		    	      this.$toast(res.data.message);
+//		          }
+//		        )
+//		    },
+		    getFindeIndex(){
+		    	window.location.href=CUR_URLBACK+'index/findIndex';
 		    },
+		    getTryIndex(){
+				window.location.href=CUR_URLBACK+'try/newCenter';
+			},
   			//点击首页
   			getFist(){
   				//this.$router.push({path:'/index/pinkIndex?memberId='+this.$route.query.memberId});
@@ -472,15 +451,15 @@ export default {
   			},
   			//点击...详情
   			goMoreIndex(id,type){
-  				console.log(type)
+//				console.log(type)
   				if(type==18 || type==19 || type==20 || type==21 || type==22 || type==23 || type==25 || type==26  || type==28){
   					if(id!=""){
 						if(id.indexOf("?")!=-1){
 							console.log("YES")
-							window.location.href=USE_URL+id+'&memberId='+this.$route.query.memberId;
+							window.location.href=USE_URL+id;
 						}else{
 							console.log("no")
-							window.location.href=USE_URL+id+'?memberId='+this.$route.query.memberId;
+							window.location.href=USE_URL+id;
 						}
 					}
   				}else if(type==29){
@@ -489,10 +468,10 @@ export default {
   					if(id!=""){
 						if(id.indexOf("?")!=-1){
 							console.log("YES")
-							window.location.href=id+'&memberId='+this.$route.query.memberId;
+							window.location.href=id;
 						}else{
 							console.log("no")
-							window.location.href=id+'?memberId='+this.$route.query.memberId;
+							window.location.href=id;
 						}
 					}
   				}
@@ -505,10 +484,10 @@ export default {
 				if(id!="" && id!="#"){
 					if(id.indexOf("?")!=-1){
 						console.log("YES")
-						window.location.href=id+'&memberId='+this.$route.query.memberId;
+						window.location.href=id;
 					}else{
 						console.log("no")
-						window.location.href=id+'?memberId='+this.$route.query.memberId;
+						window.location.href=id;
 					}
 				}else{
 					console.log(1)
@@ -555,20 +534,20 @@ export default {
 			gethotSale(){
 				let data={
 //					memberId:this.$route.query.memberId,
-//					page:1,
-//					rows:20,
+					page:1,
+					rows:10,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.recommendProduct,data,this.gethotSaleBack);
 			},
 			gethotSaleBack(data){
 //				console.log(data)
 					
-				this.hotObj=data.result;
+				this.todayObj=data.result;
 				this.getSale=true;
 		  		this.isGetSale=false;
 		  		this.getHotSale=true;
 		  		this.isGetHotSale=true;
-		  		this.noMoreGoods=true;
+		  		
 //		  		this.isMore=true;
 				//console.log(this.hotObj.length)
 			},
@@ -577,7 +556,7 @@ export default {
   				//window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id+'&memberId='+this.$route.query.memberId
   				//window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+id+'?memberId='+this.$route.query.memberId'&isLimit=0'
 				//this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0&memberId='+this.$route.query.memberId});
-				this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0'});
+				this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0&type=9'});
   			},
   			//获取今天特卖
   			getDaySale(id){
@@ -585,18 +564,16 @@ export default {
   				let data={
 //					memberId:this.$route.query.memberId,
 					type:id,
+					page:1,
+  					rows:10,
+					
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.timeProduct,data,this.getDaySaleBack);
   			},
   			getDaySaleBack(data){
   				//console.log(this.dayType)
-  				if(this.dayType==1){
-  					this.todayObj=data.result;
-  					this.todayLength=data.result.length;
-  				}else if(this.dayType==2){
-  					this.tomorrowObj=data.result;
-  					this.tomorrowLength=data.result.length;
-  				}
+  				this.todayObj=data.result;
+  				
   				
   			},
   			//获取首页弹窗图标
@@ -608,7 +585,7 @@ export default {
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getDialog,data,this.getActiveImgBack);
   			},
   			getActiveImgBack(data){
-  				console.log(data)
+//				console.log(data)
   				if(data.result.length>0){
   					this.showActive=true;
   				}else{
@@ -641,30 +618,81 @@ export default {
   			getActiveBack(data){
 				if(this.avtiveUrl.indexOf("?")!=-1){
 					console.log("YES")
-					window.location.href=this.avtiveUrl+'&memberId='+this.$route.query.memberId;
+					window.location.href=this.avtiveUrl;
 				}else{
 					console.log("no")
-					window.location.href=this.avtiveUrl+'?memberId='+this.$route.query.memberId;
+					window.location.href=this.avtiveUrl;
 				}
   			},
   			//今日特卖
   			chooseDay(){
+  				this.showMoreNone=false;
+  				this.isHotOrday=1;
+  				this.isHotMore=true;
+  				this.pageObj.page=1;
+  				this.todayOrTom=1;
   				this.dayTrue=true;
   				this.tomorrowTrue=false;
+  				this.hotSaleTrue=false;
   				this.getDaySale(1);
+  				if(this.searchBarFixed){
+					$('html,body').animate({scrollTop:document.querySelector('.cent').offsetTop-50},1000);
+				}
+  				
   			},
   			//明日预告
   			chooseTomorrow(){
+  				clearInterval(time);
+  				this.showMoreNone=false;
+  				this.isHotOrday=1;
+  				this.isHotMore=true;
+  				this.pageObj.page=1;
+  				this.todayOrTom=2;
   				this.dayTrue=false;
   				this.tomorrowTrue=true;
+  				this.hotSaleTrue=false;
   				this.getDaySale(2);
+  				if(this.searchBarFixed ){
+  					document.documentElement.scrollTop = document.body.scrollTop = document.querySelector('.cent').offsetTop-50;
+  				}
+  				
+  			},
+  			chooseHotSale(){
+  				clearInterval(time);
+  				this.showMoreNone=false;
+  				this.isHotOrday=0;
+  				this.isHotMore=true;
+  				this.pageObj.page=1;
+  				this.isGetTomorrow=false;
+  				this.dayTrue=false;
+  				this.tomorrowTrue=false;
+  				this.hotSaleTrue=true;
+  				this.gethotSale();
+  				if(this.searchBarFixed ){
+					$('html,body').animate({scrollTop:document.querySelector('.cent').offsetTop-50},1000);
+				}
+  				
+  				
+  			},
+  			//悬浮 
+  			xuanfuScroll(){
+  				let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+				
+				let offsetTop = document.querySelector('.dayTomorrow').offsetTop;
+				
+				if(scrollTop > offsetTop){
+					this.searchBarFixed = true;
+					
+				}else{
+					this.searchBarFixed = false;
+				}
   			},
   			//获取更多特卖
   			getMoreSale(){
   				let data={
 //					memberId:this.$route.query.memberId,
 					page:1,
-  					rows:20,
+  					rows:10,
 					
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.moreProduct,data,this.getMoreSaleBack);
@@ -682,7 +710,7 @@ export default {
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.totalNum,data,this.getcartNumBack);
 			},
 			getcartNumBack(data){
-				console.log(data)
+//				console.log(data)
 				this.cartNum=data.result;
 			},
   			//点击去评价
@@ -691,10 +719,10 @@ export default {
 			},
   			//跳转购物车
 			getIndex(){
-				window.location.href=CUR_URLBACK+'shopcar/ordercar?memberId='+this.getCookie("memberId")
+				window.location.href=CUR_URLBACK+'shopcar/ordercar';
 			},
-			getFind(){
-				window.location.href="http://live-weixin.olquan.cn"
+			getShangcheng(){
+				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId=33';
 			},
 			//点击客服
 			getkefu(){
@@ -705,32 +733,32 @@ export default {
   				window.location.href=USE_URL+'weixin/headline/headline';
   			},
   			getSearch(){
-  				window.location.href=USE_URL+'ol/weixin/index/search?memberId='+this.getCookie("memberId");
+  				window.location.href=USE_URL+'ol/weixin/index/search';
   			},
 			getMindIndex(){
-				window.location.href=USE_URL+'weixin/member/membercore?mmm='+this.getCookie("memberId");
+				window.location.href=USE_URL+'weixin/member/membercore';
 			},
 			//加载热门特卖
-			hotSaleScroll(){
-				
-  			  var height=document.body.scrollHeight;
-  				//console.log(height)
-//			  this.offsetTop = document.querySelector('.topmodel').offsetTop;
-//				console.log(this.offsetTop)
-			  this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-				//console.log(this.scrollTop)
-				
-				
-			  var windowH=window.innerHeight;
-			   	if(this.scrollTop + windowH >=height-200){
-			   		if(this.isGetSale){
-			   			this.isGetSale=false;
-			   			this.gethotSale();
-		  			}
-		  			
-				}
-		  	
-			},
+//			hotSaleScroll(){
+//				
+//			  var height=document.body.scrollHeight;
+//				//console.log(height)
+////			  this.offsetTop = document.querySelector('.topmodel').offsetTop;
+////				console.log(this.offsetTop)
+//			  this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+//				//console.log(this.scrollTop)
+//				
+//				
+//			  var windowH=window.innerHeight;
+//			   	if(this.scrollTop + windowH >=height-200){
+//			   		if(this.isGetSale){
+//			   			this.isGetSale=false;
+//			   			this.gethotSale();
+//		  			}
+//		  			
+//				}
+//		  	
+//			},
 //			//第一次加载更多热卖
 //			moreSaleScroll(){
 //				
@@ -752,49 +780,73 @@ export default {
 //			   	
 //		  	},
 //			//加载更多
-//			handleScroll () {
-//			  var height=document.body.scrollHeight;
-//				//console.log(height)
-////			  this.offsetTop = document.querySelector('.topmodel').offsetTop;
-////				console.log(this.offsetTop)
-//			  this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-//				//console.log(this.scrollTop)
-//				
-//				
-//			  var windowH=window.innerHeight;
-//			   	
-//		   		if(this.scrollTop + windowH >=height-200){
-//	  	
-//				  	if(this.isMore){
-//		 				this.isMore=false;
-//		 				let data={
-//		 					memberId:this.$route.query.memberId,
-//		  					page:this.pageObj.page+1,
-//		  					rows:20,
-//		  					
-//		  				};
-//		  				this.pageObj.page=this.pageObj.page+1
-//						this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.recommendProduct,data,this.getListMoreBack);
-//		 			}
-//				}
-//			   	
-//		  	},
-//			getListMoreBack(data){
-//				if(data.result.length<20){
-//					this.isMore=false;
-//					this.noMoreGoods=true;
-////					this.showTrue=true;
-//				}else{
-//					this.isMore=true;
-//				}
-//				
-//				
-//				for(let i=0; i<data.result.length; i++){
-//					this.hotObj.push(data.result[i])
-//				}
-//				//console.log(this.curObj)
-//			
-//			},
+			handleScroll () {
+			  var height=document.body.scrollHeight;
+//				console.log(height)
+//			  this.offsetTop = document.querySelector('.topmodel').offsetTop;
+//				console.log(this.offsetTop)
+			  this.scrollTopMore = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+				//console.log(this.scrollTop)
+				
+				
+			  var windowH=window.innerHeight;
+//			   	console.log(this.scrollTopMore + windowH >=height-500)
+		   		if(this.scrollTopMore + windowH >=height-200){
+	  			    if(this.isHotOrday){
+	  			    	if(this.isHotMore){
+	  			    		this.isHotMore=false;
+	  			    		let data={
+//								memberId:this.$route.query.memberId,
+								type:this.todayOrTom,
+								page:this.pageObj.page+1,
+			  					rows:10,
+								
+							}
+	  			    		this.pageObj.page=this.pageObj.page+1
+							this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.timeProduct,data,this.getListMoreBack);
+	  			    	}
+	  			    }else{
+	  			    	if(this.isHotMore){
+			 				this.isHotMore=false;
+			 				let data={
+//			 					memberId:this.$route.query.memberId,
+			  					page:this.pageObj.page+1,
+			  					rows:10,
+			  					
+			  				};
+			  				this.pageObj.page=this.pageObj.page+1
+							this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.recommendProduct,data,this.getListMoreBack);
+			 			}
+	  			    }
+				  	
+				}
+			   	
+		  	},
+			getListMoreBack(data){
+				let This=this;
+				if(data.result.length==0){
+					this.isHotMore=false;
+					this.showMoreNone=true;
+					if(this.todayOrTom==1 && this.dayTrue){
+						console.log(1)
+						time=setTimeout(function(){
+							This.chooseHotSale();
+						},2000)
+					}
+					if(this.hotSaleTrue){
+						time=setTimeout(function(){
+							This.chooseTomorrow();
+						},2000)
+					}
+				}else{
+					this.isHotMore=true;
+				}
+				for(let i=0; i<data.result.length; i++){
+					this.todayObj.push(data.result[i])
+				}
+				//console.log(this.curObj)
+			
+			},
   			
 			
 
@@ -822,9 +874,11 @@ export default {
  	destroyed () {
  		window.removeEventListener('scroll', this.hotSaleScroll)
  		window.removeEventListener('scroll', this.moreSaleScroll)
- 		
+ 		window.removeEventListener('scroll', this.xuanfuScroll)
  		window.removeEventListener('scroll', this.getTopScroll)
 	    window.removeEventListener('scroll', this.handleScroll)
+//	    window.removeEventListener('scroll', this.newFunction);
+	   
 	},
  	
   
@@ -839,6 +893,80 @@ export default {
 	padding-top: .80rem;
 	img{
 		pointer-events: none;
+	}
+	.indexTop{
+		z-index: 998;
+		width: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		background: #FFF;
+		color: #777;
+		font-size: .32rem;
+		ul{
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: -moz-flex;
+			-webkit-justify-content:center;
+			justify-content:center;
+			-moz-box-pack:center;
+			-webkit--moz-box-pack:center;
+			height: .80rem;
+			border-bottom: 0.01rem solid #E1E1E1;
+			li{
+				margin: 0 .30rem;
+				line-height: .80rem;
+			}
+			.speLiFind{
+				color: #E50F72;
+				font-size: .36rem;
+				border-bottom: .05rem solid #E50F72;
+				
+			}
+		}
+	}
+	.searchIndex{
+		padding: 0.1rem 0.3rem;
+		background: #fff;
+		.searchBox{
+			width: 100%;
+			height: .60rem;
+			background: #EFEDED;
+			border-radius: .30rem;
+		    font-size: .24rem;
+		    overflow: hidden;
+            color: #999;
+			display: flex;
+		    display: -ms-flexbox;
+		    display: -moz-flex;
+		    -ms-flex-pack: start;
+		    justify-content: flex-start;
+		    -moz-box-pack: flex-start;
+		    -webkit--moz-box-pack: flex-start;
+		    -webkit-box-pack: center;
+		    -moz-box-pack: center;
+		    -ms-flex-align: center;
+		    -moz-align-items: center;
+		    align-items: center;
+		    img{
+	    	    display: block;
+			    width: .30rem;
+			    height: .28rem;
+			    margin-left: .20rem;
+		    }
+		    input{
+		    	    margin-left: .14rem;
+				    height: 100%;
+				    border: none;
+				    background: #EFEDED;
+				    outline: none;
+				    -ms-flex: 1;
+				    flex: 1;
+		    }
+		}
 	}
 	.goFortop{
 		position: fixed;
@@ -1069,8 +1197,19 @@ export default {
 		text-align: center;
 		color: #777;
 		.chooseDay{
-			color: #131313;
+			color: #E50F72;
+			display: inline-block;
+			height: .75rem;
+			border-bottom:  0.03rem solid #E50F72;
 		}
+	}
+	.speDayTomorrow{
+		position: fixed;
+		left: 0;
+		top: 0rem;
+		z-index: 9999;
+		width: 100%;
+		background: #fff;
 	}
 	.tuijian{
 		font-size: .30rem;
@@ -1124,7 +1263,7 @@ export default {
 				position: absolute;
 				bottom: 0.32rem;
 				right: .48rem;
-				z-index: 9999;
+				z-index: 9998;
 			}
 			.productDetail{
 				display: flex;
@@ -1311,7 +1450,7 @@ export default {
 					position: absolute;
 					bottom: 0.20rem;
 					right: .48rem;
-					z-index: 9999;
+					z-index: 9998;
 				}
 				img{
 					display: block;

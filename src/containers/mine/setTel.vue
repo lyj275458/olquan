@@ -1,14 +1,19 @@
 <template>
 	<div class="setTel">
-		<div class="bindingTei">
+		<div class="bindingTei" v-show="memList.mobile!=''">
 			你当前绑定的手机号为 : {{memList.viewMobile}}
 		</div>
+		<div style="height: .40rem;width: 100%;background: #F5F5FA;" v-show="memList.mobile==''"></div>
+		<div class="getMobile" v-show="memList.mobile==''">
+			<input type="tel" placeholder="请输入手机号" v-model="setTelNum"/>
+		</div>
 		<div class="getCodeOut">
-			<input type="tel" placeholder="请输入验证码"/>
-			<p v-show="isSendFlag" @click="getCodeFun" >获取验证码</p>
+			<input type="tel" placeholder="请输入验证码" v-model="setTelCode"/>
+			<p v-show="isSendFlag" @click="getCodeFun">获取验证码</p>
 			<p v-show="!isSendFlag" style="color: #999;">{{sendCodeText}}</p>
 		</div>
-		<div class="sureBot">下一步</div>
+		<div class="sureBot" v-show="memList.mobile!=''">下一步</div>
+		<div class="sureBot" v-show="memList.mobile==''" @click="setMobile">绑定手机号</div>
 		<div class="getGraphCode" v-show="graphCode">
 			<div class="graphCode">
 				<div class="codeTop">
@@ -24,7 +29,7 @@
 					<img :src="chaImg" />
 				</div>
 				<div class="sureCode" v-show="isCilckSure">确定</div>
-				<div class="sureCode" v-show="!isCilckSure" style="background: #e50f72;">确定</div>
+				<div class="sureCode" v-show="!isCilckSure" style="background: #e50f72;" @click="sureCode">确定</div>
 			</div>
 		</div>
 	</div>
@@ -42,6 +47,8 @@
 				isCilckSure:true,
 				sendCodeNum:60,
 				graphCode:false,
+				setTelNum:'',//绑定手机号码
+				setTelCode:'',//验证码
 				memList:[],
 				iconImg:'',
 				imgCode:'',
@@ -92,7 +99,7 @@
 			//获取会员信息
 			getMember(){
 				let data={
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
@@ -123,9 +130,15 @@
 			},
 			//点击获取验证码
 			getCodeFun(){
-				this.getIcon();
-				this.imgCode='';
-				this.graphCode=true;
+				if(this.setTelNum==''){
+					this.$toast('请输入手机号',1000);
+		    		return;
+				}else{
+					this.getIcon();
+					this.imgCode='';
+					this.graphCode=true;
+				}
+				
 				
 			},
 			sendCodeFun(){
@@ -148,6 +161,50 @@
 		    		clearInterval(regCodeInterval);
 		    	}
 	
+		    },
+		    sureCode(){
+		    	let data={
+//					memberId:this.$route.query.memberId,
+					mobile:this.setTelNum,
+					graphCode:this.imgCode
+				}
+				//console.log(data)
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.sendCode,data,this.sureCodeBack,this);
+		    },
+		    sureCodeBack(data){
+		    	if(data.code==0){
+		    		this.$toast('发送成功',1000);
+		    		this.graphCode=false;
+		    	}else{
+		    		this.$toast(data.message,1000);
+		    		this.getSpecialImg();
+		    	}
+		    },
+		    setMobile(){
+		    	if(this.setTelNum==''){
+		    		this.$toast('请输入手机号',1000);
+		    		return;
+		    	}
+		    	if(this.setTelCode==''){
+		    		this.$toast('请输入验证码',1000);
+		    		return;
+		    	}
+		    	let data={
+//					memberId:this.$route.query.memberId,
+					oldCode:'',
+					mobile:this.setTelNum,
+					code:this.setTelCode
+				}
+				//console.log(data)
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.boundMobile,data,this.setMobileBack,this);
+		    },
+		    setMobileBack(data){
+		    	if(data.code==0){
+		    		this.$toast('绑定成功',1000)
+		    		this.$router.back(-1)
+		    	}else{
+		    		this.$toast(data.message,1000);
+		    	}
 		    },
 		    //只能输入数字
 			clearMoreCode(){
@@ -189,12 +246,30 @@
 	.setTel{
 		min-height: 100%;
 		background: #F5F5FA;
+		
 		.bindingTei{
 			width: 90%;
 			margin: 0 auto;
 			line-height: 1.00rem;
 			font-size: .28rem;
 			color: #666;
+		}
+		.getMobile{
+			
+			background: #fff;
+			width: 90%;
+			margin: 0 auto;
+			padding: .15rem 0;
+			border-bottom: 0.01rem solid #E1E1E1;
+
+			input{
+				display: block;
+				border: 0;
+				
+				-webkit-appearance:none;
+				line-height:.50rem;
+				width: 64%;
+			}
 		}
 		.getCodeOut{
 			background: #fff;
@@ -208,15 +283,15 @@
 		    display: -webkit-flex;
 		    display: -moz-flex;
 		    
-		    -webkit-justify-content:center;
-			justify-content:center;
-			-moz-box-pack:center;
-			-webkit--moz-box-pack:center;
+		    -webkit-justify-content:space-around;
+			justify-content:space-around;
+			-moz-box-pack:space-around;
+			-webkit--moz-box-pack:space-around;
 			input{
 				border: 0;
 				-webkit-appearance:none;
 				line-height:.50rem;
-				width: 64%;
+				width: 100%;
 			}
 			p{
 				font-size: .28rem;

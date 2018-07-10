@@ -89,7 +89,7 @@
 			//查看商品详情
 			getGoods(id){
 				
-				this.$router.push({path:'/demo/iscroll/id/'+id+'?memberId='+this.$route.query.memberId+'&isShare=0'});
+				this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0'});
 			},
 			//获取试用展示图
 			getIndexImg(){
