@@ -9,7 +9,7 @@
 		</div>
 		<div class="sureBut">
 			<div class="outDiv">
-				<p v-show="!isShowSuper" @click="openShow">点击立即开通粉领会员</p>
+				<p v-show="!isShowSuper" @click="openShow">点击立即开通店主</p>
 				<p v-show="isShowSuper" @click="yaoqing">立即邀请</p>
 			</div>
 			
@@ -21,7 +21,7 @@
 					<img :src="moreSaleImg" />
 				</div>
 				<div class="bagName">
-					<p style="margin-bottom: .36rem;">开通粉领会员大礼包</p>
+					<p style="margin-bottom: .36rem;">开通店主大礼包</p>
 					<p>￥{{curObj.totalFee}}</p>
 				</div>
 				<div class="colseImg" @click="colseShow">
@@ -47,7 +47,7 @@
 					<img :src="shareSuperImg" />
 				</div>
 				<div class="shareDetail">
-					<p>点击右上角，分享给您的好友，邀请开通粉领会员！</p>
+					<p>点击右上角，分享给您的好友，邀请开通店主！</p>
 				</div>
 				<div class="sureShare">
 					<div class="shareSure">
@@ -66,7 +66,7 @@
 						<img :src="shareSuperImg" />
 					</div>
 					<p class="moreDes">
-						点击右上角，分享给您的好友，邀请开通粉领会员！
+						点击右上角，分享给您的好友，邀请开通店主！
 					</p>
 					<div class="sureBut">确定</div>
 					
@@ -100,9 +100,9 @@
 				isShowSuper:'',
 				shareData : {
 					'title': "OL圈 试用中心",
-					'description': "开通粉领立项6大特权及超值粉领会员礼包。",
+					'description': "开通店主立项6大特权及超值店主礼包。",
 					'url': "",
-					'picURL': "http://ol-site.olquan.com/plug/mobile/img/logoo.jpg",
+					'picURL': "https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png",
 					'hide':true,
 					'share':false
 				},
@@ -143,9 +143,10 @@
 				}
 				//this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
 				this.shareData.url=USE_URL+"weixin/auth?recId="+this.memList.id+"&view="+encodeURIComponent(CUR_URLBACK+'share/pinkShare?inviteId='+this.memList.accountNo);
-				this.shareData.title="您的好友"+this.memList.nickName+"邀请您开通OL圈粉领会员"
+				this.shareData.title="您的好友"+this.memList.nickName+"邀请您开通OL圈店主"
 				this.setCookie('memberId',data.result.id)
-				if(this.memList.isShowRenewButton!=0){
+				//isShowRenewButton 1 还有30天过期 2已经过期
+				if(this.memList.isShowRenewButton==2){
 					window.location.href=USE_URL+'weixin/member/renewConfirmOrder';
 				}else{
 					if(data.result.isGetStoreCommission==1){
@@ -154,10 +155,10 @@
 						this.memberlevel=true;
 					}
 					if(data.result.isGetStoreCommission==1){
-						this.$store.commit('documentTitle','邀请粉领');
+						this.$store.commit('documentTitle','邀请店主');
 						this.isShowSuper=true;
 					}else{
-						this.$store.commit('documentTitle','申请粉领');
+						this.$store.commit('documentTitle','申请店主');
 						this.isShowSuper=false;
 					}
 				}

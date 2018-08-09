@@ -15,15 +15,16 @@
 		</div>-->
 		<div class="indexTop">
 			<ul>
-				<li class="speLiFind">特卖</li>
 				<li @click="getTryIndex">试用</li>
+				<li class="speLiFind">特卖</li>
+				
 				<li @click="getFindeIndex">发现</li>
 			</ul>
 		</div>
 		<div class="searchIndex" @click="getSearch">
 			<div class="searchBox">
 				<img :src="seachFindShare" />
-				<input placeholder="搜索" disabled />
+				<input :placeholder="searchRemind" disabled />
 			</div>
 		</div>
 		<div v-show="detailShow">
@@ -261,7 +262,7 @@ export default {
 					'title':"OL圈特卖",
 					'description':"你那么好看，这个分享一定要看!",
 					'url': "",
-					'picURL': "http://ol-site.olquan.com/plug/mobile/img/logoo.jpg",
+					'picURL': "https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png",
 					'hide':true,
 					'share':false
 				},
@@ -303,6 +304,7 @@ export default {
 				todayOrTom:1,
 				isHotOrday:1,
 				showMoreNone:false,
+				searchRemind:'',
 			}
 		},
   components: {
@@ -321,6 +323,7 @@ export default {
 			this.addRecord();
 			this.$store.commit('documentTitle','OL圈');
 			this.getMember();
+			this.getSearchRemind();
 			this.shareDate();
 //			this.getCategory();
 			this.getImgtop();
@@ -355,7 +358,23 @@ export default {
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
   			},
   			addRecordBack(data){},
-
+			 //获取搜索提示关键字
+		    getSearchRemind(){
+		    	
+				let data={
+//					memberId:this.$route.query.memberId,
+					type:2,
+				}
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getSearchRemind,data,this.getSearchRemindBack,this);
+		    },
+		    getSearchRemindBack(data){
+		    	if(data.result!='无' && data.result!=''){
+		    		this.searchRemind='大家都在搜“'+data.result+'”';
+		    		
+		    	}else{
+		    		this.searchRemind=''
+		    	}
+		    },
 		   
 			//点击回到顶部
 			gotoTop(){
@@ -423,7 +442,8 @@ export default {
 //		        )
 //		    },
 		    getFindeIndex(){
-		    	window.location.href=CUR_URLBACK+'index/findIndex';
+		    	//window.location.href=CUR_URLBACK+'index/findIndex';
+		    	window.location.href=CUR_URLBACK+'index/newFindIndex';
 		    },
 		    getTryIndex(){
 				window.location.href=CUR_URLBACK+'try/newCenter';
@@ -679,11 +699,14 @@ export default {
   				let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
 				
 				let offsetTop = document.querySelector('.dayTomorrow').offsetTop;
-				
+//				console.log(offsetTop)
 				if(scrollTop > offsetTop){
 					this.searchBarFixed = true;
 					
 				}else{
+					this.searchBarFixed = false;
+				}
+				if(scrollTop<237){
 					this.searchBarFixed = false;
 				}
   			},
@@ -791,7 +814,7 @@ export default {
 				
 			  var windowH=window.innerHeight;
 //			   	console.log(this.scrollTopMore + windowH >=height-500)
-		   		if(this.scrollTopMore + windowH >=height-200){
+		   		if(this.scrollTopMore + windowH >=height-5){
 	  			    if(this.isHotOrday){
 	  			    	if(this.isHotMore){
 	  			    		this.isHotMore=false;
@@ -831,12 +854,12 @@ export default {
 						console.log(1)
 						time=setTimeout(function(){
 							This.chooseHotSale();
-						},2000)
+						},4000)
 					}
 					if(this.hotSaleTrue){
 						time=setTimeout(function(){
 							This.chooseTomorrow();
-						},2000)
+						},4000)
 					}
 				}else{
 					this.isHotMore=true;
@@ -1470,8 +1493,8 @@ export default {
 					white-space: nowrap;
 				}
 				.describe{
-					padding: 0 .15rem;
-					margin-top: .20rem;
+					padding: .20rem .15rem 0.10rem;
+					/*margin-top: .20rem;*/
 					font-size: .22rem;
 					color: #777;
 					
@@ -1483,8 +1506,8 @@ export default {
 					font-size: .30rem;
 					line-height: .32rem; 
 					/*font-weight: 700;*/
-					padding: 0 .15rem;
-					margin-top: .22rem;
+					padding: .12rem .15rem 0;
+					
 					position: relative;
 					color: #131313;
 					z-index: 22;

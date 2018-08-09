@@ -1,6 +1,8 @@
 <template>
    <div id='newAdree'>
-	   	<group title="1"  label-width="5em" label-align="left">
+   	<div style="width: 100%;">
+   		<div class="fixOut">
+   		<group title="1"  label-width="5em" label-align="left">
 	     	<x-input title="收货人" name="username" placeholder="请输入收货人姓名" is-type="china-name" v-model="userName"></x-input>
 	       	<x-input title="手机号" name="mobile" placeholder="请输入收货人手机号" keyboard="number" is-type="china-mobile" v-model="userPhone"></x-input>
 	    	<!--<x-address :raw-value="true" @on-hide="changeAdress" :title="title2" v-model="value2" raw-value :list="addressData" value-text-align="left"></x-address>
@@ -41,16 +43,16 @@
 		   	</div>
 	   	</div>
 	   	<group title="1"  label-width="5em" label-align="left">
-	     	<x-input title="详细地址" placeholder="请输入详细地址" v-model="userHome"></x-input>
+	     	<x-input title="详细地址" placeholder="请输入详细地址" v-model="userHome" v-on:input ="clearMoretelEmo()"></x-input>
 	   	</group>
-	    <div class="weak">
+	    <div class="weak" v-show="showIdNum || showIdCard">
 	    	<img :src="weakUrl" alt="" />
 	    	根据海关规定，购买跨境产品需要办理清关手续,请您如实填写以下信息,以保证您购买的产品顺利通过海关检查。
 	    </div>
-		<group title="1"  label-width="6em" label-align="left">
+		<group title="1"  label-width="6em" label-align="left" v-show="showIdNum || showIdCard">
 	       	<x-input title="身份证号码" name="mobile" placeholder="请输入身份证号码" is-type="cheackSfz" :max="18" v-model="userSFZ"></x-input>
 	   	</group>
-		<div class="uoLoadImg">
+		<div class="uoLoadImg" v-show="showIdCard">
 			<div>
 				<p>上传国徽页照片</p>
 				<div @click="getFaceImg">
@@ -64,6 +66,10 @@
 				</div>
 			</div>
 		</div>
+   	</div>
+   	</div>
+   	
+	   	
 		<!--<div @click="select()" class="selected">
    					
 					<div class="imgDiv"><img :src="imgUrl" alt="" /></div>
@@ -95,6 +101,8 @@ export default {
     	weakUrl:'/static/weakTo.png',
     	ownImg:'/static/zhen.png',
     	ownImg2:'/static/fan.png',
+    	ownImgNew:'',
+    	ownImg2New:'',
     	userSFZ:'',
     	imgWhich:false,
     	faceImg:'',
@@ -106,6 +114,9 @@ export default {
     	districtId:0,
     	prov:0,
     	district:0,
+    	showIdCard:true,
+    	showIdNum:true,
+    	addList:[],
     	isChoose:1,
     	localId:'',
     	nationalNore:'',
@@ -130,10 +141,19 @@ export default {
   },
     created: function() {
 		this.$store.commit('documentTitle','收货地址管理');
-		
-		
 		this.getAllCity();
-		
+		if(this.$route.query.isBuyGoods==1){
+			if(this.$route.query.isOverseasDirectMailProduct==0){
+				this.showIdCard=false;
+			}else{
+				this.showIdCard=true;
+			}
+			if(this.$route.query.isCrossBorderProduct==0){
+				this.showIdNum=false;
+			}else{
+				this.showIdNum=true;
+			}
+		}
 		//console.log(this.$route.query.addressId)
 		
 //			this.getCate();
@@ -185,6 +205,9 @@ export default {
   		}
   		this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getAllCity,data,this.getAllCityBack,this);
   		
+  	},
+  	clearMoretelEmo(){
+  		this.userHome = this.userHome.replace(/\ud83d[\udc00-\ude4f\ude80-\udfff]/g, '');
   	},
   	getAllCityBack(data){
 //		console.log(data)
@@ -245,6 +268,7 @@ export default {
     	this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getAddress,data,this.getAddressBack,this);
     },
     getAddressBack(data){
+    	this.addList=data.result;
     	this.prov=data.result.provinceId;
     	this.cityId=data.result.cityId;
 //  	for(let i=0;i<this.arr.length;i++){
@@ -265,18 +289,36 @@ export default {
     	this.userName=data.result.name;
     	this.userPhone=data.result.mobile;
     	this.userHome=data.result.address;
+    	this.userSFZ=data.result.identityNo;
     	if(data.result.identityFrontImage!=null){
-    		this.ownImg=data.result.identityFrontImage
+    		this.ownImg=data.result.identityFrontImage;
+    		this.ownImgNew=data.result.identityFrontImage;
     	}
     	if(data.result.identityOppImage!=null){
-    		this.ownImg2=data.result.identityOppImage
+    		this.ownImg2=data.result.identityOppImage;
+    		this.ownImg2New=data.result.identityOppImage;
     	}
     	
     },
     //添加地址
     addAddress(){
+    	if(this.$route.query.isCrossBorderProduct==1 && this.userSFZ==''){
+    		this.$toast('跨境商品需填写身份证号');
+    		return;
+    	}
+    	if(this.$route.query.isOverseasDirectMailProduct==1){
+    		if(this.userSFZ==''){
+    			this.$toast('海外直邮商品需填写身份证号及上传身份证正反面照片');
+    			return;
+    		}else if(this.ownImgNew=='' || this.ownImg2New==''){
+    			this.$toast('海外直邮商品需填写身份证号及上传身份证正反面照片');
+    			return;
+    		}
+    		
+    	}
     	if(this.prov==0 || this.city==0 ||this.district==0 || this.userName=='' || this.userPhone=='' || this.userHome==''){
     		this.$toast('请填写完整地址');
+    		return;
     	}else{
     		let data ={
 	    		addressId:this.$route.query.addressId,
@@ -298,16 +340,23 @@ export default {
     	
     },
     addAddressBack(data){
-    	//console.log(data)
-    	if(this.$route.query.isBuyGoods==1){
-    		this.$router.push({path:'/fightAlone/ordersure/payorder?addressId='+data.result});
-    	} else if(this.$route.query.getSuper==1){
-    		this.$router.push({path:'/fightAlone/ordersure/superorder?addressId='+data.result});
-    	}else if(this.$route.query.getPink==1){
-    		this.$router.push({path:'/fightAlone/ordersure/pinkorder?addressId='+data.result});
+    	if(data.code==0){
+    		if(this.$route.query.isBuyGoods==1){
+    			window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder?addressId='+data.result;
+	    		//this.$router.push({path:'/fightAlone/ordersure/payorder?addressId='+data.result});
+	    	} else if(this.$route.query.getSuper==1){
+	    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/superorder?addressId='+data.result;
+	    		//this.$router.push({path:'/fightAlone/ordersure/superorder?addressId='+data.result});
+	    	}else if(this.$route.query.getPink==1){
+	    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/pinkorder?addressId='+data.result;
+	    		//this.$router.push({path:'/fightAlone/ordersure/pinkorder?addressId='+data.result});
+	    	}else{
+	    		this.$router.push({path:'/payMain/address'});
+	    	}
     	}else{
-    		this.$router.push({path:'/payMain/address'});
+    		this.$toast(data.message);
     	}
+    	
     },
     //国徽面
     getFaceImg(){
@@ -338,6 +387,7 @@ export default {
 			success: function (res) {
 			var serverId = res.serverId; // 返回图片的服务器端ID
 				_this.nationalNore=serverId;
+				_this.ownImgNew=serverId;
 				//alert(_this.nationalNore)
 			},
 			fail:function(res){
@@ -373,6 +423,7 @@ export default {
 			success: function (res) {
 			var serverId = res.serverId; // 返回图片的服务器端ID
 				_this.nationalNback=serverId;
+				_this.ownImg2New=serverId;
 				//alert(_this.nationalNore)
 			},
 			fail:function(res){
@@ -438,9 +489,35 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style  lang="less">
 	#newAdree{
+		display: flex;
+		display:-webkit-box;
+	    display: -moz-box;
+	    display: -ms-flexbox;
+	    display: -webkit-flex;
+		display: -moz-flex;
+		min-height: 100%;
+		width: 100%;
+		flex-wrap: wrap;
+		-webkit-flex-wrap:wrap;
+	    -webkit-box-lines:multiple;
+	    -moz-flex-wrap:wrap;
+		.fixOut{
+			width: 100%;
+			-webkit-box-flex: 1;  
+		    -moz-box-flex: 1;                
+		    -webkit-flex: 1;      
+		    -ms-flex: 1;           
+		    flex: 1;
+		    height: 90%;
+		}
 		.chooseCityList{
 			border-top: 0.01rem solid #e1e1e1;
 			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+			display: -moz-flex;
 			background:#fff;
 			.left{
 				width: 26%;
@@ -452,16 +529,29 @@ export default {
 			}
 			.selectCity{
 				display: flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+				display: -moz-flex;
 				width: 74%;
 				font-size: 0;
+				-webkit-justify-content:flex-start;
 				justify-content:flex-start;
+				-moz-box-pack:flex-start;
+				-webkit--moz-box-pack:flex-start;
 				.chooseKuang{
 					width: 33%;
 					margin-right: .10rem;
 				}
 			}
 			select{
-				flex: 1;
+				-webkit-box-flex: 1;  
+			    -moz-box-flex: 1;                
+			    -webkit-flex: 1;      
+			    -ms-flex: 1;           
+			    flex: 1;
+			   
 				width: 100%;
 				height: .92rem;
 				border: none;
@@ -492,7 +582,13 @@ export default {
 		}
 	}
 	#newAdree .uoLoadImg{
-		display: flex;justify-content: space-between;
+		display: flex;
+		display:-webkit-box;
+	    display: -moz-box;
+	    display: -ms-flexbox;
+	    display: -webkit-flex;
+		display: -moz-flex;
+		justify-content: space-between;
 		padding: 0.12rem 0.70rem 0.40rem 0.70rem;
 		font-size: 0.24rem;text-align: center;
 		background:#FFFFFF;
@@ -519,15 +615,15 @@ export default {
 				}
 	#newAdree .button{
 		width: 95%;
-		position: fixed;
-		bottom: 0.32rem;
-		left: 50%;
-		margin-left: -47.5%;
+		margin: 0 auto;
+		margin-top: 2.00rem;
 		font-size: 0.32rem;
 		color:#FFFFFF;
 		text-align: center;
-		
+		position: relative;
 		.buttonList{
+			position: absolute;
+			bottom: 0.50rem;
 			font-size: .32rem;
 			color: #fff;
 			line-height: 1.04rem;width:100%;background:#D23172 ;border:none;

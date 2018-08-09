@@ -60,7 +60,7 @@
 				<img :src="no1Img" />
 				<p class="tittle">购物送积分</p>
 				<span>商城购物,可获得产品相应积分</span><br />
-				<span>注：粉领可获得金领双倍积分</span><br />
+				<span>注：店主可获得vip双倍积分</span><br />
 				<span style="color: #000; line-height: .64rem;">去购物 >></span><br />
 			</div>
 			<div class="right">
@@ -74,9 +74,9 @@
 			<div class="left" style=" text-align: right;">
 				<img :src="no2Img" style="margin-left: 2.40rem;"/>
 				<p class="tittle">推荐会员送积分</p>
-				<span>①每推荐1个白领，送10积分</span><br />
-				<span>②每推荐1个金领，送100积分</span><br />
-				<!--<span>③每推荐1个粉领，送3000积分</span><br />-->
+				<span>①每推荐1个会员，送10积分</span><br />
+				<span>②每推荐1个vip，送100积分</span><br />
+				<!--<span>③每推荐1个店主，送3000积分</span><br />-->
 				<span style="color: #000; line-height: .64rem;">去推荐 >></span><br />
 			</div>
 			
@@ -101,10 +101,10 @@
 			</div>
 			<div class="left" style=" text-align: right;">
 				<img :src="no4Img" style="margin-left: 2.40rem;"/>
-				<p class="tittle">粉领专享送积分</p>
-				<span>购买粉领专享产品</span><br />
+				<p class="tittle">店主专享送积分</p>
+				<span>购买店主专享产品</span><br />
 				<span>可获得相应积分</span><br />
-				<span>粉圈内的粉领购买粉领专享产品</span><br />
+				<span>粉圈内的店主购买店主专享产品</span><br />
 				<span>你可获得相应积分</span><br />
 				<span style="color: #000; line-height: .64rem;">去专享 >></span><br />
 			</div>
@@ -152,31 +152,31 @@
 				<p class="ans">查看方式：个人中心-我的钱包-可用积分/待定积分</p>
 				<p class="ques">Q11：赚的积分什么时候能到？</p>
 				<p class="ans">①通过推荐会员赚的积分将即时进入“可用积分”。<br/>②通过其他方式获得或者赚的积分将进入“待定积分”，15天后转为“可用积分”。</p>
-				<!--<p class="ques">Q12：购买了68.9元的粉领专享商品，为什么积分只有68？</p>
-				<p class="ans">购买“粉领专享”商品获得的积分，数值中小数点后的积分值自动舍弃，68.9的产品获得的积分为68。</p>-->
+				<!--<p class="ques">Q12：购买了68.9元的店主专享商品，为什么积分只有68？</p>
+				<p class="ans">购买“店主专享”商品获得的积分，数值中小数点后的积分值自动舍弃，68.9的产品获得的积分为68。</p>-->
 				<p class="ques">Q7：余额账户的钱提现后多久能到账？</p>
 				<p class="ans">提现申请开始，15个工作日后到账。（15不包含周末及法定节假日）。</p>
 				<p class="ques">Q8：推荐会员赚积分，怎样推荐呢？</p>
 				<p class="ans">
-					<span>1、如何推荐白领？</span><br/>
-					金领、粉领可通过：<br />
+					<span>1、如何推荐会员？</span><br/>
+					vip、店主可通过：<br />
 					a、分享商城任意链接，非会员点击，授权登录OL圈；<br />
 					b、分享商品二维码/个人二维码，非会员点击，授权登录OL圈；<br/>
-					成功推荐白领，获得10积分/个。<br />
-					<span style="margin-top: .30rem;display: inline-block;">2、如何推荐金领？</span><br />
-					金领、粉领可通过：<br />
-					a、粉圈内白领在平台任意消费一笔；<br />
+					成功推荐会员，获得10积分/个。<br />
+					<span style="margin-top: .30rem;display: inline-block;">2、如何推荐vip？</span><br />
+					vip、店主可通过：<br />
+					a、粉圈内会员在平台任意消费一笔；<br />
 					b、分享平台商品，非会员直接购买；<br />
-					成功推荐金领，获得100积分/个。<br />
-					<span style="margin-top: .30rem;display: inline-block;">3、如何推荐粉领？</span><br />
-					粉领可通过：<br />
-					a、粉圈内白领/金领自主开通粉领(不填写邀请码)；<br />
-					b、非粉圈好友开通粉领时填写推荐人的领邀请码；<br />
-					成功推荐粉领，获得余额15元/个。
+					成功推荐vip，获得100积分/个。<br />
+					<span style="margin-top: .30rem;display: inline-block;">3、如何推荐店主？</span><br />
+					店主可通过：<br />
+					a、粉圈内会员/vip自主开通店主(不填写邀请码)；<br />
+					b、非粉圈好友开通店主时填写推荐人的领邀请码；<br />
+					成功推荐店主，获得余额15元/个。
 				</p>
-				<p class="ques">Q9：推荐粉领时，被推荐人邀请码填错了一个字符怎么办？</p>
+				<p class="ques">Q9：推荐店主时，被推荐人邀请码填错了一个字符怎么办？</p>
 				<p class="ans">
-					粉领的推荐，以邀请码为准，即开通时填写的谁的邀请码，就进入谁的粉圈。<br />
+					店主的推荐，以邀请码为准，即开通时填写的谁的邀请码，就进入谁的粉圈。<br />
 					若邀请码因错误而无效，则被推荐人仍停留在原粉圈。<br />
 					账号默认为你的邀请码，为避免出错，建议复制粘贴。
 				</p>
@@ -184,9 +184,9 @@
 				<p class="ans">
 					例：用户A开团，拼团商品售价100元，有10人（含自己）参与拼团成功。用户A将会获得100X10=1000积分。
 				</p>
-				<!--<p class="ques">Q17：怎么理解：“自购/粉圈购粉领专享商品，赚与商品价格等数值的积分”？</p>
+				<!--<p class="ques">Q17：怎么理解：“自购/粉圈购店主专享商品，赚与商品价格等数值的积分”？</p>
 				<p class="ans">
-					例：自己购买粉领专享商品价格为68元，即可获得68积分；你粉圈内的粉领会员购买此商品，你也会获得68积分。
+					例：自己购买店主专享商品价格为68元，即可获得68积分；你粉圈内的店主购买此商品，你也会获得68积分。
 				</p>-->
 			</div>
 		</div>

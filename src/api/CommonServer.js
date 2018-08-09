@@ -26,9 +26,9 @@ const API = {
       getByModelCode:'mobile/model/getByModelCode',//根据模板CODE获取页面数据
       findProductByContentId:'mobile/model/findProductByContentId',//根据contenId获取产品
       getMember:'mobile/member/getMember',//根据member获取用户信息
-      getPlusRecommendData:'mobile/oneYuanBuy/getPlusRecommendData',//粉领特权推荐商品
+      getPlusRecommendData:'mobile/oneYuanBuy/getPlusRecommendData',//店主特权推荐商品
       recommendProduct:'mobile/product/recommendProduct',//产品相关的推荐产品
-      getStoreFee:'/mobile/store/getStoreFee',//开通粉领价格
+      getStoreFee:'/mobile/store/getStoreFee',//开通店主价格
       getScoreDataAll:'mobile/oneYuanBuy/getScoreDataAll',//试用中心
       getFreeUseTimes:'mobile/freeUse/getFreeUseTimes',//免费试用时间段
       getFreeUseData:'mobile/freeUse/getFreeUseData',//获取免费试用产品
@@ -58,7 +58,7 @@ const API = {
       addProduct:'mobile/carItem/addProduct',//添加产品购物车
       totalNum:'mobile/carItem/totalNum',//获取购物车产品数量
       getCategory:'mobile/product/category/getCategory',//获取首页头部分类
-      advers:'mobile/plus/advers',//新版粉领首页轮播和广告图
+      advers:'mobile/plus/advers',//新版店主首页轮播和广告图
       recommendProduct:'mobile/plus/recommendProduct',//获取热门特卖
       timeProduct:'mobile/plus/timeProduct',//今日特卖和明日预告
       moreProduct:'mobile/plus/moreProduct',//获取更多特卖
@@ -82,11 +82,11 @@ const API = {
       newCreateOrder:'mobile/buySupervisor/newCreateOrder',//加入钱江学院
       addRecord:'mobile/ir/addRecord',//添加浏览记录
       growData:'mobile/member/growData',//我的成长
-      newGiftbags:'mobile/store/newGiftbags',//新粉领大礼包
+      newGiftbags:'mobile/store/newGiftbags',//新店主大礼包
       judgeMobile:'mobile/member/judgeMobile',//判定手机号存不存在
       sendCode:'mobile/code/sendCode2',//条形码
-      applyToStoreConfirm:'mobile/store/applyToStoreConfirm',//升级粉领确认订单
-      newApplyToStore:'mobile/store/newApplyToStore',//升级粉领订单
+      applyToStoreConfirm:'mobile/store/applyToStoreConfirm',//升级店主确认订单
+      newApplyToStore:'mobile/store/newApplyToStore',//升级店主订单
       orderCount:'mobile/order/orderCount',//订单统计
       openPayPassword:'mobile/member/openPayPassword',//开启/关闭支付保护
       update:'mobile/member/update',//修改基础会员信息
@@ -97,6 +97,12 @@ const API = {
       submitApply:'mobile/memberInvite/submitApply',//提交申请总监邀请经理
       inviteRecords:'mobile/memberInvite/inviteRecords',//会员申请列表
       doAudit:'mobile/memberInvite/doAudit',//是否拒绝督导申请
+      accountDetail:'mobile/find/accountDetail',//发现账号详情
+      follow:'mobile/find/follow',//关注或者取消
+      doGood:'mobile/find/doGood',//点赞或者取消
+      getSearchRemind:'mobile/find/getSearchRemind',//发现搜索提示
+      waitReadCount:'mobile/find/waitReadCount',//尚未阅读的关注发现数量
+      tabAcount:'mobile/member/tabAcount',//切换账号
 };
 function getCookie(argument) {
     var arrCookie = document.cookie.split(";");

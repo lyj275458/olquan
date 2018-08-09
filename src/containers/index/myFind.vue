@@ -1,70 +1,61 @@
 <template>
-	<div class="findIndex " v-bind:class="addClass">
-		<div class="indexTop">
-			<ul>
-				<li @click="getTryIndex">试用</li>
-				<li @click="getSaleIndex">特卖</li>
-				<li class="speLiFind">发现</li>
-			</ul>
-		</div>
-		<div v-bind:class="{ 'specialFide': seachShow==true}">
-			<div class="search">
-				<div class="searchIndex" style="padding: .10rem .30rem;">
-					<div class="searchBod">
-						<img :src="seachFindShare" />
-						<form action="javascript:return true;" style="flex: 1;-webkit-box-flex: 1;-ms-flex: 1;">
-							<input :placeholder="searchRemind" v-model="searchCode" @keyup.13=showInput() type="search" ref="input1"/>
-						</form>
-						
-						<!--<span>达人、标题、产品</span>-->
-					</div>
-					<!--<div class="cancleCode" v-show="seachShow" @click="cancelCode">
-						<img :src="cancelShare" />
-					</div>-->
-					<div class="searchSure" @click="cancelSearch" v-show="seachShowCancel">
-						<!--<span v-show="searchCaleText" @click="searchEnterFun">搜索</span>-->
-						<span >取消</span>
-					</div>
+	<div class="findIndex">
+		<div class="personal">
+			<div class="personalImg">
+				<img :src="acountList.logo" />
+			</div>
+			<div class="personalName">{{acountList.name}}</div>
+			<div class="sundryCount">
+				<div class="sundryTotalFind">
+					<p class="countNum">{{acountList.totalFindCount}}</p>
+					<p>素材</p>
 				</div>
+				<div class="sundryTotalFind">
+					<p class="countNum">{{acountList.followCount}}</p>
+					<p>粉丝</p>
+				</div>
+				<div class="sundryTotalFind">
+					<p class="countNum">{{acountList.doGoodCount}}</p>
+					<p>获赞</p>
+				</div>
+			</div>
+			<div class="mineOrOther" v-if="acountList.accountId!=0">
+				<div class="otherAccount " v-bind:class="{ 'accountSpe': isChooseFalse==false}" @click="getOtherAccount">我关注的</div>
+				<div class="speShu">|</div>
+				<div class="mineAccount" v-bind:class="{ 'accountSpe': isChooseFalse==true}" @click="getMineAccount">我发布的</div>
+			</div>
+			<div class="mineOrOther" v-if="acountList.accountId==0">
+				<div class="otherAccount " v-bind:class="{ 'accountSpe': isChooseFalse==false}">我关注的</div>
 				
 			</div>
-			
-		</div>
-		
-		<div class="chooseIsFollow" :class="searchBarFixed == true ? 'speChooseFollow' :''">
-			<div v-bind:class="{ 'speDiv': isFollowId==1}" @click="getNewIndex">精选</div>
-			<div class="hasFollowNew" v-bind:class="{ 'speDiv': isFollowId!=1}" @click="getNewIndexFollow">
-				<div>关注</div>
-				<div class="hasNew" v-show="isHasNewFollow"></div>
-			</div>
-			
 		</div>
 		<div class="newContent" v-for="(item,index) in curObj">
 			
 			<div class="newCent_bot">
-				<div class="newCent_headImg" @click="getMemIndex(item.accountId)">
+				<div class="newCent_headImg"  @click="getNoDetail(item.accountId,index)">
 					<img :src="item.logo" />
 				</div>
 				<div class="newCent_nameTime">
 					<p class="newCent_name">{{item.name}}</p>
 					<p class="newCent_time">{{item.createTime}}</p>
 				</div>
-				<div class="follow" v-show="isAddFollow">
-					<p class="sureFollow" @click="getFollow(0,index,item.accountId)" v-show="item.isFollow==0">
-						<span>+ 关注</span>
+				<div class="follow" v-show="!isChooseFalse">
+					<p class="sureFollow" v-if="item.isAudit==0">
+						<span>待审核</span>
 					</p>
-					<!--<p class="sureFollow" @click="getFollow(1,index,item.accountId)" v-show="item.isFollow!=0">
-						<span>已关注</span>
+					<!--<p class="sureFollow sureFollowSpe" v-if="item.isAudit==1">
+						<span>已通过</span>
 					</p>-->
-				</div>
-				<div class="follow" v-show="!isAddFollow">
-					<p class="sureFollow" v-show="item.isFollow==0">
-						<span>+ 关注</span>
+					<p class="sureFollow sureFollowSpe" v-if="item.isAudit==2">
+						<span>未通过</span>
 					</p>
-					<!--<p class="sureFollow" v-show="item.isFollow!=0">
-						<span>已关注</span>
-					</p>-->
 				</div>
+				<!--<div class="follow" v-show="isChooseFalse" @click="cancleFollow(index,item.accountId)">
+					<p class="sureFollow">
+						<span>已关注</span>
+					</p>
+					
+				</div>-->
 			</div>
 			<div class="newCent_top">
 				{{item.title}}
@@ -75,7 +66,7 @@
 				</p>
 				<p style="color: #507daf;margin-top: .10rem;" @click="lookMore(index)" v-show="item.selectM==false">全文</p>
 			</div>
-			<ul class="newScaleImg" @click="conseLog">
+			<ul class="newScaleImg">
 				<li v-for="(itemSon,index) in item.fileDtos" v-if="itemSon.type==1" v-bind:class="{ 'speScalImg': item.fileDtos.length<=2}">
 					
 					<p @click="getScalImgNew(item.fileDtos,index)"><img :src="itemSon.linkUrl"/></p>
@@ -141,23 +132,18 @@
 				</div>
 			</div>
 		</div>
-		<div class="followNone" v-show="hasNoFollowList">
-			<div>
-				<img :src="followNoneImg" />
-			</div>
-			<div>
-				您还没有关注发现号哟～
-			</div>
+		<div class="hasNoFollow" v-show="followNoOne">
+			您还没有关注任何人，快点去关注吧！
 		</div>
 		
 		     
 		
 		<div class="getBottom" v-show="!seachShow">
-			<div class="getIndex">
+			<div class="getIndex" @click="getSaleIndex">
 				<div class="top">
 					<img :src="index01Img" />
 				</div>
-				<div class="bot" style="color: #000;">首页</div>
+				<div class="bot" style="color: #000;">特卖</div>
 			</div>
 			<div class="getIndex" @click="getFind">
 				<div class="top">
@@ -189,9 +175,20 @@
 		<div class="curObjNone" v-show="findNone">
 			<div><img :src="noMorefindShare"/></div>
 			<div style="width: 100%;text-align: center;">
-				没有搜索到相关内容哟~
+				{{findText}}
 			</div>
 		</div>
+		<!--取消关注-->
+		<!--<div class="changeAdd" v-show="needIdcard" @touchmove.prevent>
+			<div class="change">
+				<div style="padding: .40rem;line-height: .52rem;">你确定取消对此人的关注吗。</div>
+				<div class="addAddress">
+					<div class="addLeft" @click="quxiaoFollow">取消</div>
+					<div class="addRight" @click="sureFollowCancel" v-show="cancleSureFollow">确定</div>
+					<div class="addRight" v-show="!cancleSureFollow">确定</div>
+				</div>
+			</div>
+		</div>-->
 		<div class="toShare" v-show="showShare">
 			<div class="shareDetail" @click="colseShare">
 				<div class="detailIndex">
@@ -285,35 +282,37 @@
 				goTopImg:'/static/images/goTop.png',
 				giveUpImg:'/static/images/giveUp.png',
 				giveUp01Img:'/static/images/giveUp01.png',
-				logo2Img:'/static/images/icon-logo.png',
+				logoImg:'/static/images/icon-logo.png',
 				newLogoImg:'https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png',
-				followNoneImg:'/static/images/followNone.png',
 				posterNew:'',
 				videoUrl:'',
 				erweiObj:'',
-				showShare:false,
+				isAddGoodsSure:true,
 				isAddFollow:true,
+				showShare:false,
 				showTop:false,
 				scalImg:false,
-				isAddGoodsSure:true,
 				seachShow:false,
 				searchCodeIndex:false,
+				isChooseFalse:false,
+				followNoOne:false,
+				cancleSureFollow:true,
+				isFollowId:'',
+				findText:'',
+				isFollowSure:'',
+				isAddGoods:'',
+				isAddGoodsIndex:'',
+				accountId:'',
+				cancelIndex:'',
+				cancelId:'',
 				isMore:true,
 				findNone:false,
 				pinKnowShow:false,
-				followAccountId:'',
-				isFollowId:'',
+				needIdcard:false,
 				videoShow:false,
-				hasNoFollowList:false,
-				searchBarFixed:false,
-				hasNoFollow:false,
-				isHasNewFollow:false,
-				seachShowCancel:false,
-				defaultCode:'',
-				addClass:'',
-				followIndex:'',
+				acountList:[],
+				memList:[],
 				fistImg:'',
-				searchRemind:'',
 				cartNum:0,
 				pageObj:{
 					page:1,
@@ -325,7 +324,7 @@
 			    curObj:[],
 				shareData : {
 					'title': "OL圈 发现",
-					'description':'发现好物 分享赚钱' ,
+					'description':'OL圈 发现' ,
 					'url': '',
 					'picURL': "https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png",
 					'hide':true,
@@ -356,19 +355,29 @@
 			
 		},
 		created: function() {
+			
 			if(this.$route.query.memberId==undefined){
 				this.$route.query.memberId='';
 			}
-			this.newFind();
-			this.getNewFollow();
-			this.getSearchRemind();
+			
 			this.getcartNum();
+			this.getAcountList();
 			this.addWeixinShare();
-			this.getMember();
-			this.$store.commit('documentTitle','OL圈');
-//			newFinds
 			
+			this.$store.commit('documentTitle','素材');
 			
+		},
+		activated(){
+			console.log(123)
+			this.$nextTick(function(){
+			    //返回页面取出来
+			    
+			    window.scroll(0, savedPosition)
+			  })
+		   
+		},
+		updated () {
+		  
 		},
 		computed: {
 			searchCaleText() {
@@ -381,78 +390,136 @@
 			},
 			
 		},
+		activated: function () {
+		    
+		},
 		mounted(){
 			window.addEventListener('scroll', this.hotSaleScroll);
-			window.addEventListener('scroll', this.xuanfuScroll);
 		},
 		methods:{
-			getNewFollow(){
+			//我的关注点击头像
+			getNoDetail(accountId){
+				if(this.isChooseFalse){
+					//this.$router.push({path:'/index/differentIndex/id/'+accountId+'?memberId=894559'});
+					this.$router.push({path:'/index/differentIndex/id/'+accountId});
+					//window.location.href=CUR_URLBACK+'index/differentIndex/id/'+accountId;
+				}
+			},
+			//取消我的关注里面的关注
+//			cancleFollow(index,accountId){
+//				this.cancelIndex=index;
+//				this.cancelId=accountId;
+//				this.needIdcard=true;
+//				
+//			},
+//			sureFollowCancel(){
+//				this.cancleSureFollow=false;
+//				let data = {
+//					memberId:this.$route.query.memberId,
+//					accountId:this.cancelId
+//				}
+//				
+//				
+//				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.follow,data,this.sureFollowCancelBack);
+//			},
+//			sureFollowCancelBack(data){
+//				this.cancleSureFollow=true;
+//				if(data.code==0){
+//					this.needIdcard=false;
+//					this.$toast('取消关注');
+//					for(let i=0;i<this.curObj.length;i++){
+//						if(this.curObj[i].accountId==this.cancelId){
+//							this.$set(this.curObj[i],'selectM',true);
+//						}
+//					}
+//					
+//				}else{
+//					this.$toast(data.result);
+//				}
+//			},
+			quxiaoFollow(){
+				this.needIdcard=false;
+			},
+			getMemList(){
 				let data = {
 //					memberId:this.$route.query.memberId,
+					
 				}
-				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.waitReadCount,data,this.getNewFollowBack,this);
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemListBack);
 			},
-			getNewFollowBack(data){
-				if(data.result>0){
-					this.isHasNewFollow=true;
-				}else{
-					this.isHasNewFollow=false;
-				}
-			},
-			//获取会员信息
-			getMember(){
-				let data={
-//					memberId:this.$route.query.memberId,
-				}
-				//console.log(data)
-				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
-			},
-			getMemberBack(data){
+			getMemListBack(data){
+				this.memList=data.result;
+				this.shareData.url=USE_URL+"weixin/auth?recId="+data.result.id+"&view="+encodeURIComponent(CUR_URLBACK+'index/differentIndex/id/'+this.acountList.accountId);
 				
-				this.setCookie('memberId',data.result.id)
-//				
 			},
-			getMemIndex(id){
-				//this.$router.push({path:'/index/differentIndex/id/'+id+'?memberId=894559'});
-				this.$router.push({path:'/index/differentIndex/id/'+id});
-				//window.location.href=CUR_URLBACK+'index/differentIndex/id/'+id;
+			//发现账号详情
+			
+			getAcountList(){
+				let data = {
+//					memberId:this.$route.query.memberId,
+					
+				}
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.accountDetail,data,this.getAcountListBack);
+			},
+			getAcountListBack(data){
+				
+				this.acountList=data.result;
+				this.accountId=this.acountList.accountId;
+				this.shareData.picURL=data.result.logo;
+//				this.shareData.url=USE_URL+"weixin/auth?recId="+data.result.id+"&view="+encodeURIComponent(CUR_URLBACK+'index/differentIndex/id'+data.result.accountId);
+				this.getOtherAccount();
+				this.getMemList();
+			},
+			//点击我发布的
+			getMineAccount(){
+				this.isChooseFalse=false;
+				this.accountId=this.acountList.accountId;
+				this.isFollowId='';
+				this.findNone=false;
+				this.isMore=true;
+				this.pageObj.page=1;
+				this.newFind();
+			},
+			//点击我关注的
+			getOtherAccount(){
+				this.isChooseFalse=true;
+				this.accountId='';
+				this.isFollowId=1;
+				this.findNone=false;
+				this.isMore=true;
+				this.pageObj.page=1;
+				this.newFind();
 			},
 			//关注或者取消
-			getFollow(id,index,accountId){
-//				console.log(id)
-				this.isAddFollow=false;
-				this.isFollowSure=id;
-				this.followIndex=index;
-				this.followAccountId=accountId;
-//				console.log(this.isFollow)
-				let data = {
+//			getFollow(id){
+////				console.log(id)
+//				this.isAddFollow=false;
+//				this.isFollowSure=id;
+////				console.log(this.isFollow)
+//				let data = {
 //					memberId:this.$route.query.memberId,
-					accountId:this.followAccountId
-				}
-				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.follow,data,this.getFollowBack);
-			},
-			getFollowBack(data){
-				this.isAddFollow=true;
-				if(data.code==0){
-					if(this.isFollowSure==1){
-						this.$toast('取消关注');
-						for(let i=0;i<this.curObj.length;i++){
-							if(this.curObj[i].accountId==this.followAccountId){
-								this.$set(this.curObj[i],'isFollow',0);
-							}
-						}
-					}else{
-						this.$toast('关注成功');
-						for(let i=0;i<this.curObj.length;i++){
-							if(this.curObj[i].accountId==this.followAccountId){
-								this.$set(this.curObj[i],'isFollow',1);
-							}
-						}
-					}
-				}else{
-					this.$toast(data.message);
-				}
-			},
+//					accountId:this.acountList.accountId
+//				}
+//				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.follow,data,this.getFollowBack);
+//			},
+//			getFollowBack(data){
+//				this.isAddFollow=true;
+//				if(data.code==0){
+//					
+//					if(this.isFollowSure==1){
+//						this.$toast('取消关注');
+//						this.$set(this.acountList,'isFollow',0);
+//						this.$set(this.acountList,'followCount',this.acountList.followCount-1);
+//					}else{
+//						this.$toast('关注成功');
+//						this.$set(this.acountList,'isFollow',1);
+//						this.$set(this.acountList,'followCount',this.acountList.followCount+1);
+//					}
+//					
+//				}else{
+//					this.$toast(data.message);
+//				}
+//			},
 			//点赞或者取消
 			addGoodsNum(index,id,findId){
 				this.isAddGoodsSure=false;
@@ -472,36 +539,25 @@
 					if(this.isAddGoods==1){
 						this.$set(this.curObj[this.isAddGoodsIndex],'isDoGood',0);
 						this.$set(this.curObj[this.isAddGoodsIndex],'goodCount',this.curObj[this.isAddGoodsIndex].goodCount-1);
+						if(!this.isChooseFalse){
+							this.$set(this.acountList,'doGoodCount',this.acountList.doGoodCount-1);
+						}
 						
 					}else{
 						this.$set(this.curObj[this.isAddGoodsIndex],'isDoGood',1);
+						
 						this.$set(this.curObj[this.isAddGoodsIndex],'goodCount',this.curObj[this.isAddGoodsIndex].goodCount+1);
+						if(!this.isChooseFalse){
+							this.$set(this.acountList,'doGoodCount',this.acountList.doGoodCount+1);
+						}
 					}
 					
 				}else{
 					this.$toast(data.message);
 				}
 			},
-			 //获取搜索提示关键字
-		    getSearchRemind(){
-		    	
-				let data={
-//					memberId:this.$route.query.memberId,
-					type:1,
-				}
-				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getSearchRemind,data,this.getSearchRemindBack,this);
-		    },
-		    getSearchRemindBack(data){
-		    	this.defaultCode=data.result;
-		    	if(data.result!='无' && data.result!=''){
-		    		this.searchRemind='大家都在搜“'+data.result+'”';
-		    		
-		    	}else{
-		    		this.searchRemind=''
-		    	}
-		    	
-		    },
 			lookMore(index){
+				console.log(123)
 				this.curObj[index].selectM=true;
 			},
 		    getVideoNew(url,poster){
@@ -537,36 +593,11 @@
 				//console.log(data)
 				this.cartNum=data.result;
 			},
-			//点击精选
-			getNewIndex(){
-				if(this.searchBarFixed){
-					$('html,body').animate({scrollTop:0},1000);
-				}
-				this.searchCode='';
-				this.isFollowId='';
-				this.isMore=true;
-				this.pageObj.page=1;
-				this.addClass='';
-				this.newFind();
-				
-			},
-			getNewIndexFollow(){
-				this.searchCode='';
-				this.isHasNewFollow=false;
-				if(this.searchBarFixed){
-					$('html,body').animate({scrollTop:0},1000);
-				}
-				this.isFollowId=1;
-				this.isMore=true;
-				this.pageObj.page=1;
-				this.newFind();
-				
-			},
 			newFind(){
 				let data={
-					keyword:this.searchCode,
-					isFollow:this.isFollowId,
 //					memberId:this.$route.query.memberId,
+					accountId:this.accountId,
+					isFollow:this.isFollowId,
 					page:1,
 	  				rows:10,
 					
@@ -583,52 +614,19 @@
 					}
 					this.curObj=data.result;
 //					console.log(this.curObj)
+				}
+				if(data.result.length==0){
 					if(this.isFollowId==1){
-						if(data.result.length==0){
-							this.hasNoFollowList=true;
-							this.addClass='speFollowNone';
-						}else{
-							this.hasNoFollowList=false;
-						}
+						this.findNone=true;
+						this.findText='你还没有关注过他人哦'
 					}else{
-						this.hasNoFollowList=false;
+						this.findNone=true;
+						this.findText='你还没有发过素材哦'
 					}
+					
 				}
 			},
-			showInput(){
-				if(this.searchCode==''){
-					if(this.defaultCode!='无' && this.defaultCode!=''){
-						this.searchCode=this.defaultCode
-					}else{
-						this.searchCode='';
-					}
-				}
-				this.seachShowCancel=true;
-				this.searchEnterFun();
-			},
-			getSearch(){
-		    	this.seachShow=true;
-		    	this.addClass='speFindIndex';
-		    	
-		    	
-		    },
-		    
-		    cancelSearch(){
-		    	this.searchCode='';
-		    	this.isFollowId='';
-		    	this.seachShowCancel=false;
-		    	this.addClass='';
-		    	this.searchEnterFun();
-		    },
-		    cancelCode(){
-		    	this.searchCode='';
-		    },
-		    ceshi(){
-		    	this.scalImg=true;
-		    },
-		    conseLog(){
-		    	console.log(1)
-		    },
+			
 		    //放大图片
 		    getScalImgNew(item,index){
 //		    	console.log(item)
@@ -667,11 +665,10 @@
 		    		this.$router.push({path:'/demo/iscroll/id/'+productId+'?isShare=0&type='+ type});
 		    	}else if(type==12){
 		    		this.$router.push({path:'/activity/newact?id='+productId});
-		    		//window.location.href=CUR_URLBACK+'activity/newact?id='+productId;
+//		    		window.location.href=CUR_URLBACK+'activity/newact?id='+productId;
 		    	}else if(type==13){
-		    		//this.$router.push({path:'/coupon/getcoupon/id/'+productId+'?memberId=894559'});
 		    		this.$router.push({path:'/coupon/getcoupon/id/'+productId});
-		    		//window.location.href=CUR_URLBACK+'/coupon/getcoupon/id/'+productId;
+//		    		window.location.href=CUR_URLBACK+'/coupon/getcoupon/id/'+productId;
 		    	}else {
 		    		window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId+'&type='+type;
 		    	}
@@ -692,71 +689,11 @@
 		    showImg(){
 				this.pinKnowShow=false;
 			},
-		    //搜索功能
-		    searchEnterFun(){
-		    	let data={
-					keyword:this.searchCode,
-//					memberId:this.$route.query.memberId,
-					isFollow:this.isFollowId,
-					page:1,
-	  				rows:10,
-					
-				}
-				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.newFinds,data,this.searchEnterFunBack,this);
-		    },
-		    searchEnterFunBack(data){
-		    	if(data.code==-1){
-					this.$toast(data.message);
-				}else{
-					this.seachShow=true;
-					this.$refs.input1.blur();
-					
-					if(this.isFollowId==1){
-						if(data.result.length==0){
-							this.addClass='speFollowNone';
-							this.hasNoFollowList=true;
-						}
-						
-					}else{
-						if(data.result.length==0){
-				    		this.findNone=true;
-				    	}else{
-				    		this.findNone=false;
-				    	}
-					}
-					
-			    	if(data.result.length<10){
-			    		this.isMore=false;
-			    	}else{
-			    		this.isMore=true;
-			    	}
-	//				this.isMore=true;
-			    	this.pageObj.page=1;
-			    	this.curObj=data.result;
-			    	this.seachShow=false;
-				}
-		    	
-		    },
+		   
 		    //点击回到顶部
 			gotoTop(){
 				$('html,body').animate({scrollTop:0},1000);
 			},
-			//悬浮 
-  			xuanfuScroll(){
-  				let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-				
-				let offsetTop = document.querySelector('.chooseIsFollow').offsetTop;
-//				console.log(offsetTop)
-				if(scrollTop > offsetTop){
-					this.searchBarFixed = true;
-					
-				}else{
-					this.searchBarFixed = false;
-				}
-				if(scrollTop<81){
-					this.searchBarFixed = false;
-				}
-  			},
 		    //加载更多
   			hotSaleScroll () {
   			  var height=document.body.scrollHeight;
@@ -774,13 +711,14 @@
 			  var windowH=window.innerHeight;
 			 // console.log(this.scrollTop + windowH >=height-200)
 			  if(this.scrollTop + windowH >=height-200){
-//			  	console.log(this.isMore)
+			  	
 			  	if(this.isMore){
 	 				this.isMore=false;
 	 				let data={
-	 					keyword:this.searchCode,
-//						memberId:this.$route.query.memberId,
+//	 					keyword:this.searchCode,
+						accountId:this.accountId,
 						isFollow:this.isFollowId,
+//						memberId:this.$route.query.memberId,
 	  					page:this.pageObj.page+1,
 	  					rows:10,
 	  					
@@ -854,199 +792,87 @@
 	      
 	        next();
 	    },
+
 		destroyed () {
 		 window.removeEventListener('scroll', this.hotSaleScroll)
-		 window.removeEventListener('scroll', this.xuanfuScroll);
 		},
 	}
 </script>
 
 <style lang="scss" scoped>
-	.speFollowNone{
-		background: #fff;
-		height: 100%;
-		
-	}
+	
 	.findIndex{
 		
 		padding-bottom: 1.00rem;
-		
-		.indexTop{
-			
-			width: 100%;
-			background: #FFF;
-			z-index: 999;
-			color: #777;
-			font-size: .32rem;
-			ul{
-				display: flex;
-				display:-webkit-box;
-			    display: -moz-box;
-			    display: -ms-flexbox;
-			    display: -webkit-flex;
-			    display: -moz-flex;
-				-webkit-justify-content:center;
-				justify-content:center;
-				-moz-box-pack:center;
-				-webkit--moz-box-pack:center;
-				
-				height: .80rem;
-				border-bottom: 0.01rem solid #E1E1E1;
-				li{
-					margin: 0 .30rem;
-					line-height: .80rem;
-				}
-				.speLiFind{
-					color: #E50F72;
-					font-size: .36rem;
-					border-bottom: .05rem solid #E50F72;
-					
-				}
-			}
-		}
-		.chooseIsFollow{
-			width: 100%;
-			background: #fff;
-			padding: .26rem 0;
-			padding-top: .13rem;
+		.personal{
+			position: relative;
+			background: #E50F72;
 			margin-bottom: .20rem;
-			display: flex;
-			display:-webkit-box;
-		    display: -moz-box;
-		    display: -ms-flexbox;
-		    display: -webkit-flex;
-		    display: -moz-flex;
-			-webkit-justify-content:center;
-			justify-content:center;
-			-moz-box-pack:center;
-			-webkit--moz-box-pack:center;
-			font-size: .28rem;
-			color: #333;
-			font-weight: 700;
+			padding-top: .68rem;
+			padding-bottom: .42rem;
 			
-			.hasFollowNew{
-				margin-left: .48rem;
-				position: relative;
-				.hasNew{
-					position: absolute;
-					right: -.15rem;
-					top: -.05rem;
-					width: .12rem;
-					height: .12rem;
-					background: #E50F72;
+			.personalImg{
+				
+				width: 100%;
+				img{
+					display: block;
+					width: 1.20rem;
+					height: 1.20rem;
 					border-radius: 50%;
+					margin: 0 auto;
 				}
 			}
-			
-			.speDiv{
-				color: #777;
-				font-weight: normal;
+			.personalName{
+				text-align: center;
+				font-size: .34rem;
+				color: #fff;
+				margin-top: .18rem;
 			}
-		}
-		.speChooseFollow{
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			z-index: 998;
-			background: #fff;
-			padding-top: .26rem;
-		}
-		.search{
-			background: #fff;
-			
-			
-			.searchIndex{
+			.sundryCount{
+				margin-top: .50rem;
+				font-size: .24rem;
+				color: rgba(255,255,255,.7);
+				display: flex;
+				justify-content: center;
+				text-align: center;
+				p{
+					margin: 0 .45rem;
+				}
+				.countNum{
+					font-size: .30rem;
+					color: #fff;
+					margin-bottom: .20rem;
+				}
+			}
+			.mineOrOther{
+				font-size: .30rem;
+				margin-top: .42rem;
+				color: #fff;
 				display: flex;
 				display:-webkit-box;
 			    display: -moz-box;
 			    display: -ms-flexbox;
 			    display: -webkit-flex;
 			    display: -moz-flex;
-				-webkit-justify-content:flex-start;
-				justify-content:flex-start;
-				-moz-box-pack:flex-start;
-				-webkit--moz-box-pack:flex-start;
-				position: relative;
-				.cancleCode{
-					position: absolute;
-					right: 1.32rem;
-					top: .28rem;
-					
-					img{
-						display: block;
-						width: .28rem;
-						height: .28rem;
-					}
-				}
-			}
-			.searchSure{
-				font-size: .28rem;
-				line-height: .60rem;
-				color: #333;
-				margin-left: .20rem;
-			}
-			.searchBod{
-				height: .60rem;
-				-webkit-box-flex: 1;
-			    -ms-flex: 1;
-			    flex: 1;
-				background: #EFEDED;
-				overflow: hidden;
-				border-radius: .30rem;
-				font-size:.24rem;
-				color: #aaa;
-				display: flex;
-				display:-webkit-box;
-			    display: -moz-box;
-			    display: -ms-flexbox;
-			    display: -webkit-flex;
-			    display: -moz-flex;
-				-webkit-justify-content:flex-start;
-				justify-content:flex-start;
-				-moz-box-pack:flex-start;
-				-webkit--moz-box-pack:flex-start;
-				-webkit-box-pack: center;
+			    -webkit-box-pack: center;
 			    -moz-box-pack: center;
-			    -ms-flex-align:center;/* IE 10 */
+			    -ms-flex-align:center;
 			    -webkit-align-items: center;
 			    -moz-align-items: center;
 			    align-items: center;
-			    img{
-			    	display: block;
-			    	width: .30rem;
-			    	height: .28rem;
-			    	margin-left: .20rem;
-			    }
-			    input{
-			    	width: 100%;
-			    	margin-left: .14rem;
-			    	height: 100%;
-			    	border: none;
-			    	background: #EFEDED;
-			    	outline: none;
-			    	
-			    }
-			    input::-webkit-search-cancel-button{
-				  display: none;
+			    justify-content: center;
+		    	-moz-box-pack: center;
+		    	-webkit--moz-box-pack: center;
+				.speShu{
+					margin: 0 1.10rem;
 				}
-				input[type=search]::-ms-clear{
-				  display: none;
+				.accountSpe{
+					color: rgba(255,255,255,.7);
 				}
-			    span{
-			    	margin-left: .14rem;
-			    }
+				.mineAccount{
+					
+				}
 			}
-		}
-		.specialFide{
-			position: fixed;
-			top: 0;
-			left: 0;
-			background: #fff;
-			
-			z-index: 999;
-			width: 100%;
-			border-bottom: 0.01rem solid #E1E1E1;
 		}
 		.newContent{
 			padding: .20rem .30rem;
@@ -1093,16 +919,15 @@
 					}
 				}
 				.follow{
-				
+					padding: 0.05rem ;
 					position: absolute;
-					right: 0rem;
-					top: 0.15rem;
-					padding: 0.05rem;
-					font-size: .26rem;
+					right: 0;
+					bottom: .08rem;
+					font-size: .24rem;
 					.sureFollow{
 						color: #E50F72;
-						width: 1.06rem;
-						height: .46rem;
+						width: .98rem;
+						height: .40rem;
 						display: flex;
 						display:-webkit-box;
 					    display: -moz-box;
@@ -1118,6 +943,7 @@
 					    justify-content: center;
 				    	-moz-box-pack: center;
 				    	-webkit--moz-box-pack: center;
+						background: #fff;
 						
 						border-radius: .08rem;
 						border: 0.01rem solid #E50F72;
@@ -1129,19 +955,6 @@
 							color: #777777;
 						}
 					}
-				}
-				.howToShare{
-					position: absolute;
-					right: 0;
-					top: .40rem;
-					padding-top: .1rem;
-					width: .48rem;
-	    			height: .38rem;
-	    			img{
-					    display: block;
-						  width: .32rem;
-						  height: .06rem;
-	    			}
 				}
 			}
 			.newCent_descript{
@@ -1181,6 +994,7 @@
 				li{
 					cursor:pointer;
 					position: relative;
+					border-radius: 0.06rem;
 					left: 0;
 					top: 0;
 					z-index: 222;
@@ -1258,7 +1072,7 @@
 					height: 2.85rem;
 					margin-right: .10rem;
 					margin-bottom: .10rem;
-					border-radius: 0.06rem;
+					
 					
 				}
 				.speScalImg:nth-child(2){
@@ -1408,18 +1222,59 @@
 				}
 			}
 		}
-		.followNone{
-			padding-top: 3.06rem;
-			text-align: center;
-			font-size: .26rem;
-			color: #AAAAAA;
-			img{
-				display: block;
-				width: 1.65rem;
-				height: 1.24rem;
+		.changeAdd{
+			position: fixed;
+			z-index: 9999;
+			left: 0;
+			top: 0;
+			background: rgba(0,0,0,0.5);
+			width: 100%;
+			height: 100%;
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: -moz-flex;
+		    -webkit-box-pack: center;
+		    -moz-box-pack: center;
+		    -ms-flex-align:center;/* IE 10 */
+		    -webkit-align-items: center;
+		    -moz-align-items: center;
+		    align-items: center;
+			.change{
+				text-align: center;
+				font-size: .30rem;
+				
+				color: #333;
+				width: 70%;
 				margin: 0 auto;
-				margin-bottom: .36rem;
+				background: #fff;
+				.addAddress{
+					border-top: 0.01rem solid #E1E1E1;
+					display: flex;
+					display:-webkit-box;
+				    display: -moz-box;
+				    display: -ms-flexbox;
+				    display: -webkit-flex;
+				    display: -moz-flex;
+					text-align: center;
+					line-height: .88rem;
+					.addLeft{
+						width: 50%;
+						
+					}
+					.addRight{
+						width: 50%;
+						background: #E5006E;
+						color: #fff;
+					}
+				}
 			}
+		}
+		.hasNoFollow{
+			font-size: .30rem;
+			text-align: center;
 		}
 		.getBottom{
 			border-top: 0.01rem solid #e1e1e1;
@@ -1472,12 +1327,9 @@
 		}
 		.curObjNone{
 			width: 100%;
-			height: 6.40rem;
-			background: #fff;
 			font-size: .26rem;
 			color: #aaa;
-			
-			padding-top: 3.60rem;
+			padding-top: 2.60rem;
 			img{
 				display: block;
 				margin: 0 auto;

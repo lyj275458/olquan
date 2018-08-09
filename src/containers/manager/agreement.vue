@@ -1,6 +1,7 @@
 <template>
 	<div class="agreement">
-		<div class="agreeListTop">
+		<div style="line-height:.91rem;background: #fff;text-align: center;font-size: .32rem;">【您还剩<span style="color: #E5006E;">{{memList.inviteSupervisorCount}}</span>个邀请名额】</div>
+		<div class="agreeListTop" v-bind:class="{ 'agreeListTopSpe': agreeListSpe==true}">
 			<ul>
 				<li v-for="(item,index) in list" v-bind:class="{ 'speAgreeMent': speListAgree==index}" @click="getDifferent(index)">{{item}}</li>
 			</ul>
@@ -38,7 +39,8 @@
 				</div>
 				<div class="tiBots">
 					<p class="tiBleft" @click="cancelSure">取消</p>
-					<p class="tiBright" @click="agreeApply">确定</p>
+					<p class="tiBright" v-show="isCilck" @click="agreeApply">确定</p>
+					<p class="tiBright" v-show="!isCilck">确定</p>
 				</div>
 			</div>
 		</div>
@@ -52,7 +54,8 @@
 				</div>
 				<div class="tiBots">
 					<p class="tiBleft" @click="cancelSure">取消</p>
-					<p class="tiBright" @click="refuseApply">确定</p>
+					<p class="tiBright" v-show="isCilck" @click="refuseApply">确定</p>
+					<p class="tiBright" v-show="!isCilck">确定</p>
 				</div>
 			</div>
 		</div>
@@ -69,11 +72,27 @@
 				actstartImg: '/static/images/actstart.png',
 				isSureOrNot:false,
 				isSure:false,
+				isMore:true,
+				isCilck:true,
 				applyList:[],
+				memList:[],
 				indexId:'',
 				applyId:'',
 				realName:'',
+				agreeListSpe:false,
 				nickName:'',
+				status:'',
+				pageObj:{
+					page:1,
+				},
+				shareData : {
+					'title': "",
+					'description': "",
+					'url': "",
+					'picURL': "",
+					'hide':true,
+					'share':true
+				},
 			}
 		},
 		components: {
@@ -88,6 +107,7 @@
 			}
 			
 			this.getApplyList();
+			this.getMember();
 			this.$store.commit('documentTitle','申请列表');
 //			newFinds
 			
@@ -97,9 +117,41 @@
 		
 		},
 		mounted(){
-			
+			window.addEventListener('scroll', this.handleScroll);
+			window.addEventListener('scroll', this.xuanfuScroll);
+			this.addWeixinShare();
 		},
 		methods:{
+			//悬浮 
+  			xuanfuScroll(){
+  				let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+				
+				let offsetTop = document.querySelector('.agreeListTop').offsetTop;
+				
+				if(scrollTop > offsetTop){
+					this.agreeListSpe = true;
+					
+				}else{
+					this.agreeListSpe = false;
+				}
+				if(scrollTop<45){
+					this.agreeListSpe = false;
+				}
+  			},
+			//获取会员信息
+			getMember(){
+				let data={
+//					memberId:this.$route.query.memberId,
+				}
+				//console.log(data)
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
+			},
+			getMemberBack(data){
+				
+				this.memList=data.result;
+				
+				
+			},
 			//同意
 			argeeApplySure(realName,nickName,id,index){
 				this.realName=realName;
@@ -113,8 +165,9 @@
 				this.isSure=false;
 			},
 			agreeApply(){
+				this.isCilck=false;
 				let data = {
-					memberId:8,
+//					memberId:this.$route.query.memberId,
 					recordId:this.applyId,
 					status:1,
 				}
@@ -122,6 +175,7 @@
 				
 			},
 			agreeApplyBack(data){
+				this.isCilck=true;
 				if(data.code==0){
 					this.isSureOrNot=false;
 					this.$set(this.applyList[this.indexId],'status',1);
@@ -130,6 +184,7 @@
 					this.$toast(data.message,1000);
 				}
 			},
+			//点击拒绝
 			refuseApplySure(realName,nickName,id,index){
 				this.realName=realName;
 				this.nickName=nickName;
@@ -138,8 +193,9 @@
 				this.indexId=index;
 			},
 			refuseApply(){
+				this.isCilck=false;
 				let data = {
-					memberId:8,
+//					memberId:this.$route.query.memberId,
 					recordId:this.applyId,
 					status:2,
 				}
@@ -147,6 +203,7 @@
 				
 			},
 			refuseApplyBack(data){
+				this.isCilck=true;
 				if(data.code==0){
 					this.isSure=false;
 					this.$set(this.applyList[this.indexId],'status',2);
@@ -158,24 +215,67 @@
 			//获取列表
 			getApplyList(status){
 				let data={
-					memberId:8,
+//					memberId:this.$route.query.memberId,
 					status:status,
+					page:1,
+					row:10,
 				}
 //				console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.inviteRecords,data,this.getApplyListBack,this);
 			},
 			getApplyListBack(data){
+				if(data.code!=0){
+					this.$toast(data.message,1000);
+				}else{
+					this.applyList=data.result;
+				}
 //				console.log(data)
-				this.applyList=data.result;
+				
 			},
 		    getDifferent(index){
+		    	this.pageObj.page=1;
+		    	this.isMore=true;
 		    	this.speListAgree=index;
-		    	let status=index-1;
-		    	if(status<0){
-		    		status='';
+		    	this.status=index-1;
+		    	if(this.status<0){
+		    		this.status='';
 		    	}
-		    	this.getApplyList(status)
+		    	this.getApplyList(this.status)
 		    },
+		    //下拉加载更多
+			handleScroll () {
+  			  var height=document.body.scrollHeight;
+  				//console.log(height)
+			  this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+				//console.log(this.scrollTop)
+			  var windowH=window.innerHeight;
+			  if(this.scrollTop + windowH >=height-200){
+			  	if(this.isMore){
+	 				this.isMore=false;
+	 				let data={
+	  					page:this.pageObj.page+1,
+	  					rows:10,
+//	  					memberId:this.$route.query.memberId,
+						status:this.status,
+	  				};
+	  				this.pageObj.page=this.pageObj.page+1
+					this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.inviteRecords,data,this.getListMoreBack);
+	 			}
+			  }
+	 			
+			},
+			getListMoreBack(data){
+				if(data.result.data.length<10){
+					this.isMore=false;
+				}else{
+					this.isMore=true;
+				}
+				for(let i=0; i<data.result.length; i++){
+					this.applyList.push(data.result[i])
+				}
+				//console.log(this.curObj)	
+			
+			},
 			//微信分享 
 			  addWeixinShare:function(){
 				var data = {                 
@@ -197,7 +297,8 @@
 			  },
 		},
 		destroyed () {
-		
+		 	window.removeEventListener('scroll', this.handleScroll);
+		 	window.removeEventListener('scroll', this.xuanfuScroll);
 		},
 	}
 </script>
@@ -205,12 +306,14 @@
 <style lang="scss" scoped>
 	.agreement{
 		
-		padding-top: .91rem;
-		.agreeListTop{
+		.agreeListTopSpe{
 			position: fixed;
 			left: 0;
 			top: 0;
 			width: 100%;
+		}
+		.agreeListTop{
+			
 			background: #fff;
 			z-index: 999;
 			font-size: .32rem;
@@ -247,7 +350,8 @@
 			.agreeOrNot{
 				position: absolute;
 				right: 0.30rem;
-				top: .44rem;
+				padding-top: .20rem;
+				top: .24rem;
 				font-size: 0;
 				p{
 					display: inline-block;

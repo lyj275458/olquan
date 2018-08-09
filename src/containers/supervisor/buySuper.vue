@@ -20,7 +20,7 @@
 					<img :src="moreSaleImg" />
 				</div>
 				<div class="bagName">
-					<p style="margin-bottom: .36rem;">选择督导礼包</p>
+					<p style="margin-bottom: .36rem;">选择经理礼包</p>
 					<p>￥{{curObj.totalFee}}</p>
 				</div>
 				<div class="colseImg" @click="colseShow">
@@ -46,7 +46,7 @@
 					<img :src="shareSuperImg" />
 				</div>
 				<div class="shareDetail">
-					<p>点击右上角，分享给您的好友，邀请开通督导！</p>
+					<p>点击右上角，分享给您的好友，邀请开通经理！</p>
 				</div>
 				<div class="sureShare">
 					<div class="shareSure">
@@ -62,11 +62,11 @@
 					<img :src="shareSuperImg" />
 				</div>
 				<div class="shareDetail">
-					<p>您还不是粉领会员，无法开通督导特权，请先升级粉领会员。</p>
+					<p>您还不是店主，无法开通经理特权，请先升级店主。</p>
 				</div>
 				<div class="sureShare">
 					<div class="shareSure">
-						<p @click="getPink">点击开通粉领会员</p>
+						<p @click="getPink">点击开通店主</p>
 					</div>
 				</div>
 			</div>
@@ -97,7 +97,7 @@
 					'title': "OL圈 试用中心",
 					'description': "试,是一种态度。每日10,20点限量开抢！",
 					'url': "",
-					'picURL': "http://ol-site.olquan.com/plug/mobile/img/logoo.jpg",
+					'picURL': "https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png",
 					'hide':true,
 					'share':false
 				},
@@ -107,9 +107,9 @@
 		    
 		},
 		created: function() {
-			this.$store.commit('documentTitle','申请督导');
+			this.$store.commit('documentTitle','申请经理');
 			this.getMember();
-			this.getGiftBag()
+			
 		},
 		mounted(){
 			
@@ -133,13 +133,14 @@
 			getMemberBack(data){
 				this.memList=data.result
 				this.setCookie('memberId',data.result.id)
+				this.getGiftBag()
 				console.log(this.getCookie("memberId"))
 				
 				if(this.memList.levelCode=='supervisor' || this.memList.levelCode=='starSupervisor' || this.memList.levelCode=='highSupervisor'){
-					this.$store.commit('documentTitle','邀请督导');
+					this.$store.commit('documentTitle','邀请经理');
 					this.isShowSuper=true;
 				}else{
-					this.$store.commit('documentTitle','申请督导');
+					this.$store.commit('documentTitle','申请经理');
 					this.isShowSuper=false;
 				}
 				if(this.memList.isGetStoreCommission==0){
@@ -164,7 +165,7 @@
 			colseShare(){
 				this.shareIMg=false;
 			},
-			//点击开通粉领
+			//点击开通店主
 			getPink(){
 				this.$router.push({path:'/supervisor/buyPink?inviteId='+this.$route.query.inviteId});
 			},
@@ -173,8 +174,11 @@
 				this.moreSaleImg=data.result.gifts[0].bagImage;
 				this.isCanBuy=data.result.gifts[0].bagCanBuy;
 				this.bagId=data.result.gifts[0].bagId;
+				
+				this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'manager/invite?inviteId='+this.memList.accountNo+'&inviteMemberId='+this.memList.id);
+				
 				//this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper');				
-				this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'supervisor/buySuper?inviteId='+this.memList.accountNo);
+				
 				this.shareData.title=this.curObj.shareTitle;
 				this.shareData.description=this.curObj.shareDesc;
 				this.shareData.picURL=this.curObj.shareLogo;
@@ -195,7 +199,7 @@
 				if(this.isCanBuy==0){
 					this.$toast('库存不足');
 				}else if(this.memList.isGetStoreCommission==0){
-					this.$toast('您还不是粉领，请先升级粉领');
+					this.$toast('您还不是店主，请先升级店主');
 				}else{
 					let data={
 						bagId:this.bagId,

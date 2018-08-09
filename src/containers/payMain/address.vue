@@ -109,7 +109,7 @@
 		    },
 		    upData(id){
 		    	if(this.$route.query.isBuyGoods){
-		    		this.$router.push({path:'/add/addAdress?isBuyGoods='+this.$route.query.isBuyGoods+'&addressId='+id});
+		    		this.$router.push({path:'/add/addAdress?isBuyGoods='+this.$route.query.isBuyGoods+'&addressId='+id+'&isOverseasDirectMailProduct='+this.$route.query.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.$route.query.isCrossBorderProduct});
 		    	}else if(this.$route.query.getSuper){
 		    		this.$router.push({path:'/add/addAdress?getSuper='+this.$route.query.getSuper+'&addressId='+id});
 		    	}else if(this.$route.query.getPink){
@@ -126,7 +126,7 @@
 		    },
 		    addNew(){
 		    	if(this.$route.query.isBuyGoods){
-		    		this.$router.push({path:'/add/addAdress?isBuyGoods='+this.$route.query.isBuyGoods});
+		    		this.$router.push({path:'/add/addAdress?isBuyGoods='+this.$route.query.isBuyGoods+'&isOverseasDirectMailProduct='+this.$route.query.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.$route.query.isCrossBorderProduct});
 		    	}else if(this.$route.query.getSuper){
 		    		this.$router.push({path:'/add/addAdress?getSuper='+this.$route.query.getSuper});
 		    	}else if(this.$route.query.getPink){
@@ -155,7 +155,7 @@
 		    chooseDefault(id,index){
 		    	this.defalutIndex=index;
 		    	let data = {
-//		    		memberId:this.getCookie("memberId"),
+//		    		memberId:this.$route.query.memberId,
 		    		addressId:id,
 		    	}
 		    	this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.setDefaultAddress,data,this.chooseDefaultBack,this);
@@ -168,11 +168,14 @@
 		    },
 		    chooseAddressId(id){
 		    	if(this.$route.query.isBuyGoods){
-		    		this.$router.push({path:'/fightAlone/ordersure/payorder?addressId='+id});
+		    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder?addressId='+id;
+		    		//this.$router.push({path:'/fightAlone/ordersure/payorder?addressId='+id});
 		    	}else if(this.$route.query.getSuper){
-		    		this.$router.push({path:'/fightAlone/ordersure/superorder?addressId='+id});
+		    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/superorder?addressId='+id;
+		    		//this.$router.push({path:'/fightAlone/ordersure/superorder?addressId='+id});
 		    	}else if(this.$route.query.getPink){
-		    		this.$router.push({path:'/fightAlone/ordersure/pinkorder?addressId='+id});
+		    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/pinkorder?addressId='+id;
+		    		//this.$router.push({path:'/fightAlone/ordersure/pinkorder?addressId='+id});
 		    	}
 		    },
 		    //微信分享

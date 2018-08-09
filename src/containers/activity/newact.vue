@@ -9,7 +9,7 @@
 				      </swiper-item>
 				    </Swiper>
         		</div>
-        		
+
 				<!--能滑动的-->
 				<!--<div class="touchImg" v-if="item.modelSampleCode==='titleproducttouch'"  id='issc'>
 					<div v-for="itemSons in item.contents" @click="goMore(itemSons.url,itemSons.type,itemSons.typeId,itemSons.productId,itemSons.image)" class='liTisy'>
@@ -42,25 +42,32 @@
 
 
 			</div>
-			
+
 			<!--分类-->
-			<div class="list-top" v-show="classify.length!=0">
+			<!---->
+			<div class="list-top"  v-bind:class="{ 'spelist-top': offTopTrue===true}" v-show="classify.length!=0">
 				<ul :class="searchBarFixed == true ? 'isFixed' :''">
-					<li v-for="(itemsSon,index) in classify" v-bind:class="{ 'special': index===addSelect}" @click="getDetail(index,itemsSon.contentId)">{{itemsSon.title}}</li>
+					<li v-for="(itemsSon,index) in classify" v-bind:class="{ 'special': index===addSelect}" @click="getDetail(index,itemsSon)">{{itemsSon.title}}</li>
 				</ul>
 			</div>
 			<!--分类产品-->
 			<div class="cent">
+				<!--<div style="height: 3rem;" v-show="offTopTrue"></div>/-->
 				<ul class="init">
-					<li v-for='item in dataList' @click="goBuy(item.togetherId,item.type,item.productId)">
+					<li v-for='(item,index) in dataList' @click="goBuy(item.type,item.productType,item.productId,item.classMore)" :ref="indexArr.indexOf(index)>-1 ? 'addref' : ''" :class="{'firstRef' : index===0,'teBanner' : item.classMore=='classBanner'}">
 						<img :src="item.image" />
-						<p class="top"><span v-show="item.productTag!=null">{{item.productTag}}</span>{{item.productName}}</p>
-
-						<p style="font-size: .28rem;color: #fc469a; line-height: .66rem;">￥{{item.salePriceView}}</p>
-						<p class="botMoney">
-							<span class="left">￥{{item.marketPriceView}}</span>
-							<span class="right" >{{item.score? item.score : ''}}</span>
-						</p>
+						<div v-if="item.classMore !=='classBanner'">
+							<p class="top">{{item.productName}}</p>
+							<p style="padding:.20rem;">
+								<span style="font-size: .22rem;color: #999;" v-show="item.productType==4">保证金</span>
+								<span style="color: #E50F72;font-size: .22rem;">￥</span><span style="color: #E50F72;margin-right: .08rem;">{{item.salePriceView | changePrice}}</span>
+								<span v-show="item.marketPriceView" style="text-decoration: line-through;color: #999999;font-size: .22rem;margin-right: .08rem;">￥{{item.marketPriceView | changePrice}}</span>
+								<span v-show="item.commission" style="font-size: .22rem;color: #E50F72;">赚{{item.commission |changePrice }}</span>
+							</p>
+							<p class="getBuyThing">
+								<span >立即购买</span>
+							</p>
+						</div>
 					</li>
 					<li v-if="showTrue" class="special">没有更多了</li>
 				</ul>
@@ -72,9 +79,9 @@
 			</div>
 			<div class="zhezhaoName" v-if="activeTrue==true && status==-1">
 				<img :src="activeImg" style="height: 5.20rem; width: 5.20rem;"/>
-			</div>	
+			</div>
 	</div>
-		<div v-show='LoadTrue===false' style='width:100%;position: fixed;background: #fffff;text-align: center;z-index=111111'>
+		<div v-show='LoadTrue===false' style='width:100%;background: #fffff;text-align: center;z-index=111111'>
 			<span style='display:inline-block;margin:0 auto;font-size:0.30rem;margin-top: 49%;'>正在加载中......</span>
 		</div>
 	</div>
@@ -93,9 +100,11 @@
 
     data: function () {
       return {
+        indexArr:[],
+        offsetTopSure:0,
         activeImg: '/static/images/active.png',
         goodImg: '/static/images/goodsImg.png',
-        activeImg: '/static/images/active.png',
+//        activeImg: '/static/images/active.png',
         actstartImg: '/static/images/actstart.png',
         colseImg: '/static/images/cha.png',
         listObj: {},
@@ -104,12 +113,13 @@
           page: 1,
         },
         styleobj:{},
+        offTopTrue:false,
         backCObj:{},
         activeDetail:'',
 
         showTrue: false,
         status: '',
-        
+
         swiperOption: {
 		  notNextTick: true,
           slidesPerView: 3,
@@ -155,7 +165,7 @@
 		obj:{},
 		LoadTrue:false,
 		isPinkSureGet:false,
-		
+
       }
     },
     components: {
@@ -176,11 +186,8 @@
 
     },
     mounted() {
-      //window.addEventListener('scroll', this.handleScroll);
-		
-
-
-    },
+        window.addEventListener('scroll', this.xuanfuScroll);
+	},
 
     computed: {
 			objLoad:function(){
@@ -197,9 +204,47 @@
 			},
 			swiper() {
 		        return this.$refs.mySwiper.swiper
-		    }
-    },
+		    },
+
+   },
     methods: {
+    	//悬浮
+		xuanfuScroll(){
+			let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+//			console.log(scrollTop);
+			let offsetTopTe = document.querySelector('.list-top').offsetTop;
+			let oLiDom=this.$refs.addref;
+			let _self=this;
+			this.offsetTopSure=scrollTop;
+			/*Array.prototype.slice.call(oLiDom).forEach((val,index)=> {
+				console.log(val.offsetTop,index,scrollTop)
+				if(parseInt(val.offsetTop)==parseInt(scrollTop)){
+					_self.addSelect=index+1
+				}
+			})*/
+			for(let i=0;i<oLiDom.length;i++){
+//				console.log(oLiDom[i].offsetTop,i,scrollTop)
+				if(scrollTop>oLiDom[i].offsetTop-45 && scrollTop<oLiDom[i+1].offsetTop-45){
+					this.addSelect=i;
+					break
+				}else if(scrollTop<oLiDom[0].offsetTop-45){
+					this.addSelect=0;
+					break
+				}else if(scrollTop>oLiDom[oLiDom.length-1].offsetTop-45){
+					this.addSelect=oLiDom.length-1;
+					break
+				}
+			}
+//			console.log(offsetTop)
+			if(scrollTop > offsetTopTe){
+				this.offTopTrue = true;
+			}else{
+				this.offTopTrue = false;
+			}
+			if(scrollTop < 632){
+				this.offTopTrue = false;
+			}
+		},
     	getUrl(url){
 //  		console.log(url)
     	},
@@ -217,11 +262,11 @@
 			}else{
 				this.isPinkSureGet=false;
 			}
-			
+
 		},
       //关闭弹窗
       colseShow() {
-        this.activeTrue = false
+        this.activeTrue = false;
       },
       loading(){
       	var $imgLoad=$('img')
@@ -265,6 +310,7 @@
         )
       },
       getFirstBack(data) {
+        let _self=this
        if (this.listObj.background.modelSampleCode == 'color') {
          this.styleobj = {'background': this.listObj.background.contents}
        } else if (this.listObj.background.modelSampleCode == "imgUrl") {
@@ -277,7 +323,26 @@
          this.obj = {}
        }
        if(this.listObj.subassembly[this.listObj.subassembly.length-1].contents.length>0 && this.listObj.subassembly[this.listObj.subassembly.length - 1].modelSampleCode=="catlist1"){
-      		this.dataList=this.listObj.subassembly[this.listObj.subassembly.length-1].contents[0].dataList
+//      		this.dataList=this.listObj.subassembly[this.listObj.subassembly.length-1].contents[0].dataList
+         let dataArr=[]
+         let numkey=0
+         _self.indexArr.push(numkey)
+         this.listObj.subassembly[this.listObj.subassembly.length-1].contents.forEach(function(val,index){
+           if(val.classBannerImg.classMore==='classBanner'){
+             numkey+=val.dataList.length+1
+           }else{
+             numkey+=val.dataList.length
+           }
+//         	numkey+=val.dataList.length
+           _self.indexArr.push(numkey)
+           if(val.classBannerImg.classMore==='classBanner'){
+             dataArr=dataArr.concat(val.classBannerImg,val.dataList)
+           }else{
+             dataArr=dataArr.concat(val.dataList)
+           }
+         })
+         _self.indexArr.splice(_self.indexArr.length-1,1)
+         this.dataList=dataArr
        }else{
        		this.dataList=[]
        }
@@ -307,7 +372,7 @@
 				}
 			}
 		}
-	
+
 //		for(let i=0;i<this.listObj.subassembly.length;i++){
 //			if(this.listObj.subassembly[i].modelSampleCode==catlist1)
 //		}
@@ -371,10 +436,10 @@
 		console.log(type)
 		if(type=="" || type==undefined){
             return;
-			
+
 		}else if(type==0){
 			return;
-			
+
 //			console.log(Number(url.substr(url.indexOf("d=")+2)))
 		}else if(type==1){
         	this.iosType='syzx';
@@ -405,7 +470,7 @@
         }else if(type==14){
         	this.iosType='xsms';
         }else if(type==16){
-        	this.iosType='olbx';	
+        	this.iosType='olbx';
         }else if(type==17){
         	this.iosType='ppgl';
         }else if(type==18 || type==22){
@@ -420,9 +485,9 @@
         }else if(productId==''){
         	productId=0
         }
-        
+
         if(this.iPhone){
-        	
+
 			if(tsApp.getClientBrowser()=='wx'){
 				if(type==11){
 					if(this.isPinkSureGet){
@@ -438,9 +503,9 @@
 					}else{
 						window.location.href = url
 					}
-					
+
 				}
-				
+
 			}else{
 				if(this.isAndroid){
 					if(type!="" && type!=0){
@@ -454,7 +519,7 @@
 							}else{
 								OLquan.activeJump(11,typeId,productId,image,url,productType)
 							}
-							
+
 						}else{
 							OLquan.activeJump(type,typeId,productId,image,url,productType)
 						}
@@ -465,15 +530,15 @@
 					if(type!="" && type!=0){
 						if(type==17){
 							window.location.href="https://www.baidu.com/"+this.iosType+typeId+'&'+image
-	
+
 						}else if(type==2 || type==21){
 							window.location.href="https://www.baidu.com/"+this.iosType+productId+"&"+productType
 						}else if(type==16){
 							window.location.href="https://www.baidu.com/"+this.iosType+url
-	
+
 						}else if(type==18 || type==22){
 							window.location.href="https://www.baidu.com/hdlb"+url.substr(url.indexOf("=")+1)
-	
+
 						}else if(type==11){
 							if(this.isPinkSureGet){
 								window.location.href="https://www.baidu.com/"+"flxf";
@@ -487,13 +552,13 @@
 				}
 			}
 		}else{
-			window.location.href=CUR_URLBACK+'index/newIndex'
+			window.location.href=CUR_URLBACK+'index/pinkIndex'
 		}
 
 
         //window.location.href=id+'&memberId='+this.getCookie("memberId");
       },
-		
+
       getLunbo(url) {
 //      console.log(url);
         if (url != "") {
@@ -504,18 +569,27 @@
         //
       },
       getDetail(index, id) {
-
         this.addSelect = index;
-        console.log(id)
-        this.dataList = this.classify[index].dataList
-        this.pageObj.page = 1;
-        this.isMore = true;
-        this.dataObj.contentId = id;
+        let refArrList=this.$refs.addref
+        let oLi=document.getElementsByClassName('firstRef')[0].offsetTop
+       /* console.log(this.indexArr)
+        console.log(refArrList)*/
+       if(index!=0){
+        window.scrollTo(0,refArrList[index].offsetTop-44)
+       }else{
+       	window.scrollTo(0,oLi-44)
+       }
+
+//        console.log(id)
+//        this.dataList = this.classify[index].dataList
+//        this.pageObj.page = 1;
+//        this.isMore = true;
+//        this.dataObj.contentId = id;
 //      console.log(this.dataObj)
-        let data = {
-         // memberId: this.$route.query.memberId,
-          contentId: id
-        }
+//        let data = {
+//         // memberId: this.$route.query.memberId,
+//          contentId: id
+//        }
 
         //this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.findProductByContentId,data,this.getDetailBack);
       },
@@ -523,34 +597,46 @@
         //console.log(data)
         this.curObj = data.result;
       },*/
-      goBuy(id,type,productId) {
-//      console.log(id)
-        if(this.iPhone){
-//      	console.log(1)
-			if(tsApp.getClientBrowser()=='wx'){
-				if(type==11){
-					this.$router.push({path:'/index/goodsDetali/id/'+id+'&isLimit=0'});
-				}else if(type==4 || type==8){
-					this.$router.push({path:'/demo/demo/id/'+productId});
-				}else if(type==9){
-					this.$router.push({path:'/demo/iscroll/id/'+productId});
-				}else{
+      goBuy(type,productType,productId,classMore) {
 
-					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId
+        if(classMore!="classBanner"){
+          	if(this.iPhone){
+	//      	console.log(1)
+				if(tsApp.getClientBrowser()=='wx'){
+				    if(productType==4){
+						this.$router.push({path:'/demo/iscroll/id/'+productId+'?type='+productType});
+					}else if(productType==9){
+						this.$router.push({path:'/demo/iscroll/id/'+productId+'?type='+productType});
+					}else{
+						window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId
+					}
+				}else{
+					if(this.isAndroid){
+						if(productType==9){
+							OLquan.activeJump(21,'',productId,'','',productType)
+						}else{
+							OLquan.activeJump(2,'',productId,'','',productType)
+						}
+
+					}
+					if(this.isiOS){
+						if(productType==9){
+							window.location.href="https://www.baidu.com/flxq"+productId+"&"+productType
+						}else{
+							window.location.href="https://www.baidu.com/cpxq"+productId+"&"+productType
+						}
+						//window.location.href="https://www.baidu.com/cpxq"+productId;//小积分页面  去提现5
+
+
+					}
 				}
 			}else{
-				if(this.isAndroid){
-					OLquan.activeJump(2,0,productId,'','');
-				}
-				if(this.isiOS){
-					window.location.href="https://www.baidu.com/cpxq"+productId;//小积分页面  去提现5
-
-
-				}
+				window.location.href=CUR_URLBACK+'index/pinkIndex'
 			}
-		}else{
-			window.location.href=CUR_URLBACK+'index/newIndex'
-		}
+        }else{
+        	console.log(1)
+        }
+
         //window.location.href = API_HOST + 'weixin/product/newProductDetail?productId=' + id + '&memberId=' + this.getCookie("memberId")
       },
       //微信分享
@@ -559,7 +645,7 @@
           "url": location.href,
           "callback": '',
         };
-        console.log(location.href)
+//      console.log(location.href)
 
         this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.weixinShare,data,this.shareBack,this);
       },
@@ -581,7 +667,7 @@
       },
 //  拼团首页  拼团秒杀列表 超值拼列表 拼洋货列表  拼大牌列表 清仓拼列表  （ptlb）
 //	拼团秒杀产品详情 正常拼团产品详情  积分试用产品详情 产品详情 （cpxq）
-//	开通粉领 （ktfl）
+//	开通店主 （ktfl）
 //	全球购列表（qjgl）
 //	家居日用首页（jzry）
 //	品牌馆（ppgl）
@@ -593,33 +679,43 @@
 //	今日上新（jzsx）
 //	活动内跳活动，优惠券活动（hdlb）
 //	小金库充值（jkcz）
-//	粉领产品详情（flxq）
+//	店主产品详情（flxq）
 //	1 试用中心
 //	2 产品详情
 //	3 品牌特卖
 //	4 限时购
 //	5 进口超市
 //	6 进口家居馆
-//	7 全球购 
+//	7 全球购
 //	8 美妆
 //	9 今日上新
 //	10 拼团
-//	11 开通粉领
+//	11 开通店主
 //	12 小金库充值
-//	13 粉领专享
+//	13 店主专享
 //	14 限时拼
-//	15 拼洋货/拼大牌/超值拼/拼大牌   productId 传 分类Id 如果没有分类Id 就传0 
+//	15 拼洋货/拼大牌/超值拼/拼大牌   productId 传 分类Id 如果没有分类Id 就传0
 //	16保险
 //	17品牌馆
 //	18其他活动
-//	19 粉领续费
+//	19 店主续费
 //	20 特卖首页
-//	21 粉领产品详情
+//	21 店主产品详情
 //	22  优惠券活动
      /* destroyed() {
         window.removeEventListener('scroll', this.handleScroll)
       },*/
-    }
+    },
+    beforeRouteLeave(to, from, next) {
+	      
+        from.meta.keepAlive = true;
+      
+        next();
+    },
+    destroyed () {
+ 		window.removeEventListener('scroll', this.xuanfuScroll)
+
+	},
   }
 </script>
 
@@ -647,6 +743,7 @@ img{
 	.order{
 		overflow-x: auto;
 		position: relative;
+
 		.zhezhao{
 			position: absolute;
 			height: 100%;
@@ -699,7 +796,7 @@ img{
 		.touchImg{
 			/*width:100%;*/
 		    overflow-x: auto;
-		  	
+
 		  	overflow-y: hidden;
 		   	white-space:nowrap;
 		   	.liTisy{
@@ -755,7 +852,7 @@ img{
 
 	.list-top{
 		width: 100%;
-		background: #fff;
+		background: #FC89B2;
 		height: .88rem;
 		/*margin-bottom: .10rem;*/
 		.isFixed{
@@ -770,34 +867,41 @@ img{
 		}
 		ul{
 			width:100%;
-		   	height: 1.60rem;
+			font-size: 0;
+		   	height: 100%;
 		   	white-space:nowrap;
 		    overflow: auto;
 		    li{
 		    	  font-size: 0.30rem;
 			      text-align: center;
 			      display: inline-block;
-
+				  color: #fff;
 			      line-height: .88rem;
-			      width: 1.60rem;
-			      padding:0 ;
+			      padding:0 .30rem;
+			      height: 100%;
 		  		  margin: 0;
-
-			      vertical-align: top;
+				  vertical-align: top;
 
 		    }
 		    .special{
-
+				background: #E50F72;
 		      	z-index: 999;
-		      	color: #f49;
+		      	color: #fff;
 		    }
 		}
 
 	}
+	.spelist-top{
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100%;
+
+	}
 	.cent{
-
+		padding: .20rem .20rem 0;
 		/*padding: 0rem .10rem;*/
-
+		background: #E50F72;
 		ul{
 			width:100%;
 			display: flex;
@@ -805,7 +909,7 @@ img{
 			display: -moz-box;
 			display: -ms-flexbox;
 			display: -webkit-flex;
-
+			font-size: 0;
 			-webkit-justify-content:space-between;
 			justify-content:space-between;
 			-moz-box-pack:space-between;
@@ -824,12 +928,15 @@ img{
 				text-align: center;
 				font-size:.28rem ;
 			}
+			li.teBanner{
+				width: 100%;
+			}
 			li{
-				width: 49.5%;
+				width:3.46rem;
 				/*width: 50%;*/
 				background: #fff;
-				margin-bottom:.10rem;
-
+				margin-bottom:.20rem;
+				background: #fff;
 				 img[lazy=loading] {
 					  width: .50rem;
 					  height: .50rem;
@@ -839,14 +946,18 @@ img{
 				img{
 					display: block;
 					width: 100%;
-					height: 3.59rem;
+					height: 3.0rem;
+				}
+				span{
+					font-size: .28rem;
+
 				}
 				.top{
 					font-weight: normal;
 					font-size: .24rem;
 					color: #333;
 					line-height: .40rem;
-					padding:0.08rem  .08rem 0;
+					padding:0.12rem  .20rem 0;
 			        height:.80rem;
 			        overflow: hidden;
 			        span{
@@ -861,24 +972,19 @@ img{
 		 				font-size: .20rem;
 			        }
 				}
-				.botMoney{
-					display: block;
-					overflow: hidden;
-					font-size: .20rem;
-					color: #b2b2b2;
-					font-style: normal;
+				.getBuyThing{
+					width: 100%;
 
-					padding-right: .24rem;
-					.left{
-						text-decoration:line-through;
-
-						float: left;
-
-
-					}
-					.right{
-						float: right;
-
+					margin-bottom: .20rem;
+					span{
+						margin: 0 auto;
+						background: #E5006E;
+						display: block;
+						width: 3.06rem;
+						line-height: .54rem;
+						color: #FFFFFF;
+						text-align: center;
+						font-size: .28rem;
 					}
 				}
 

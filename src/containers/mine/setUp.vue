@@ -3,7 +3,26 @@
 		<div class="topMessage">
 			<p>基本信息</p>
 		</div>
-		
+		<div class="setMessage" style="height: 1.28rem;">
+			<div class="setLeft">
+				<p><img :src="seLogoImg" style="width: .28rem;height: .28rem;"/></p>
+				<p style="margin-left: .07rem;">头像</p>
+			</div>
+			<div class="setRight">
+				<img :src="memList.logo" class="memLogo" />
+			</div>
+		</div>
+		<div class="setMessage" @click="changeNickname">
+			<div class="setLeft">
+				<p><img :src="setNickImg" /></p>
+				<p style="margin-left: .14rem;">昵称</p>
+			</div>
+			<div class="setRight">
+				<p style="margin-right: .20rem; color: #666;" v-show="memList.nickName==null">未填写</p>
+				<p style="margin-right: .20rem;" v-show="memList.nickName!=null">{{memList.nickName}}</p>
+				<p><img :src="setRowImg"/></p>
+			</div>
+		</div>
 		<div class="setMessage" @click="changeRelname">
 			<div class="setLeft">
 				<p><img :src="setNameImg"/></p>
@@ -60,16 +79,26 @@
 				<p><img :src="setRowImg"/></p>
 			</div>
 		</div>
-		<div class="topMessage">
+		<div class="topMessage" v-show="memList.accounts.length>1">
 			<p>账户切换</p>
 		</div>
-		<div class="setMessage">
+		<div class="setMessage" @click="chooseAccountList" v-show="memList.accounts.length>1">
 			<div class="setLeft">
 				<p><img :src="chooseMemImg"/></p>
 				<p style="margin-left: .14rem;">选择账号</p>
 			</div>
 			<div class="setRight">
-				<p style="margin-right: .20rem; color: #666;">15658160809</p>
+				<p style="margin-right: .20rem; color: #666;">{{memList.accountNo}}</p>
+				<p><img :src="setRowImg"/></p>
+			</div>
+		</div>
+		<div class="setMessage" v-show="memList.accounts.length>1">
+			<div class="setLeft">
+				<p><img :src="chooseMemImg"/></p>
+				<p style="margin-left: .14rem;">设置默认账号</p>
+			</div>
+			<div class="setRight">
+				<p style="margin-right: .20rem; color: #666;">{{memList.defaultAccountNo}}</p>
 				<p><img :src="setRowImg"/></p>
 			</div>
 		</div>
@@ -120,6 +149,21 @@
 				<div class="sureOrdel">
 					<div class="delBot" @click="delChange">取消</div>
 					<div class="sureBot" @click="changeRealName">确定</div>
+				</div>
+			</div>
+			
+		</div>
+		<div class="openPasward" v-show="changeNickNameS">
+			<div class="message">
+				<div class="messageTop">
+					设置昵称
+				</div>
+				<div class="inputName">
+					<input type="text" placeholder="请输入昵称" v-model="nickName"/>
+				</div>
+				<div class="sureOrdel">
+					<div class="delBot" @click="delChange">取消</div>
+					<div class="sureBot" @click="changeNickName">确定</div>
 				</div>
 			</div>
 			
@@ -189,6 +233,19 @@
 			</div>
 			
 		</div>
+		<div class="mask" v-show="chooseAccount">
+			<transition name="slide-fade">
+				<div class="accountList" v-show="chooseAccount">
+					<ul>
+						<li v-for="item in memList.accounts" @click="chooseAmountList(item.account)">{{item.account}}</li>
+					</ul>
+					<div class="cancelAccount" @click="cancelChooseAount">取消</div>
+				</div>
+			</transition>
+		</div>
+		
+		
+		
 	</div>
 </template>
 
@@ -207,6 +264,8 @@
 				addressSetImg:'/static/images/addressSet.png', 
 				pasWadImg:'/static/images/pasWad.png', 
 				setNameImg:'/static/images/setName.png', 
+				setNickImg:'/static/images/nick.png',
+				seLogoImg:'/static/images/memlogo.png',
 				memList:[],
 				time:'',
 				isChecked:false,
@@ -215,11 +274,14 @@
 				changeSex:false,
 				changeDay:false,
 				changeIDcard:false,
+				changeNickNameS:false,
+				chooseAccount:false,
 				birthDay:'',//生日
 				payPassword:'',//支付密码
 				realName:'',//真实姓名
 				sexIndex:'0',//性别
 				IDcard:'',//身份证
+				nickName:'',//昵称
 				arr:[
 					{name: '男', id: 1},
           			{name: '女', id: 2}
@@ -254,6 +316,34 @@
             
         },
 		methods:{
+			//选择账号
+			cancelChooseAount(){
+				this.chooseAccount=false;
+			},
+			chooseAccountList(){
+				this.chooseAccount=true;
+			},
+			chooseAmountList(id){
+				if(this.memList.accountNo==id){
+					this.chooseAccount=false;
+				}else{
+					let data = {
+						memberId:this.$route.query.memberId,
+						accountNo:id,
+					}
+					this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.tabAcount,data,this.chooseAmountListBack,this);
+				}
+				
+			},
+			chooseAmountListBack(data){
+				if(data.code!=0){
+					
+					this.$toast(data.message,200);
+				}else{
+					window.location.href=USE_URL+'weixin/member/membercore?mmm='+data.result.id;
+				}
+			},
+			
 			getInput(){
 				let o = document.getElementById('date')
 				this.$refs.setInput.removeAttribute('placeholder');
@@ -274,6 +364,31 @@
 				this.changeSex=false;
 				this.changeDay=false;
 				this.changeIDcard=false;
+				this.changeNickNameS=false;
+			},
+			changeNickname(){
+				this.changeNickNameS=true;
+				console.log(1)
+			},
+			changeNickName(){
+				if(this.nickName==''){
+					this.$toast('请输入昵称',200);
+					return false;
+				}
+				let data = {
+					memberId:this.$route.query.memberId,
+					nickName:this.nickName,
+				}
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.update,data,this.changeNickNameBack,this);
+			},
+			changeNickNameBack(data){
+				this.delChange();
+				if(data.code!=0){
+					this.$toast(data.message,200);
+				}else{
+					this.$toast('修改成功',200);
+					this.$set(this.memList,'nickName',this.nickName);
+				}
 			},
 			//打开修改姓名框
 			changeRelname(){
@@ -457,6 +572,52 @@ input[type="date"]:before{
 	.setUp{
 		background: #F5F5FA;
 		min-height: 100%;
+		.slide-fade-enter-active {
+		  transition: all .3s ease;
+		}
+		.slide-fade-leave-active {
+		  transition: all .1s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+		}
+		.slide-fade-enter, .slide-fade-leave-to
+		/* .slide-fade-leave-active for below version 2.1.8 */ {
+		  transform: translateY(100px);
+		  opacity: 0;
+		}
+		.mask{
+			position: fixed;
+			left: 0;
+			top: 0;
+			background: rgba(0,0,0,.5);
+			height: 100%;
+			width: 100%;
+			z-index: 99;
+			
+		}
+		.accountList{
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			
+			background: #efeff4;
+			z-index: 100;
+			ul{
+				margin-bottom:.12rem;
+				li{
+					background: #fff;
+					text-align: center;
+					padding: .30rem 0;
+					font-size: .36rem;
+					border-bottom: .01rem solid #E1E1E1;
+				}
+			}
+			.cancelAccount{
+				text-align: center;
+				font-size: .36rem;
+				background: #fff;
+				padding: .30rem 0;
+			}
+		}
 		.topMessage{
 			line-height: .64rem;
 			background: #F5F5FA;
@@ -529,10 +690,18 @@ input[type="date"]:before{
 				justify-content:center;
 				-moz-box-pack:center;
 				-webkit--moz-box-pack:center;
+				
 				img{
 					display: block;
 					width: .16rem;
 					height: .28rem;
+				}
+				.memLogo{
+					display: block;
+					width: .80rem;
+					height: .80rem;
+					border-radius: 50%;
+					margin-right: .18rem;
 				}
 			}
 		}

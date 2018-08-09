@@ -64,7 +64,7 @@
 		methods:{
 			getCouponList(){
 			 	let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					activityId:this.$route.params.id
 				}
 			 	this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getActivityInfo,data,this.getCouponListBack,this);
@@ -106,7 +106,7 @@
 			getGoodDetail(productId){
 				let data={
 					productId:productId,
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					uutype:1
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.productDetail,data,this.getGoodDetailBack,this);
@@ -139,10 +139,10 @@
 			},
 			//点击立即领取
 			getCouponId(id,index){
-				console.log(index)
+//				console.log(index)
 				this.curTargetS=index;
 				let data={
-					//memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					couponId:id
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.receiveCoupon,data,this.getCouponIdBack,this);
@@ -208,7 +208,13 @@
 				this.wxShareFun(data.result,this.shareData);
 				//this.locationWx(data);
 			},
-		}
+		},
+		beforeRouteLeave(to, from, next) {
+	      
+	        from.meta.keepAlive = true;
+	      
+	        next();
+	    },
 		
 	}
 </script>

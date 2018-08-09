@@ -142,7 +142,7 @@
 				</li>
 				<li @click="goThree">
 					<img :src="zhuanxiangImg"/>
-					<span>粉领会员</span>
+					<span>店主</span>
 				</li>
 				<li @click="goFour">
 					<img :src="shiyongImg"/>
@@ -311,7 +311,7 @@
 			goTwo(){
 				window.location.href=CUR_URLBACK+'index/newIndex';
 			},
-			//点击粉领专享
+			//点击店主专享
 			goThree(){
 				window.location.href=CUR_URLBACK+'mine/index';
 			},
@@ -320,7 +320,7 @@
 				if(this.showMember){
 					window.location.href=CUR_URLBACK+'try/newCenter';
 				}else{
-					this.$toast('试用中心仅粉领可用');
+					this.$toast('试用中心仅店主可用');
 				}
 			},
 			//点击品牌特卖

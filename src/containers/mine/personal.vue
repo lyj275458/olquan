@@ -20,7 +20,7 @@
 			</div>
 		</div>
 		<div class="renewGet" v-show="memList.isShowRenewButton!=0">
-			<div class="getDate">您的粉领会员将于{{time}}到期</div>
+			<div class="getDate">您的店主将于{{time}}到期</div>
 			<div class="goRenew" @click="getRenew">立即续费</div>
 		</div>
 		<div class="useNavTab">
@@ -108,13 +108,13 @@
 			<div class="navTab" v-show="memList.levelCode!='white' &&  memList.levelCode!='golden' && memList.isShowRenewButton==0">
 				<p @click="getInvitedPink">
 					<img :src="myInvitedImg"/>
-					<span>邀请粉领</span>
+					<span>邀请店主</span>
 				</p>
 			</div>
 			<div class="navTab"  v-show="memList.isShowRenewButton!=0">
 				<p @click="getRenew">
 					<img :src="myInvitedImg"/>
-					<span>粉领续费</span>
+					<span>店主续费</span>
 				</p>
 			</div>
 			<div class="navTab">
@@ -156,8 +156,8 @@
 			<div class="navTab" v-show="memList.levelCode!='white' &&  memList.levelCode!='golden'">
 				<p @click="getSuper">
 					<img :src="userHuaImg"/>
-					<span v-show="memList.levelCode=='store'">申请督导</span>
-					<span v-show="memList.levelCode!='store'">邀请督导</span>
+					<span v-show="memList.levelCode=='store'">申请经理</span>
+					<span v-show="memList.levelCode!='store'">邀请经理</span>
 				</p>
 			</div>
 		</div>
@@ -319,7 +319,7 @@
 			getMycode(){
 				window.location.href=USE_URL+'mobile/weixin/member/memberTwoCode2';
 			},
-			//邀请粉领
+			//邀请店主
 			getInvitedPink(){
 				
 				this.$router.push({path:'/supervisor/buyPink'});

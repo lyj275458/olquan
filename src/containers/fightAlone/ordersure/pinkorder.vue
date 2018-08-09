@@ -15,25 +15,26 @@
 		<div style="height: .20rem;width: 100%;background: #f2f2f2;" v-show="!showAddress"></div>
 		<div class="codeSure">
 			<div style="background: #fff;">
-				<div class="telNum">
+				<!--<div class="telNum">
 					<input placeholder="请输入图形码" :maxlength="11" v-model="imgCode" pattern="[0-9]*" v-on:input ="clearMoreCode()"/>
 					<p @click="getSpecialImg" class="sendNum" style="background: none; width: 1.40rem;height: .60rem;margin-top: -.30rem;">
 						<img :src="iconImg" />
 					</p>
-					<!--<p class="sendNum" v-show="!isSendFlag" style="background: #fff; color: #999;" @click="getCode">{{sendCodeText}}</p>-->
+					
 				</div>
 				<div class="telNum">
 					<input placeholder="请输入你的手机号" :maxlength="11" v-model="telNumber" pattern="[0-9]*" v-on:input ="clearMoretelNum()"/>
-					<p class="sendNum" @click="getCode">发送验证码</p>
-					<!--<p class="sendNum" v-show="!isSendFlag" style="background: #fff; color: #999;" @click="getCode">{{sendCodeText}}</p>-->
+					<p class="sendNum" v-show="isSendFlag" @click="getCode">发送验证码</p>
+					<p class="sendNum" v-show="!isSendFlag" style="background: #fff; color: #999;">{{sendCodeText}}</p>
 				</div>
 				<div class="telNum">
 					<input placeholder="请输入验证码" pattern="[0-9]*" v-model="codeNum" v-on:input ="clearMorecodeNum()" />
 					
-				</div>
+				</div>-->
 				<div class="telNum">
+					<p class="chooseSure">邀请人：</p>
 					<input readonly="readonly" placeholder="邀请码" style="color: #333333;" v-model="inviteCode"/>
-					<!--<p class="chooseSure">必填</p>-->
+					
 				</div>
 			</div>
 		</div>
@@ -61,7 +62,7 @@
 			</div>
 			<div class="peopleName">
 				<p class="left">收件人手机号</p>
-				<input class="right" placeholder="默认上面手机号" pattern="[0-9]*" v-model="getGifTel"  v-on:input ="clearMoregetGifTel()"/>
+				<input class="right" placeholder="收货手机号码" pattern="[0-9]*" v-model="getGifTel"  v-on:input ="clearMoregetGifTel()"/>
 			</div>
 			<div class="chooseCityList">
 		   		<div class="left">
@@ -254,7 +255,7 @@
 					<img :src="pinkGiftImg" />
 				</div>
 				<div class="sureSucess">
-					恭喜您成功开通粉领会员
+					恭喜您成功开通店主
 				</div>
 				<div class="sureSucess" style="color: #333333;font-size: .28rem;">
 					接下来的日子里面祝您购物愉快！
@@ -364,7 +365,7 @@
 		    	imgCode:'',
 		    	getGifTel:'',//收件人手机
 		    	codeNum:'',//验证码
-		    	inviteCode:'',//邀请码
+		    	inviteCode:localStorage.getItem('inviteCode'),//邀请码
 		    	address:'',//详细地址
 		    	addressName:'',//收件人姓名
 		    	getCodeSure:false,
@@ -391,10 +392,10 @@
 			if(this.$route.query.memberId=='undefined' || this.$route.query.memberId==undefined){
 				this.$route.query.memberId='';
 			}
-			if(this.getCookie("inviteCode")==undefined || this.getCookie("inviteCode")=='undefined'){
+			if(localStorage.getItem('inviteCode')==undefined || localStorage.getItem('inviteCode')=='undefined'){
 				this.inviteCode='';
 			}else{
-				this.inviteCode=this.getCookie("inviteCode");
+				this.inviteCode=localStorage.getItem('inviteCode');
 			}
 			
 			this.addRecord();
@@ -470,7 +471,11 @@
 			},
 			getMemberBack(data){
 				this.memberScore=data.result;
-				
+				if(data.result.mobile!='' && data.result.mobile!=null){
+					this.telNumber=data.result.mobile;
+				}else{
+					this.telNumber='';
+				}
 				//console.log(this.memberlevel)
 			},
 			getIcon() {
@@ -534,7 +539,7 @@
 					this.$toast('请输入手机号码');
 					return false;
 				}else if(this.telNumber.length!=11){
-					this.$toast('请输入正确手机号码');
+					this.$toast('请输入正确验证手机号码');
 					
 				}else if(this.imgCode.length!=4){
 					this.$toast('请输入正确规格图形码');
@@ -556,6 +561,7 @@
 			},
 			judgeMobileBack(data){
 				if(data.code==1){
+					
 					this.tellMessage();
 				}else if(data.code==0){
 					this.$toast('号码已存在');
@@ -564,6 +570,13 @@
 				}
 			},
 			tellMessage(){
+				if(this.isSendFlag){
+					this.isSendFlag=false;
+					let _this=this;
+					regCodeInterval = setInterval(function() {
+						_this.regCodeTimeinterval();
+					}, 1000);
+				}
 				let data={
 //						memberId:this.$route.query.memberId,
 						mobile:this.telNumber,
@@ -721,26 +734,30 @@
 			},
 			//提交订单
 			payOrder(){
-				if(this.inviteCode=='' || this.inviteCode==undefined){
-					this.$toast('请输入邀请码');
-					return false;
-				}
+//				if(this.inviteCode=='' || this.inviteCode==undefined){
+//					this.$toast('请输入邀请码');
+//					return false;
+//				}
 				if(Number(this.amountFee)==0 && Number(this.coffersFee)==0){
 					this.isShowPass=true;
 				}else{
 					this.isShowPass=false;
 				}
-				if(this.telNumber=='' || this.telNumber.length!=11 ){
-					this.$toast('请输入正确的手机号码');
-					return false;
-				}
-				if(this.codeNum==''){
-					this.$toast('请输入验证码');
-					return false;
-				}
+//				if(this.telNumber=='' || this.telNumber.length!=11 ){
+//					this.$toast('请输入正确的手机号码');
+//					return false;
+//				}
+//				if(this.codeNum==''){
+//					this.$toast('请输入验证码');
+//					return false;
+//				}
 				if(this.curObj.receiveAddress==null){
 					if(this.addressName==''){
 						this.$toast('请输入收货人姓名');
+						return false;
+					}
+					if(this.getGifTel=='' || this.getGifTel.length!=11){
+						this.$toast('请输入正确收货手机号码');
 						return false;
 					}
 					if(this.prov==0 || this.city==0 || this.district==0 || this.address==''){
@@ -749,9 +766,7 @@
 					}
 					
 				}
-				if(this.getGifTel==''){
-					this.getGifTel=this.telNumber;
-				}
+				
 				//console.log(this.memberScore.enabledPayPassword)
 				if(this.memberScore.enabledPayPassword && !this.isShowPass){
 						this.payPasswordShow=true;
@@ -759,7 +774,7 @@
 						
 				}else{
 					let data ={
-						mobile:this.telNumber,
+//						mobile:this.telNumber,
 						giftBagId:this.orderObj.bagId,
 //						memberId:this.$route.query.memberId,
 						addressId:this.addressId,
@@ -773,7 +788,7 @@
 						address:this.address,
 						addressName:this.addressName,
 						addressMobile:this.getGifTel,
-						code:this.codeNum,
+//						code:this.codeNum,
 					}
 					this.isOrderGet=true;
 						
@@ -833,7 +848,7 @@
 				
 				//console.log(md5(this.payPassword));
 					let data ={
-						mobile:this.telNumber,
+//						mobile:this.telNumber,
 						giftBagId:this.orderObj.bagId,
 //						memberId:this.$route.query.memberId,
 						addressId:this.addressId,
@@ -847,7 +862,7 @@
 						address:this.address,
 						addressName:this.addressName,
 						addressMobile:this.getGifTel,
-						code:this.codeNum,
+//						code:this.codeNum,
 						payPassword:md5(this.payPassword),
 						
 					}
@@ -1025,13 +1040,30 @@
 			
 			.telNum{
 				position: relative;
+				display: flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+				display: -moz-flex;
+				-webkit-box-pack: center;
+			    -moz-box-pack: center;
+			    -ms-flex-align:center;
+			    -webkit-align-items: center;
+			    -moz-align-items: center;
+			    align-items: center;
+			    justify-content: center;
+		    	-moz-box-pack: center;
+		    	-webkit--moz-box-pack: center;
 				padding-left: .26rem;
 				border-bottom: .02rem solid #EBEBEB;
 				
 				input{
-					
+
 					display: block;
-					width: 100%;
+					-webkit-box-flex: 1;
+				    -ms-flex: 1;
+				    flex: 1;
 					border: none;
 					line-height: .90rem;
 					font-size: .26rem;
@@ -1052,12 +1084,10 @@
 					border-radius: .48rem;
 				}
 				.chooseSure{
-					position: absolute;
-					right: .26rem;
-					top:0;
-					line-height: .90rem;
+					
+					
 					font-size: .26rem;
-					color: #999;
+					color: #333;
 				}
 			}
 		}
@@ -1201,7 +1231,11 @@
 					}
 				}
 				select{
-					flex: 1;
+					-webkit-box-flex: 1;  
+				    -moz-box-flex: 1;                
+				    -webkit-flex: 1;      
+				    -ms-flex: 1;           
+				    flex: 1;
 					width: 100%;
 					height: .92rem;
 					border: none;

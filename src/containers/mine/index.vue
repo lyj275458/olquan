@@ -5,9 +5,9 @@
 				<div style="overflow: hidden;" >
 					<img :src="listObj.logo" class="headerImg"/>
 					<p class="name">{{listObj.nickName}}<br />
-						<span v-if="listObj.levelCode=='white'">白领会员</span>
-						<span v-else-if="listObj.levelCode=='golden'">金领会员</span>
-						<span v-else>粉领会员</span>
+						<span v-if="listObj.levelCode=='white'">会员会员</span>
+						<span v-else-if="listObj.levelCode=='golden'">vip会员</span>
+						<span v-else>店主</span>
 					</p>
 				</div>
 				<div class="leijifen">已累计获得 <span>{{listObj.totalScore}}</span> 积分</div>
@@ -25,7 +25,7 @@
 					</div>
 					<div class="dataDetail" @click="getDetailFour">
 						<p class="top">{{listObj.storeFansCount}}<span style="font-size: .24rem;">人</span></p>
-						<p class="cen">推荐粉领会员</p>
+						<p class="cen">推荐店主</p>
 						<p class="bot">去推荐</p>
 					</div>
 				</div>
@@ -51,7 +51,7 @@
 		</div>
 		<div class="pink-invio">
 			<div class="pinTop" v-show="listObj.levelCode=='white'">
-				<p class="top">金领会员5大特权</p>
+				<p class="top">vip会员5大特权</p>
 			</div>
 			<div class="benefit" v-show="listObj.levelCode=='white' || listObj.levelCode=='golden'">
 				<ul>
@@ -80,8 +80,8 @@
 			</div>
 			<div class="tiao" v-show="listObj.levelCode=='white' || listObj.levelCode=='golden'"></div>
 			<div class="pinTop">
-				<p class="top" v-show="listObj.levelCode!='white' && listObj.levelCode!='golden'">您已尊享粉领会员6大特权</p>
-				<p class="top" v-show="listObj.levelCode=='white' || listObj.levelCode=='golden'">开通粉领会员尊享6大特权</p>
+				<p class="top" v-show="listObj.levelCode!='white' && listObj.levelCode!='golden'">您已尊享店主6大特权</p>
+				<p class="top" v-show="listObj.levelCode=='white' || listObj.levelCode=='golden'">开通店主尊享6大特权</p>
 			</div>
 			<div class="jinOwn">
 				<ul>
@@ -102,7 +102,7 @@
 					</li>
 					<li style="border-right: 0.01rem solid #ddd;padding: .40rem 0;" @click="getDetailOne">
 						<img :src="buypackImg"/>
-						<span>粉领试用</span>
+						<span>店主试用</span>
 					</li>
 					<li style="border-right: 0.01rem solid #ddd;padding: .40rem 0;">
 						<img :src="zhuanImg"/>
@@ -110,12 +110,12 @@
 					</li>
 					<li style="padding: .40rem 0;">
 						<img :src="giftImg"/>
-						<span>粉领礼包</span>
+						<span>店主礼包</span>
 					</li>
 				</ul>
 			</div>
 			<!--<div class="getPink" @click="kaiPinkuse" v-show="listObj.levelCode=='white' || listObj.levelCode=='golden'">
-				<p>一步到位 ￥{{fenMoney}}/年 享粉领特权</p>
+				<p>一步到位 ￥{{fenMoney}}/年 享店主特权</p>
 				<img  :src="getpinkImg"/>
 			</div>-->
 			<!--<div class="jifenUse" @click="gotoJifen">
@@ -219,7 +219,7 @@
 			
 		},
 		methods:{
-			//开通粉领
+			//开通店主
 			kaiPinkuse(){
 				if(this.showButton){
 					if(tsApp.getClientBrowser()=='wx'){
@@ -246,7 +246,7 @@
 				}
 				
 			},
-			//开通粉领的价格
+			//开通店主的价格
 			getMoney(){
 				let data={
 					
@@ -293,7 +293,7 @@
 //				console.log(this.curObj)
 //			
 //			},
-			//白领点击
+			//会员点击
 			goIndex(){
 				if(tsApp.getClientBrowser()=='wx'){
 					if(this.showFen){
@@ -355,7 +355,7 @@
 						window.location.href="https://www.baidu.com/flxf";//续费  8
 					}
 				}	
-//					window.location.href="开通粉领";//续费8  开通粉领1
+//					window.location.href="开通店主";//续费8  开通店主1
 //					window.location.href="试用中心";//点击去试用  小积分页面 去试用2
 //					window.location.href="商城首页";//小积分页面 去下单 去购物3
 //					window.location.href="我的钱包";//小积分页面  去提现4
@@ -363,7 +363,7 @@
 //					window.location.href="推广海报";//点击去推荐  小积分页面 去推荐6
 //					window.location.href="产品详情+756";//点击产品3
 //					window.location.href="推广海报";//点击去推荐  小积分页面 去推荐3				
-//					window.location.href="邀请粉领";//点击去邀请4
+//					window.location.href="邀请店主";//点击去邀请4
 			},
 			
 			getInvite(){
@@ -390,7 +390,7 @@
 							OLquan.toProduct("2")
 						}
 						if(this.isiOS){
-							//window.location.href="https://www.baidu.com/flsy";//点击去试用  跳粉领试用  9
+							//window.location.href="https://www.baidu.com/flsy";//点击去试用  跳店主试用  9
 							window.location.href="https://www.baidu.com/syzx";
 						}
 					}

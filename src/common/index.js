@@ -38,7 +38,7 @@ Vue.prototype.getCookie = function(argument) {
           //console.log(argument)
           //console.log(arr[0])
             if (arr[0]==argument) { //如果前面是 userId 就是找到了
-              console.log(arr[1])
+//            console.log(arr[1])
                 return arr[1]; //将后面的值赋给 userId ，跳出循环                  
                 break;
             }

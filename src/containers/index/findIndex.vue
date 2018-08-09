@@ -68,17 +68,23 @@
 				
 				<img :src="pinkShare" @click="ceshi"/>
 			</div>-->
-			<div class="prodtctList">
+			<div class="prodtctList" v-show="item.productName!=null">
 				<div class="productDescrip" @click="getGoodsDetail(item.productType,item.productId)">
 					<div class="prodtctImg">
 						<img :src="item.productImage"/>
 					</div>
-					<div class="prodtctDescript">
+					<div class="prodtctDescript" v-if="item.productType!=12 && item.productType!=13">
 						<p class="productName">{{item.productName}}</p>
 						<p class="productPrice">￥{{item.productPrice}}</p>
 					</div>
+					<div class="prodtctDescript" v-if="item.productType==12 || item.productType==13">
+						<p class="activeTitle">
+							<span>{{item.productName}}</span>
+						</p>
+						
+					</div>
 				</div>
-				<div class="shareErwei" @click="getGoodsShareNew(item.productType,item.productId)">
+				<div class="shareErwei" v-if="item.productType!=12 && item.productType!=13" @click="getGoodsShareNew(item.productType,item.productId)">
 					<img :src="shareEShare" />
 				</div>
 			</div>
@@ -182,7 +188,10 @@
 	  				    v-show="videoShow"
 					   >
 			</video>
-				</div>
+			<div class="goFortop" v-show="showTop" @click="gotoTop">
+			<img :src="goTopImg"/>
+		</div>
+	</div>
 	
 	
 	
@@ -214,10 +223,12 @@
 				serviceImg:'/static/images/icon-service.png',
 				myImg:'/static/images/icon-my.png',
 				bofangImg:'/static/images/bofang.png',
+				goTopImg:'/static/images/goTop.png',
 				posterNew:'',
 				videoUrl:'',
 				erweiObj:'',
 				showShare:false,
+				showTop:false,
 				scalImg:false,
 				seachShow:false,
 				searchCodeIndex:false,
@@ -226,6 +237,7 @@
 				pinKnowShow:false,
 				videoShow:false,
 				fistImg:'',
+				searchRemind:'',
 				cartNum:0,
 				pageObj:{
 					page:1,
@@ -239,7 +251,7 @@
 					'title': "OL圈 发现",
 					'description':'OL圈 发现' ,
 					'url': '',
-					'picURL': "http://ol-site.olquan.com/plug/mobile/img/logoo.jpg",
+					'picURL': "https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png",
 					'hide':true,
 					'share':false,
 					'video':true,
@@ -272,6 +284,7 @@
 				this.$route.query.memberId='';
 			}
 			this.newFind();
+			this.getSearchRemind();
 			this.getcartNum();
 			this.addWeixinShare();
 			
@@ -295,6 +308,17 @@
 			window.addEventListener('scroll', this.hotSaleScroll);
 		},
 		methods:{
+			 //获取搜索提示关键字
+		    getSearchRemind(){
+		    	
+				let data={
+//					memberId:this.$route.query.memberId,
+				}
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getSearchRemind,data,this.getSearchRemindBack,this);
+		    },
+		    getSearchRemindBack(data){
+		    	this.searchRemind=data.result;
+		    },
 			lookMore(index){
 				this.curObj[index].selectM=true;
 			},
@@ -334,7 +358,7 @@
 			newFind(){
 				let data={
 					keyword:this.searchCode,
-//					memberId:this.$route.query.memberId,
+					//memberId:this.$route.query.memberId,
 					page:1,
 	  				rows:10,
 					
@@ -412,6 +436,12 @@
 		    	if(type==9 || type==4){
 		    		//window.location.href=CUR_URLBACK+'demo/iscroll/id/'+productId+'?isShare=0&type='+type;
 		    		this.$router.push({path:'/demo/iscroll/id/'+productId+'?isShare=0&type='+ type});
+		    	}else if(type==12){
+//		    		this.$router.push({path:'/activity/newact?id='+productId});
+		    		window.location.href=CUR_URLBACK+'activity/newact?id='+productId;
+		    	}else if(type==13){
+//		    		this.$router.push({path:'/coupon/getcoupon/id/'+productId});
+		    		window.location.href=CUR_URLBACK+'coupon/getcoupon/id/'+productId;
 		    	}else {
 		    		window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId+'&type='+type;
 		    	}
@@ -464,6 +494,10 @@
 				}
 		    	
 		    },
+		    //点击回到顶部
+			gotoTop(){
+				$('html,body').animate({scrollTop:0},1000);
+			},
 		    //加载更多
   			hotSaleScroll () {
   			  var height=document.body.scrollHeight;
@@ -472,7 +506,11 @@
 //				console.log(this.offsetTop)
 			  this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
 //				console.log(this.scrollTop)
-				
+				if(this.scrollTop>600){
+					this.showTop=true;
+				}else{
+					this.showTop=false;
+				}
 				
 			  var windowH=window.innerHeight;
 			 // console.log(this.scrollTop + windowH >=height-200)
@@ -813,6 +851,21 @@
 						height: 100%;
 						cursor:pointer;
 						position: relative;
+						display: flex;
+						display:-webkit-box;
+					    display: -moz-box;
+					    display: -ms-flexbox;
+					    display: -webkit-flex;
+					    display: -moz-flex;
+					    -webkit-box-pack: center;
+					    -moz-box-pack: center;
+					    -ms-flex-align:center;/* IE 10 */
+					    -webkit-align-items: center;
+					    -moz-align-items: center;
+					    align-items: center;
+						img{
+							
+						}
 						.SpeImgBofang{
 							position: absolute;
 							width: .94rem;
@@ -821,6 +874,7 @@
 							margin-left: -.47rem;
 							margin-top: -.47rem;
 							top: 50%;
+							min-height: 0;
 						}
 					}
 					img{
@@ -846,6 +900,7 @@
 					margin-right: .10rem;
 					margin-bottom: .10rem;
 					
+					
 				}
 				.speScalImg:nth-child(2){
 					margin-right: 0;
@@ -865,12 +920,15 @@
 					background: #F5F5F5;
 					border-radius: 0.06rem;
 					display: flex;
-			    display: -ms-flexbox;
-			    display: -moz-flex;
-			    -ms-flex-pack: start;
-			    justify-content: flex-start;
-			    -moz-box-pack: flex-start;
-			    -webkit--moz-box-pack: flex-start;
+					display:-webkit-box;
+					display: -webkit-flex;
+					display: -moz-box;
+					display: -moz-flex;
+					display: -ms-flexbox;
+				    -ms-flex-pack: start;
+				    justify-content: flex-start;
+				    -moz-box-pack: flex-start;
+				    -webkit--moz-box-pack: flex-start;
 			    .prodtctImg{
 			    	width: 1.10rem;
 			    	height: 1.10rem;
@@ -887,14 +945,31 @@
 			    .prodtctDescript{
 			    		font-size: .26rem;
 			    		color: #333;
-			    		padding-top: .16rem;
-			    	.productName{
 			    		
+			    	.productName{
+			    		padding-top: .16rem;
 			    		width: 3.7rem;
 			    		line-height:.62rem;
 					    overflow: hidden;
 					    white-space: nowrap;
 					    text-overflow: ellipsis;
+			    	}
+			    	.activeTitle{
+			    		height: 100%;
+			    		display: flex;
+						display:-webkit-box;
+						display: -webkit-flex;
+						display: -moz-box;
+						display: -moz-flex;
+						display: -ms-flexbox;
+						align-items: center;
+					   span{
+					   		display: block;
+						   	width: 3.7rem;
+				    		line-height:.32rem;
+				    		max-height: .64rem;
+				    		overflow: hidden;
+					   }
 			    	}
 			    	.productPrice{
 			    		color: #E50F72;
@@ -1154,6 +1229,17 @@
 			width: 100%;
 			z-index: 989;
 			height: 100%;
+		}
+		.goFortop{
+			position: fixed;
+			bottom: 1.80rem;
+			right: .60rem;
+			z-index: 222;
+			img{
+				display: block;
+				width: .60rem;
+				height: .60rem;
+			}
 		}
 		.pinKnow{
 			position: fixed;

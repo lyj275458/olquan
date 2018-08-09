@@ -387,11 +387,11 @@
 			<div class="tishi"  v-show="levelEnt">
 				
 				<div class="tiCen">
-					您还不是粉领会员，是否开通粉领会员
+					您还不是店主，是否开通店主
 				</div>
 				<div class="tiBots">
 					<p class="tiBleft" @click='getlevel'>取消</p>
-					<p class="tiBright" @click="getPink">开通粉领</p>
+					<p class="tiBright" @click="getPink">开通店主</p>
 				</div>
 			</div>
 		</div>
@@ -603,7 +603,7 @@
 				
 				this.getCouponList=false;
 			},
-			//不是粉领
+			//不是店主
 			getlevel(){
 				this.levelEnt=false;
 			},
@@ -615,7 +615,7 @@
 			getMineIndex(){
 				window.location.href=USE_URL+'weixin/member/membercore';
 			},
-			//开通粉领
+			//开通店主
 			getPink(){
 				if(this.showButton){
 					window.location.href=USE_URL+'weixin/member/renewConfirmOrder';

@@ -439,7 +439,7 @@ export default [
 		}
         
         
-    },{//新版粉领首页--
+    },{//新版店主首页--
         path: '/index/pinkIndex',
         
         component: resolve => {
@@ -554,7 +554,7 @@ export default [
 		}
         
         
-    },{//升级粉领--
+    },{//升级店主--
         path: '/supervisor/buyPink',
         
         component: resolve => {
@@ -567,7 +567,7 @@ export default [
 		}
         
         
-    },{//粉领确认订单--
+    },{//店主确认订单--
         path: '/fightAlone/ordersure/pinkorder',
         
         component: resolve => {
@@ -580,7 +580,7 @@ export default [
 		}
         
         
-    },{//分享升级粉领--
+    },{//分享升级店主--
         path: '/share/pinkShare',
         
         component: resolve => {
@@ -681,6 +681,46 @@ export default [
         },
         meta: {
 		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//个人素材页面
+        path: '/index/differentIndex/id/:id',
+        
+        component: resolve => {
+            require.ensure(['../containers/index/differentIndex.vue'], () => {
+                resolve(require('../containers/index/differentIndex.vue'));
+            }, 'differentIndex');
+        },
+        meta: {
+		  keepAlive: true,// 不需要缓存
+		  isTop:true
+		}
+        
+        
+    },{//我的素材页
+        path: '/index/myFind',
+        
+        component: resolve => {
+            require.ensure(['../containers/index/myFind.vue'], () => {
+                resolve(require('../containers/index/myFind.vue'));
+            }, 'myFind');
+        },
+        meta: {
+		  keepAlive: true // 不需要缓存
+		}
+        
+        
+    },{//我的新发现页
+        path: '/index/newFindIndex',
+        
+        component: resolve => {
+            require.ensure(['../containers/index/newFindIndex.vue'], () => {
+                resolve(require('../containers/index/newFindIndex.vue'));
+            }, 'newFindIndex');
+        },
+        meta: {
+		  keepAlive: true // 不需要缓存
 		}
         
         

@@ -13,8 +13,9 @@
 		</div> -->
 		<div class="indexTop">
 			<ul>
-				<li @click="getFist">特卖</li>
 				<li class="speLiFind">试用</li>
+				<li @click="getFist">特卖</li>
+				
 				<li @click="getFind">发现</li>
 			</ul>
 		</div>
@@ -241,7 +242,7 @@
 					<img :src="item.indexImage" />
 					<img class="tryOut" :src="tryOutImg" v-show="item.percent=='100%'"/>
 				</div>
-				<div class="moreGoodsName">
+				<div class="moreGoodsName moreGoodsNameSpe">
 					{{item.productName}}
 				</div>
 				<div class="moreGoodsDes">
@@ -268,11 +269,13 @@
 						<span style="font-size: .28rem;color: #333;;">{{item.productName}}</span>
 					</div>
 					<div class="goodsNum" v-show="addSelect==0">
-						<div class="progress">
-							<div class="num">已试用{{item.percent}}</div>
-							<div class="porNum"v-bind:style="{width:item.percent}"></div>
+						<div class="uesNum">仅剩{{item.dayLimitCount-item.saleCount}}件</div>
+						<!--<div class="progress">
+							<div class="num">仅剩{{item.plusPercent}}</div>
+							<div class="porNum"v-bind:style="{width:item.plusPercent}"></div>
 						</div>
-						<div class="uesNum">已试{{item.buyCount}}件</div>
+						<div class="uesNum">仅剩{{item.dayLimitCount-item.saleCount}}件</div>-->
+						<div class="uesNum" style="color: #777;">已有{{item.totalBuyCount}}人试用</div>
 					</div>
 					<div class="dayTomorrow"  v-show="addSelect==1">
 						{{item.dayLimitCount}}件 | 明日{{item.dailyStartTime}}
@@ -420,7 +423,7 @@
 					'title': "OL圈 试用中心",
 					'description': "试，是一种态度。每日整点限量抢试！还有更多新品、海外产品期待您来试用体验！",
 					'url': "",
-					'picURL': "http://ol-site.olquan.com/plug/mobile/img/logoo.jpg",
+					'picURL': "https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png",
 					'hide':true,
 					'share':false
 				},
@@ -477,7 +480,7 @@
 				}else{
 					this.memberlevel=false;
 				}
-				
+				this.setCookie('memberId',data.result.id)
 			},
 			//添加访问记录
 			addRecord(){
@@ -638,19 +641,26 @@
 					var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
 	//			 	console.log(scrollTop)
 				  	var offsetTop = document.querySelector('.fixedArea').offsetTop;
+//				  	console.log(offsetTop)
 				  	var offsetTopNext= document.querySelector('.fanfanfan').offsetTop;
-//				    console.log(offsetTop)	
+//				    console.log(offsetTopNext)	
 					if(this.isChooseIndex==1){
 						if (scrollTop > offsetTop) {
 						    this.searchBarFixed = true;
 						} else {
 						    this.searchBarFixed = false;
 						}
+						if(scrollTop<198){
+							this.searchBarFixed = false;
+						}
 					}else{
 						if (scrollTop > offsetTopNext) {
 						    this.searchBarFixedSpecial = true;
 						} else {
 						    this.searchBarFixedSpecial = false;
+						}
+						if(scrollTop<256){
+							this.searchBarFixedSpecial = false;
 						}
 					}
 				}
@@ -849,7 +859,8 @@
   			//点击特卖
   			getFind(){
   				//this.$router.push({path:'/index/pinkIndex?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'index/findIndex'
+  				//window.location.href=CUR_URLBACK+'index/findIndex';
+		    	window.location.href=CUR_URLBACK+'index/newFindIndex';
   				
   			},
   			gotoTop(){
@@ -1521,6 +1532,11 @@
 				font-size: .26rem;
 				max-height: .68rem;
 				
+			}
+			.moreGoodsNameSpe{
+				overflow: hidden;
+				text-overflow:ellipsis;
+				white-space: nowrap;
 			}
 			.moreGoodsDes{
 				font-size: .24rem;

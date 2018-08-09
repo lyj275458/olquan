@@ -9,7 +9,8 @@ import store from './store';
 import fastclick from 'fastclick'
 import * as CommonServer from './api/CommonServer.js'; 
 import './css/reset.css';
-
+import Vuex from 'vuex' ;
+Vue.use(Vuex)
 
 
 import loading from './components/iscroll/index.js';
@@ -30,32 +31,21 @@ const authPageArr=['coupon/receive','test']
 Vue.use(comFun)
 Vue.use(VueRouter)
 Vue.use(VueLazyload, {
-  loading: '/static/images/default.jpg',
+  loading: '/static/images/olDefault.png',
   preLoad:1
 });
+
 const scrollBehavior = (to, from, savedPosition) => {
-	//console.log(savedPosition)
-	  if (savedPosition) {
-	    // savedPosition is only available for popstate navigations.
-	    return savedPosition
-	  } else {
-	    const position = {}
-	    // new navigation.
-	    // scroll to anchor by returning the selector
-	    if (to.hash) {
-	      position.selector = to.hash
-	    }
-	    // check if any matched route config has meta that requires scrolling to top
-	    if (to.matched.some(m => m.meta.scrollToTop)) {
-	      // cords will be used if no selector is provided,
-	      // or if the selector didn't match any element.
-	      position.x = 0
-	      position.y = 0
-	    }
-	    // if the returned position is falsy or an empty object,
-	    // will retain current scroll position.
-	    return position
-	  }
+	if (savedPosition) {
+//		console.log(savedPosition)
+      return savedPosition
+    } else {
+      if (from.meta.keepAlive) {
+        from.meta.savedPosition = document.body.scrollTop
+      }
+     // console.log(to.meta.savedPosition)
+      return { x: 0, y: to.meta.savedPosition || 0 }
+    }
 }
 const router = new VueRouter({
     mode: 'history',
@@ -360,4 +350,7 @@ new Vue({
 //图片地址处理
 Vue.filter('ToUrl', function (val) {
   return 'http://ol-quan2017.oss-cn-shanghai.aliyuncs.com/' + val
+});
+Vue.filter('changePrice', function (val) {
+  return parseFloat(val);
 });

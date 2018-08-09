@@ -86,7 +86,7 @@
 			}
 		},
 		created: function() {
-			this.$store.commit('documentTitle','粉领试用');
+			this.$store.commit('documentTitle','店主试用');
 			this.getActive();
 			//this.getCategory();
 			console.log(this.cateObj)

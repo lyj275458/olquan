@@ -9,7 +9,7 @@
 		</div>
 		<div class="sureBut">
 			<div class="outDiv">
-				<p v-show="memList.levelCode!='supervisor'" @click="openShow">点击立即开通粉领会员</p>
+				<p v-show="memList.levelCode!='supervisor'" @click="openShow">点击立即开通店主</p>
 				<!--<p v-show="memList.levelCode=='supervisor'" @click="yaoqing">立即邀请</p>-->
 			</div>
 			
@@ -21,7 +21,7 @@
 					<img :src="moreSaleImg" />
 				</div>
 				<div class="bagName">
-					<p style="margin-bottom: .36rem;">开通粉领会员大礼包</p>
+					<p style="margin-bottom: .36rem;">开通店主大礼包</p>
 					<p>￥{{curObj.totalFee}}</p>
 				</div>
 				<div class="colseImg" @click="colseShow">
@@ -50,7 +50,7 @@
 					<p>亲爱的{{memList.nickName}}</p>
 				</div>
 				<div class="detailName">
-					<p>您已经开通过粉领会员无需再次开通！</p>
+					<p>您已经开通过店主无需再次开通！</p>
 				</div>
 				<div class="sureShare">
 					<div class="shareSure">
@@ -71,7 +71,7 @@
 					<p>亲爱的{{memList.nickName}}</p>
 				</div>
 				<div class="detailName">
-					<p>您的粉领会员即将到期，为了保障您的粉领会员特权，请及时续费，以免影响使用！</p>
+					<p>您的店主即将到期，为了保障您的店主特权，请及时续费，以免影响使用！</p>
 				</div>
 				<div class="sureShare">
 					<div class="shareSure">
@@ -108,9 +108,9 @@
 				time:'',
 				shareData : {
 					'title': "OL圈 试用中心",
-					'description': "开通粉领立项6大特权及超值粉领会员礼包。",
+					'description': "开通店主立项6大特权及超值店主礼包。",
 					'url': "",
-					'picURL': "http://ol-site.olquan.com/plug/mobile/img/logoo.jpg",
+					'picURL': "https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png",
 					'hide':true,
 					'share':false
 				},
@@ -166,7 +166,7 @@
 			getMemberBack(data){
 				this.memList=data.result
 				this.setCookie('memberId',data.result.id)
-				this.shareData.title="您的好友"+this.memList.nickName+"邀请您开通OL圈粉领会员！";
+				this.shareData.title="您的好友"+this.memList.nickName+"邀请您开通OL圈店主！";
 				//console.log(this.getCookie("memberId"))
 				if(data.result.levelCode=='white' || data.result.levelCode=='golden'){
 					this.shareData.share=true;
@@ -194,9 +194,9 @@
 					this.isPinkSureGet=false;
 				}
 				if(data.result.isGetStoreCommission==1){
-					this.$store.commit('documentTitle','邀请粉领');
+					this.$store.commit('documentTitle','邀请店主');
 				}else{
-					this.$store.commit('documentTitle','申请粉领');
+					this.$store.commit('documentTitle','申请店主');
 				}
 					
 			},
@@ -245,6 +245,7 @@
 						
 					}
 					localStorage.setItem('pinkIdObj',JSON.stringify(data))
+					localStorage.setItem('inviteCode',this.$route.query.inviteId)
 	  				//let ObjObj=JSON.parse(localStorage.getItem("pinkIdObj"))
 	  				//console.log(this.bagId);
 	  				//this.$router.push({path:'/fightAlone/ordersure/pinkorder?memberId='+this.$route.query.memberId+'&inviteId='+this.$route.query.inviteId});

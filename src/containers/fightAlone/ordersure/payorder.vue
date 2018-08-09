@@ -185,6 +185,15 @@
 			</div>
 		</transition>
 		<!--输入密码弹框-->
+		<div class="changeAdd" v-show="needIdcard" @touchmove.prevent>
+			<div class="change">
+				<div style="padding: .40rem;line-height: .52rem;">海关要求购买跨境商品需提供购买人实名信息。</div>
+				<div class="addAddress">
+					<div class="addLeft" @click="cancelAdd">取消</div>
+					<div class="addRight" @click="suerAddAdress">去完善</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -216,6 +225,8 @@
 				isShowPass:false,
 				isOrderGet:false,
 				showWXpay:true,
+				needIdcard:false,
+				needNameAndCode:'',
 				orderObj:JSON.parse(localStorage.getItem("orderObj")),
 				curObj:[],
 				addressObj:[],
@@ -249,6 +260,10 @@
 				this.showWXpay=true;
 			}else{
 				this.showWXpay=false;
+				this.sureCheckone=false;
+				this.sureChecktwo=true;
+				this.sureCheckthree=false;
+				this.payMethod=4;
 			}
 			console.log(this.showWXpay)
 			this.addRecord();
@@ -291,14 +306,14 @@
   			},
   			addRecordBack(data){},
 			getAddressMore(){
-				this.$router.push({path:'/payMain/address?isBuyGoods=1'});
+				this.$router.push({path:'/payMain/address?isBuyGoods=1&isOverseasDirectMailProduct='+this.curObj.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.curObj.isCrossBorderProduct});
 			},
 			getList(){
 				let data={
 					productId:this.orderObj.productId,
 					num:this.orderObj.num,
 					normalId:this.orderObj.normalId,
-					type:this.orderObj.type,
+					type:4,
 //					memberId:this.$route.query.memberId,
 					
 					uutype:1,
@@ -314,7 +329,7 @@
 				}else{
 					this.curObj=data.result;
 					if(data.result.receiveAddress==null){
-						this.$router.push({path:'/add/addAdress?isBuyGoods=1'});
+						this.$router.push({path:'/add/addAdress?isBuyGoods=1&isOverseasDirectMailProduct='+data.result.isOverseasDirectMailProduct+'&isCrossBorderProduct='+data.result.isCrossBorderProduct});
 					}
 					//console.log(this.curObj)
 					this.totalFee=this.curObj.totalFee;
@@ -361,6 +376,13 @@
 				}
 //				this.totalFee=this.curObj.totalFee-this.amountFee;
 			},
+			//取消添加地址
+			cancelAdd(){
+				this.needIdcard=false;
+			},
+			suerAddAdress(){
+				this.$router.push({path:'/add/addAdress?isBuyGoods=1'+'&addressId='+this.addressId+'&isOverseasDirectMailProduct='+this.curObj.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.curObj.isCrossBorderProduct});
+			},
 			//点击余额
 			inputCoofers(){
 				this.coffersFeeShow=!this.coffersFeeShow;
@@ -387,7 +409,7 @@
 				this.sureCheckone=false;
 				this.sureChecktwo=true;
 				this.sureCheckthree=false;
-				this.payMethod=4
+				this.payMethod=4;
 				
 			},
 			checkThree(){
@@ -407,28 +429,33 @@
 					}else{
 						this.isShowPass=false;
 					}
+					
 					if(this.curObj.isCrossBorderProduct==1){
-						
 						if(this.addressObj.identityNo==''){
-							this.$toast('海购商品需要填写身份证号');
-							return;
-						}
-						
-					}else if(this.curObj.isOverseasDirectMailProduct==1){
-						
-						if(this.addressObj.identityNo==''){
-							this.$toast('海外直邮商品需要填写身份证号和身份正反照');
-							return;
-						}else if(this.addressObj.identityFrontImage==null){
-							this.$toast('海外直邮商品需要填写身份证号和身份正反照');
-							return;
-						}else if(this.addressObj.identityOppImage==null){
-							this.$toast('海外直邮商品需要填写身份证号和身份正反照');
+							this.needNameAndCode='跨境商品需填写身份证号';
+							this.needIdcard=true;
 							return;
 						}
 						
 					}
-					console.log( )
+					if(this.curObj.isOverseasDirectMailProduct==1){
+						
+						if(this.addressObj.identityNo==''){
+							
+							this.needIdcard=true;
+							return;
+						}else if(this.addressObj.identityFrontImage==null){
+							
+							this.needIdcard=true;
+							return;
+						}else if(this.addressObj.identityOppImage==null){
+							
+							this.needIdcard=true;
+							return;
+						}
+						
+					}
+					
 					if(this.curObj.enabledPayPassword && !this.isShowPass){
 						this.payPasswordShow=true;
 						
@@ -438,7 +465,7 @@
 							productId:this.orderObj.productId,
 							num:this.orderObj.num,
 							normalId:this.orderObj.normalId,
-							type:this.orderObj.type,
+							type:4,
 //							memberId:this.$route.query.memberId,
 							addressId:this.addressId,
 							payMethod:this.payMethod,
@@ -447,7 +474,7 @@
 							coffers:Number(this.coffersFee),
 							uutype:1,
 						}
-						
+						console.log(this.orderObj.type)
 						this.isOrderGet=true;
 						
 						let defaultStyle = 'fading-circle';
@@ -505,7 +532,7 @@
 						productId:this.orderObj.productId,
 						num:this.orderObj.num,
 						normalId:this.orderObj.normalId,
-						type:this.orderObj.type,
+						type:4,
 //						memberId:this.$route.query.memberId,
 						addressId:this.addressId,
 						payMethod:this.payMethod,
@@ -937,6 +964,55 @@
 			background: rgba(0,0,0,0.5);
 			left: 0;
 			top: 0;
+		}
+		.changeAdd{
+			position: fixed;
+			left: 0;
+			top: 0;
+			background: rgba(0,0,0,0.5);
+			width: 100%;
+			height: 100%;
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: -moz-flex;
+		    -webkit-box-pack: center;
+		    -moz-box-pack: center;
+		    -ms-flex-align:center;/* IE 10 */
+		    -webkit-align-items: center;
+		    -moz-align-items: center;
+		    align-items: center;
+			.change{
+				text-align: center;
+				font-size: .30rem;
+				
+				color: #333;
+				width: 70%;
+				margin: 0 auto;
+				background: #fff;
+				.addAddress{
+					border-top: 0.01rem solid #E1E1E1;
+					display: flex;
+					display:-webkit-box;
+				    display: -moz-box;
+				    display: -ms-flexbox;
+				    display: -webkit-flex;
+				    display: -moz-flex;
+					text-align: center;
+					line-height: .88rem;
+					.addLeft{
+						width: 50%;
+						
+					}
+					.addRight{
+						width: 50%;
+						background: #E5006E;
+						color: #fff;
+					}
+				}
+			}
 		}
 		.password{
 			width: 85%;

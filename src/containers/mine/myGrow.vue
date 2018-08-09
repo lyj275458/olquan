@@ -12,106 +12,106 @@
 				{{memList.levelName}}
 			</div>
 			<div class="personalTime" v-show="showMember">
-				粉领有效期：{{time}}
+				店主有效期：{{time}}
 			</div>
 			
-			<!--白，金领-->
+			<!--白，vip-->
 			<div class="white">
 				<div class="father">
-					<!--<img :src="whiteBotImg"/>-->
-					<img :src="whiteCentImg" v-show="memList.levelCode!='white' && memList.levelCode!='golden'"/>
+					<!--<img :src="whiteBotImg" v-show="memList.levelCode!='white'"/>-->
+					<img :src="whiteCentImg" v-show="memList.levelCode!='white'"/>
 					
 				</div>
 			</div>
-			<div class="whiteImg" v-show="memList.levelCode=='white' || memList.levelCode=='golden'">
+			<div class="whiteImg" v-show="memList.levelCode=='white'">
 				<div style="position: relative;height: .15rem;">
 					<img :src="whiteTopImg" style="position: absolute;left: 50%;margin-left: -.17rem;"/>
 				</div>
 				<img :src="memList.logo" class="special"/>
 			</div>
-			<div class="levelName" v-show="memList.levelCode!='white' && memList.levelCode!='golden'" style="position: absolute;left: .80rem;top: 4.94rem;">会员</div>
-			<div class="levelName levelSpecial" v-show="memList.levelCode=='white' || memList.levelCode=='golden'" style="position: absolute;left: .92rem;top: 5.06rem;">会员</div>
-			<!--白，金领-->
-			<!--粉领-->
+			<div class="levelName" v-show="memList.levelCode!='white'" style="position: absolute;left: .80rem;top: 4.94rem;">会员</div>
+			<div class="levelName levelSpecial" v-show="memList.levelCode=='white'" style="position: absolute;left: .92rem;top: 5.06rem;">会员</div>
+			<!--白，vip-->
+			<!--店主-->
 			<div class="white" style="top: 3.72rem;left: 2.06rem;">
 				<div class="father">
-					<img :src="pinkBotImg" v-show="memList.levelCode=='white' || memList.levelCode=='golden'"/>
-					<img :src="pinkCentImg" v-show="memList.levelCode!='white' && memList.levelCode!='golden' && memList.levelCode!='store'"/>
+					<img :src="pinkBotImg" v-show="memList.levelCode=='white'"/>
+					<img :src="pinkCentImg" v-show="memList.levelCode!='white'"/>
 					
 				</div>
 			</div>
-			<div class="whiteImg" style="top: 3.48rem;left: 1.92rem;" v-show="memList.levelCode=='store'">
+			<div class="whiteImg" style="top: 3.48rem;left: 1.92rem;" v-show="memList.levelCode=='golden'">
 				<div style="position: relative;height: .15rem;">
 					<img :src="pinkTopImg" style="position: absolute;left: 50%;margin-left: -.17rem;"/>
 				</div>
 				
 				<img :src="memList.logo" class="special"/>
 			</div>
-			<div class="levelName" v-show="memList.levelCode!='store'" style="position: absolute;left: 2.10rem;top: 4.74rem;">粉领</div>
-			<div class="levelName levelSpecial" v-show="memList.levelCode=='store'" style="position: absolute;left: 2.12rem;top: 4.72rem;">粉领</div>
-			<!--粉领-->
+			<div class="levelName" v-show="memList.levelCode!='golden'" style="position: absolute;left: 2.18rem;top: 4.74rem;">VIP</div>
+			<div class="levelName levelSpecial" v-show="memList.levelCode=='golden'" style="position: absolute;left: 2.22rem;top: 4.72rem;">VIP</div>
+			<!--店主-->
 			<!--督导-->
 			<div class="white" style="top: 3.32rem;left: 3.48rem;">
 				<div class="father">
-					<img :src="supervisorBotImg"  v-show="memList.levelCode=='white' || memList.levelCode=='golden' || memList.levelCode=='store'"/>
-					<img :src="supervisorCentImg" v-show="memList.levelCode!='white' && memList.levelCode!='golden' && memList.levelCode!='store' && memList.levelCode!='supervisor'"/>
+					<img :src="supervisorBotImg"  v-show="memList.levelCode=='white' || memList.levelCode=='golden'"/>
+					<img :src="supervisorCentImg" v-show="memList.levelCode!='white' && memList.levelCode!='golden' && memList.levelCode!='store'"/>
 					
 				</div>
 			</div>
-			<div class="whiteImg" style="top: 3.30rem;left: 3.30rem;" v-show="memList.levelCode=='supervisor'">
+			<div class="whiteImg" style="top: 3.30rem;left: 3.30rem;" v-show="memList.levelCode=='store'">
 				<div style="position: relative;height: .15rem;">
 					<img :src="supervisorTopImg" style="position: absolute;left: 50%;margin-left: -.17rem;"/>
 				</div>
 				
 				<img :src="memList.logo" class="special"/>
 			</div>
-			<div class="levelName" v-show="memList.levelCode!='supervisor'" style="position: absolute;left:3.52rem;top: 4.26rem;">督导</div>
-			<div class="levelName levelSpecial" v-show="memList.levelCode=='supervisor'" style="position: absolute;left:3.52rem;top: 4.56rem;">督导</div>
+			<div class="levelName" v-show="memList.levelCode!='store'" style="position: absolute;left:3.52rem;top: 4.26rem;">店主</div>
+			<div class="levelName levelSpecial" v-show="memList.levelCode=='store'" style="position: absolute;left:3.52rem;top: 4.56rem;">店主</div>
 			<!--督导-->
 			<!--高级督导-->
 			<div class="white" style="top: 2.82rem;left: 4.84rem;">
 				<div class="father">
-					<img :src="highSupervisorBotImg"  v-show="memList.levelCode=='white' || memList.levelCode=='golden' || memList.levelCode=='store' || memList.levelCode=='supervisor'"/>
-					<img :src="highSupervisorCentImg" v-show="memList.levelCode!='white' && memList.levelCode!='golden' && memList.levelCode!='store' && memList.levelCode!='supervisor' && memList.levelCode!='highSupervisor'"/>
+					<img :src="highSupervisorBotImg"  v-show="memList.levelCode=='white' || memList.levelCode=='golden' || memList.levelCode=='store'"/>
+					<img :src="highSupervisorCentImg" v-show="memList.levelCode!='white' && memList.levelCode!='golden' && memList.levelCode!='store' && memList.levelCode!='supervisor'"/>
 					
 				</div>
 			</div>
-			<div class="whiteImg" style="top: 2.70rem;left: 4.68rem;" v-show="memList.levelCode=='highSupervisor'">
+			<div class="whiteImg" style="top: 2.70rem;left: 4.68rem;" v-show="memList.levelCode=='supervisor'">
 				<div style="position: relative;height: .15rem;">
 					<img :src="highSupervisorTopImg" style="position: absolute;left: 50%;margin-left: -.17rem;"/>
 				</div>
 				
 				<img :src="memList.logo" class="special"/>
 			</div>
-			<div class="levelName" v-show="memList.levelCode!='highSupervisor'" style="position: absolute;left:4.66rem;top: 3.80rem;">高级督导</div>
-			<div class="levelName levelSpecial" v-show="memList.levelCode=='highSupervisor'" style="position: absolute;left:4.66rem;top: 3.96rem;">高级督导</div>
+			<div class="levelName" v-show="memList.levelCode!='supervisor'" style="position: absolute;left:4.91rem;top: 3.80rem;">经理</div>
+			<div class="levelName levelSpecial" v-show="memList.levelCode=='supervisor'" style="position: absolute;left:4.92rem;top: 3.96rem;">经理</div>
 			<!--高级督导-->
 			<!--联创-->
 			<div class="white" style="top: 2.12rem;left: 6.20rem;">
 				<div class="father">
-					<img :src="starSupervisorBotImg"  v-show="memList.levelCode=='white' || memList.levelCode=='golden' || memList.levelCode=='store' || memList.levelCode=='supervisor'|| memList.levelCode=='highSupervisor'"/>
+					<img :src="starSupervisorBotImg"  v-show="memList.levelCode=='white' || memList.levelCode=='golden' || memList.levelCode=='store' || memList.levelCode=='supervisor'"/>
 					<!--<img :src="highSupervisorCentImg" v-show="memList.levelCode!='white' && memList.levelCode!='golden' && memList.levelCode!='store' && memList.levelCode!='supervisor' && memList.levelCode!='highSupervisor'"/>-->
 					
 				</div>
 			</div>
-			<div class="whiteImg" style="top: 1.98rem;left: 5.90rem;" v-show="memList.levelCode=='starSupervisor'">
+			<div class="whiteImg" style="top: 1.98rem;left: 5.90rem;" v-show="memList.levelCode=='highSupervisor'">
 				<div style="position: relative;height: .15rem;">
 					<img :src="starSupervisorTopImg" style="position: absolute;left: 50%;margin-left: -.17rem;"/>
 				</div>
 				
 				<img :src="memList.logo" class="special"/>
 			</div>
-			<div class="levelName" v-show="memList.levelCode!='starSupervisor'" style="position: absolute;left:6.28rem;top: 3.08rem;">联创</div>
-			<div class="levelName levelSpecial" v-show="memList.levelCode=='starSupervisor'" style="position: absolute;left:6.14rem;top: 3.24rem;">联创</div>
+			<div class="levelName" v-show="memList.levelCode!='highSupervisor'" style="position: absolute;left:6.28rem;top: 3.08rem;">总监</div>
+			<div class="levelName levelSpecial" v-show="memList.levelCode=='highSupervisor'" style="position: absolute;left:6.14rem;top: 3.24rem;">总监</div>
 			<!--联创-->
 		</div>
-		<div class="imgdetail" v-html="gifObj.content" style="width: 100%;" v-show="memList.levelCode=='white' || memList.levelCode=='golden'">
+		<div class="imgdetail" v-html="gifObj.content" style="width: 100%;" v-show="memList.levelCode=='golden'">
 			{{gifObj.content}}
 		</div>
 		<div v-show="memList.levelCode=='store'" class="getSuperversion">
 			<div class="getSuper">
 				
-				<div>距离 <span style="color: #E50F71;">督导</span></div>
+				<div>距 <span style="color: #E50F71;">经理</span></div>
 				<div class="getHighter" @click="getSuper" v-show="memBerIds">
 					<span>直接升级</span>
 					<img :src="rowrightImg"/>
@@ -124,49 +124,58 @@
 		
 		<div v-show="memList.levelCode=='supervisor'" style="background: #fff;" class="getHighSuper">
 			<div class="getSuper">
-				<div>距离 <span style="color: #E50F71;">高级督导</span></div>
+				<div>距 <span style="color: #E50F71;">总监</span></div>
 				<!--<div class="getHighter">
 					<span>直接升级</span>
 					<img :src="rowrightImg"/>
 				</div>-->
 			</div>
-			<div style="display: flex; justify-content: center;">
-				<div class="plusSuper">
-					<div id="supervisor" :style="{width: '3.75rem', height: '3.00rem'}"></div>
-					<div class="queshao">直属培养{{growList.supervisorRequireCount}}个督导</div>
-				</div>
+			<div class="speOutDiv">
 				<div>
-					<div id="supervisorList" :style="{width: '3.75rem', height: '3.00rem'}"></div>
+					<div id="supervisorList" :style="{width: '2.50rem', height: '3.00rem'}"></div>
 					<div class="queshao">团队累计销售额{{growList.supervisorRequireAmount}}元</div>
 				</div>
+				<div>
+					<div id="supervisorStore" :style="{width: '2.50rem', height: '3.00rem'}"></div>
+					<div class="queshao">团队{{growList.storeRequireCount}}个店主</div>
+				</div>
+				<div class="plusSuper">
+					<div id="supervisor" :style="{width: '2.50rem', height: '3.00rem'}"></div>
+					<div class="queshao">直属培养{{growList.supervisorRequireCount}}个经理</div>
+				</div>
+				
 				
 			</div>
 		</div>
 		<div v-show="memList.levelCode=='highSupervisor'" style="background: #fff;" class="getHighSuper">
-			<div class="getSuper">
+			<!--<div class="getSuper">
 				<div>距离 <span style="color: #E50F71;">联创</span></div>
-				<!--<div class="getHighter">
+				<div class="getHighter">
 					<span>直接升级</span>
 					<img :src="rowrightImg"/>
-				</div>-->
-			</div>
-			<div style="display: flex; justify-content: center;">
+				</div>
+			</div>-->
+			<div class="speOutDiv">
 				<div class="plusSuper">
-					<div id="highSupervisor" :style="{width: '2.50rem', height: '3.00rem'}"></div>
-					<div class="queshao" style="padding: 0 .20rem;">直属推荐{{growList.storeRequireCount}}个粉领</div>
+					<div id="highSupervisor" :style="{width: '1.87rem', height: '3.00rem'}"></div>
+					<div class="queshao" style="padding: 0 .20rem;">直属推荐{{growList.storeRequireCount}}个店主</div>
 				</div>
 				<div>
-					<div id="highSupervisorList" :style="{width: '2.50rem', height: '3.00rem'}"></div>
-					<div class="queshao" style="padding: 0 .20rem;">督导收益{{growList.supervisorRequireAmount}}元</div>
+					<div id="highSupervisorList" :style="{width: '1.87rem', height: '3.00rem'}"></div>
+					<div class="queshao" style="padding: 0 .20rem;">经理收益{{growList.supervisorRequireAmount}}元</div>
 				</div>
 				<div>
-					<div id="highSupervisorNum" :style="{width: '2.50rem', height: '3.00rem'}"></div>
-					<div class="queshao" style="padding: 0 .20rem;">直属培养{{growList.highSupervisorRequireCount}}个高级督导</div>
+					<div id="highSupervisorNum" :style="{width: '1.87rem', height: '3.00rem'}"></div>
+					<div class="queshao" style="padding: 0 .20rem;">直属培养{{growList.highSupervisorRequireCount}}个总监</div>
 				</div>
+				<!--<div>
+					<div id="highSupervisorNum" :style="{width: '1.87rem', height: '3.00rem'}"></div>
+					<div class="queshao" style="padding: 0 .20rem;">直属培养{{growList.highSupervisorRequireCount}}个总监</div>
+				</div>-->
 			</div>
 		</div>
 		
-		<div class="botDetail" v-show="showMember">
+		<!--<div class="botDetail" v-show="showMember">
 			<div class="botTop">您当前</div>
 			<div class="memberDetail">
 				<div class="memBerD">
@@ -186,13 +195,13 @@
 				</div>
 				<div class="memBerD">
 					<div class="top">{{memList.storeFansCount}}人</div>
-					<div class="cent">已推荐粉领</div>
+					<div class="cent">已推荐店主</div>
 					<div class="bot" v-show="memBerIds">
 						<p @click="getInvited">去邀请</p>
 					</div>
 				</div>
 			</div>
-		</div>
+		</div>-->
 	</div>
 	
 </template>
@@ -334,6 +343,7 @@
 				if(this.memList.levelCode=='supervisor'){
 					this.superVison();
 					this.supervisorList();
+					this.supervisorStore();
 				}
 				if(this.memList.levelCode=='highSupervisor'){
 					this.highSupervisor();
@@ -352,7 +362,7 @@
 						OLquan.growJump(4)
 					}
 					if(this.isiOS){
-						window.location.href="https://www.baidu.com/ktdd";//邀请粉领  3
+						window.location.href="https://www.baidu.com/ktdd";//邀请店主  3
 					}
 				}
 				
@@ -379,7 +389,7 @@
 						OLquan.growJump(3)
 					}
 					if(this.isiOS){
-						window.location.href="https://www.baidu.com/yqfl";//邀请粉领  3
+						window.location.href="https://www.baidu.com/yqfl";//邀请店主  3
 					}
 				}
 				
@@ -393,7 +403,7 @@
 							OLquan.growJump(1)
 						}
 						if(this.isiOS){
-							window.location.href="https://www.baidu.com/zhye";//粉领收益  1
+							window.location.href="https://www.baidu.com/zhye";//店主收益  1
 						}
 					}
 					
@@ -404,7 +414,7 @@
 			//督导
 			superVison(){
 				let labelTopValue=this.growList.supervisorCount;
-				let labelBottomValue=this.growList.supervisorRequireCount;
+				let labelBottomValue=this.growList.supervisorPlusCount;
 				if(this.growList.supervisorPlusCount<=0){
 					this.growList.supervisorPlusCount=0;
 					labelBottomValue=0;
@@ -591,7 +601,105 @@
 				});
 		    
 			},
-			//粉领收益
+			//团队店主
+			supervisorStore(){
+				let labelTopValue=this.growList.storeCount;
+				let labelBottomValue=this.growList.storeRequireCount;
+				//console.log(this.growList.saleAmount)
+				if(this.growList.salePlusCount<=0){
+					this.growList.salePlusCount=0;
+					labelBottomValue=0;
+					labelTopValue=1;
+				}
+				let labelTop = {
+				    normal : {
+				    	color: '#F6B800',
+			                
+				        label : {
+				            show : true,
+				           
+				            position : 'center',
+				            formatter : '{b}',
+				            textStyle: {
+				                baseline : 'bottom'
+				            }
+				        },
+				        labelLine : {
+				            show : false
+				        }
+				    }
+				};
+				let labelFromatter = {
+				    normal : {
+				        label : {
+				        	show:false,
+				            formatter : function (params){
+				                return 100 - params.value + '%'
+				            },
+				            textStyle: {
+				                baseline : 'top'
+				            }
+				        },
+				        labelLine : {
+				            show : false
+				        }
+				    },
+				}
+				let labelBottom = {
+				    normal : {
+				        color: '#E3E3E3',
+				        label : {
+				            show : true,
+				            position : 'center'
+				        },
+				        labelLine : {
+				            show : false
+				        }
+				    },
+				    
+				    emphasis: {
+				        color: '#f7f7f7'
+				    }
+				};
+				let radius = [48, 55];
+				
+   
+		        // 基于准备好的dom，初始化echarts实例
+		        let myChart = echarts.init(document.getElementById('supervisorStore'))
+		        // 绘制图表
+				myChart.setOption({
+					title : {
+				        text: '还差'+this.growList.storePlusCount+'个',
+				        subtext: '',
+				        top:'center',
+				        left:'center',
+				        textStyle:{
+				          color:'#333',
+				          fontSize:12,
+				          align:'center'
+				        },
+				        
+				    },
+				    series : [
+				    	{
+				            type : 'pie',
+				            center : ['50%', '50%'],
+				            radius : radius,
+				            x: '20%', // for funnel
+				            itemStyle:labelFromatter,
+				            clockWise:false,
+				            data : [
+				                {name:'other', value:labelBottomValue, itemStyle : labelBottom},
+				                {name:'GoogleMaps', value:labelTopValue,itemStyle : labelTop}
+				            ]
+				        },
+				    ]
+				});
+		    
+			
+				
+			},
+			//店主收益
 			drawLine(){
 				let labelTopValue=this.growList.saleAmount;
 				let labelBottomValue=this.growList.saleRequireAmount;
@@ -660,7 +768,7 @@
 		        // 绘制图表
 				myChart.setOption({
 					title : {
-				        text: '还差'+this.salePlusCount+'元',
+				        text: '还差'+this.storePlusCount+'元',
 				        subtext: '',
 				        top:'center',
 				        left:'center',
@@ -748,7 +856,7 @@
 				        color: '#f7f7f7'
 				    }
 				};
-				let radius = [48, 55];
+				let radius = [30, 33];
 				
    
 		        // 基于准备好的dom，初始化echarts实例
@@ -795,8 +903,7 @@
 					labelBottomValue=0;
 					labelTopValue=1;
 				}
-				console.log(labelTopValue);
-				console.log(labelBottomValue)
+				
 				
 				let labelTop = {
 				    normal : {
@@ -847,7 +954,7 @@
 				        color: '#f7f7f7'
 				    }
 				};
-				let radius = [48, 55];
+				let radius = [30, 33];
 				
    
 		        // 基于准备好的dom，初始化echarts实例
@@ -945,7 +1052,7 @@
 				        color: '#f7f7f7'
 				    }
 				};
-				let radius = [48, 55];
+				let radius = [30, 33];
 				
    
 		        // 基于准备好的dom，初始化echarts实例
@@ -993,11 +1100,23 @@
 
 <style lang="scss" scoped>
 	.personal{
+		width: 7.50rem;
+		margin: 0 auto;
 		img{
 			pointer-events:none;
 		}
 		background: #F6F6F6;
-		
+		.speOutDiv{
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+			display: -moz-flex;
+			justify-content: center;
+			-moz-box-pack: center;
+	    	-webkit--moz-box-pack: center;
+		}
 		.perTop{
 			background: url(../../../static/images/myGrow.png) no-repeat;
 			background-size: 100% 6.20rem ;

@@ -113,7 +113,7 @@
 		    		试用时间: {{curObj.freeUseDays}}天
 		    	</div>
 		    	<div class="moneyBot">
-		    		<span v-show="curObj.type==4 || curObj.type==8">已有{{curObj.soldCount}}人试用 · </span>还剩{{curObj.store}}件
+		    		仅剩{{curObj.store}}件<span v-show="curObj.type==4 || curObj.type==8"> · 已有{{curObj.soldCount}}人试用</span>
 		    	</div>
 	    	</div>
 	    	
@@ -160,7 +160,7 @@
 				<p>分享奖励</p>
 			</div>
 			<div class="cenMessage">
-				<p>邀请白领首次试用可获得<span>{{curObj.promotionAward}}元</span>奖励</p>
+				<p>邀请好友首次试用可获得<span>{{curObj.promotionAward}}元</span>奖励</p>
 			</div>
 			<div class="botMessage">
 				<div style="position: relative;">
@@ -280,8 +280,9 @@
 				</li>
 			</ul>
 			<div class="trytouse" v-show="curObj.type==4 && curObj.status!=1">
-				<div class="notPink" v-show="curObj.isApply==0" @click="buyGoods">
-					<p>申请试用</p>
+				<div class="notPink" v-show="curObj.isApply==0">
+					<p @click="buyGoods" v-show="curObj.store!=0">申请试用</p>
+					<p v-show="curObj.store==0" style="background: #bdbcbc;">申请试用</p>
 				</div>
 				<div class="notPink" v-show="curObj.isApply!=0 && curObj.canGoPlusBuy==1" @click="buyGoods">
 					<p>已试用 去购买</p>
@@ -418,11 +419,11 @@
 		<div class="tishi"  v-show="scroeEnt">
 				
 			<div class="tiCen">
-				您还不是粉领会员，是否开通粉领会员
+				您还不是店主，是否开通店主
 			</div>
 			<div class="tiBots">
 				<p class="tiBleft" @click='getCon'>取消</p>
-				<p class="tiBright" @click="getScroe">开通粉领</p>
+				<p class="tiBright" @click="getScroe">开通店主</p>
 			</div>
 		</div>
 		<div class="tishi" v-show="levelEnt">
@@ -462,7 +463,7 @@
 						只要你的好友通过你的链接购买此商品，你就能赚到<span style="color: #E50F72;">{{getMoney}}</span>元利润哦~
 					</p>
 					<p class="moreDes" v-show="curObj.type==4">
-						邀请白领首次试用可获得<span style="color: #E50F72;">{{curObj.promotionAward}}</span>元奖励
+						邀请好友首次试用可获得<span style="color: #E50F72;">{{curObj.promotionAward}}</span>元奖励
 					</p>
 					<div class="sureBut">确定</div>
 					
@@ -571,7 +572,7 @@
 					'title': "OL圈 试用中心",
 					'description': "试,是一种态度。每日10,20点限量开抢！",
 					'url': "",
-					'picURL': "http://ol-site.olquan.com/plug/mobile/img/logoo.jpg",
+					'picURL': "https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png",
 					'hide':true,
 					'share':false
 				},
@@ -609,8 +610,6 @@
 			this.getMember();
 			this.addRecord();
 			this.$store.commit('documentTitle','商品详情');
-			
-			
 			this.gotoTop();
 			
 			//console.log(this.isShare)
@@ -663,7 +662,7 @@
 				
 				this.getCouponList=false;
 			},
-			//不是粉领
+			//不是店主
 			getlevel(){
 				this.levelEnt=false;
 			},
@@ -716,7 +715,7 @@
 				}else{
 					this.$toast('取消收藏',1000);
 				}
-				console.log(this.curObj.isCollect)
+//				console.log(this.curObj.isCollect)
 			},
 			getScroll(){
 				//var offsetTop = document.querySelector('.goodsDetail').offsetTop;
@@ -747,7 +746,7 @@
 				this.getList();
 				this.memList=data.result
 				this.memberScore=data.result.score;
-				console.log(data.result.mobile.length)
+//				console.log(data.result.mobile.length)
 				if(data.result.mobile==""){
 					this.isHasMobile=true;
 				}else{
@@ -790,7 +789,7 @@
 			},
 			//获取商品信息
 			getList(){
-				console.log(this.$route.query.memberId)
+//				console.log(this.$route.query.memberId)
 				let data={
 					productId:this.$route.params.id,
 					//productId:140,
@@ -802,7 +801,7 @@
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.productDetail,data,this.getListBack,this);
 			},
 			getListBack(data){
-				console.log(data)
+//				console.log(data)
 				if(data.result.type==9 || data.result.type==4){
 						//console.log(data)this.getCookie("memberId")
 					if(data.code==-1){
@@ -856,7 +855,7 @@
 					}
 					
 					//this.shareData.url="https://ol-site.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1');
-					this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1&type='+this.$route.query.type +'&inviteId='+this.memList.accountNo);
+					this.shareData.url=USE_URL+"weixin/auth?recId="+this.memList.id+"&view="+encodeURIComponent(CUR_URLBACK+'demo/iscroll/id/'+this.curObj.productId+'?isShare=1&type='+this.$route.query.type +'&inviteId='+this.memList.accountNo);
 					this.shareData.title=this.curObj.productName;
 					this.shareData.description=this.curObj.summary;
 					this.shareData.picURL=this.curObj.image;
@@ -900,7 +899,7 @@
 				}else if(this.curObj.status==5){
 					this.$toast('该商品已经下架');
 				}else if(this.num>this.curObj.store || this.num>this.getNomoreObj.store){
-					console.log(this.getNomoreObj.store)
+//					console.log(this.getNomoreObj.store)
 					this.$toast('库存不足');
 				}else{
 					if(this.isAddGoods){
@@ -920,9 +919,11 @@
 							type:this.curObj.type,
 							productId:this.curObj.productId
 						}
+						
 						localStorage.setItem('orderObj',JSON.stringify(data))
-//		  				let ObjObj=JSON.parse(localStorage.getItem("orderObj"))
-//		  				console.log(ObjObj)
+		  				let ObjObj=JSON.parse(localStorage.getItem("orderObj"))
+		  				console.log(ObjObj.type)
+		  				
 		  				if(this.curObj.type==4){
 		  					//this.$router.push({path:'/fightAlone/ordersure/payorder?memberId='+this.$route.query.memberId});
 //		  					this.$router.push({path:'/common/scroll?memberId='+this.$route.query.memberId});
@@ -1336,6 +1337,11 @@
 			overflow: hidden;
 			margin-top: .20rem;
 			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+			display: -moz-flex;
 			padding:  0 .24rem;
 			span{
 				float: left;
@@ -1692,6 +1698,10 @@
 					font-size: .26rem;
 					margin-top: .10rem;
 					line-height: .46rem;
+					word-break: break-all;
+					word-wrap: break-word;
+					white-space: pre-wrap;
+					width: 100%;
 				}
 				
 			}

@@ -40,7 +40,7 @@
 		},
 		created: function() {
 			//this.getMember();
-			console.log(this.getCookie("memberId"))
+//			console.log(this.getCookie("memberId"))
 		},
 		methods:{
 			//获取会员信息
