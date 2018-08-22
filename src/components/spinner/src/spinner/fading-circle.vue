@@ -69,7 +69,8 @@
             transform: scale(1); } }
 
 .ball-spin-fade-loader {
-  position: relative; }
+  position: relative;
+  z-index: 9999; }
   .ball-spin-fade-loader > div:nth-child(1) {
     top: 0.25rem;
     left: 0;
@@ -119,5 +120,5 @@
     -webkit-animation-fill-mode: both;
             animation-fill-mode: both;
     position: absolute; }
-  .mint-indicator-wrapper{background: transparent !important;}
+  .mint-indicator-wrapper{background: transparent !important;position: relative;z-index: 99999;}
 </style>

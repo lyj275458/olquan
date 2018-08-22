@@ -39,7 +39,8 @@
 			</div>
 			
 		</div>
-		<div class="newContent" v-for="(item,index) in curObj">
+		
+		<div class="newContent" v-for="(item,index) in curObj" :key="index">
 			
 			<div class="newCent_bot">
 				<div class="newCent_headImg" @click="getMemIndex(item.accountId)">
@@ -94,8 +95,8 @@
 				
 				<img :src="pinkShare" @click="ceshi"/>
 			</div>-->
-			<div class="prodtctList" v-show="item.productName!=null">
-				<div class="productDescrip" @click="getGoodsDetail(item.productType,item.productId)">
+			<div class="prodtctList" v-show="item.productName!=null && item.productName!=''">
+				<div class="productDescrip" @click="getGoodsDetail(item.productType,item.productId,item.memberId)">
 					<div class="prodtctImg">
 						<img :src="item.productImage" v-if="item.productImage!=''"/>
 						<img :src="newLogoImg" v-if="item.productImage==''"/>
@@ -116,6 +117,10 @@
 				</div>
 			</div>
 			<div class="giveGood">
+				<div class="sureGood" @click="showAppLink">
+					<img :src="productComment"/>
+					<span>保存素材</span>
+				</div>
 				<div v-show="isAddGoodsSure">
 					<div class="sureGood" v-show="item.isDoGood==1" @click="addGoodsNum(index,1,item.findId)">
 						<img :src="giveUpImg"/>
@@ -141,6 +146,8 @@
 				</div>
 			</div>
 		</div>
+		
+
 		<div class="followNone" v-show="hasNoFollowList">
 			<div>
 				<img :src="followNoneImg" />
@@ -192,6 +199,22 @@
 				没有搜索到相关内容哟~
 			</div>
 		</div>
+		<div class="shareAppLink" v-show="appLinkShow" @click="closeAppLink"  @touchmove.prevent>
+			<div class="linkCOntent">
+				<div style="width: 100%;border-bottom: 0.01em solid #E1E1E1;">
+					<div class="content" style="font-size: .26rem;">发现自动保存素材仅支持APP端，请前往下载。</div>
+				</div>
+				
+				<div class="linkBot">
+					<p @click="closeAppLink">
+						<span style="display: block;border-right: 0.01rem solid #e1e1e1;">取消</span>
+					</p>
+					<p @click="linkAppAddress">
+						<span style="color: #E50F72;">去下载</span>
+					</p>
+				</div>
+			</div>
+		</div>
 		<div class="toShare" v-show="showShare">
 			<div class="shareDetail" @click="colseShare">
 				<div class="detailIndex">
@@ -226,7 +249,7 @@
 			<div class="baocunImg"><img :src="baocunShare" />长按保存图片</div>
 		</div>
 		<div class="zhezhao" v-show="seachShow"></div>
-			
+		<div class="tiaozhuan" v-show="qiehuanShow"></div>
 		<!--产品二维码-->
 		<div class="pinKnow" v-show="pinKnowShow" @click="showImg"></div>
 		<div class="pinGoods" v-show="pinKnowShow">
@@ -288,6 +311,7 @@
 				logo2Img:'/static/images/icon-logo.png',
 				newLogoImg:'https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png',
 				followNoneImg:'/static/images/followNone.png',
+				productComment:'/static/images/sucai.png',
 				posterNew:'',
 				videoUrl:'',
 				erweiObj:'',
@@ -298,6 +322,7 @@
 				isAddGoodsSure:true,
 				seachShow:false,
 				searchCodeIndex:false,
+				appLinkShow:false,
 				isMore:true,
 				findNone:false,
 				pinKnowShow:false,
@@ -309,6 +334,7 @@
 				hasNoFollow:false,
 				isHasNewFollow:false,
 				seachShowCancel:false,
+				qiehuanShow:false,
 				defaultCode:'',
 				addClass:'',
 				followIndex:'',
@@ -363,7 +389,7 @@
 			this.getNewFollow();
 			this.getSearchRemind();
 			this.getcartNum();
-			this.addWeixinShare();
+			
 			this.getMember();
 			this.$store.commit('documentTitle','OL圈');
 //			newFinds
@@ -386,6 +412,15 @@
 			window.addEventListener('scroll', this.xuanfuScroll);
 		},
 		methods:{
+			showAppLink(){
+				this.appLinkShow=true;
+			},
+			closeAppLink(){
+				this.appLinkShow=false;
+			},
+			linkAppAddress(){
+				window.location.href='http://a.app.qq.com/o/simple.jsp?pkgname=com.olquanapp.ttds.android';
+			},
 			getNewFollow(){
 				let data = {
 //					memberId:this.$route.query.memberId,
@@ -408,9 +443,9 @@
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
 			},
 			getMemberBack(data){
-				
+				this.shareData.title='您的好友'+data.result.nickName+'在OL圈发布了一篇达人日记，快去看看吧！';
 				this.setCookie('memberId',data.result.id)
-//				
+				this.addWeixinShare();
 			},
 			getMemIndex(id){
 				//this.$router.push({path:'/index/differentIndex/id/'+id+'?memberId=894559'});
@@ -575,6 +610,9 @@
 				//console.log(data)
 			},
 			newFindBack(data){
+				let _this=this;
+				this.qiehuanShow=false;
+				
 				if(data.code==-1){
 					this.$toast(data.message);
 				}else{
@@ -660,11 +698,12 @@
 		    	this.showShare=false;
 		    },
 		    //获取商品详情
-		    getGoodsDetail(type,productId){
+		    getGoodsDetail(type,productId,recId){
 		    	
 		    	if(type==9 || type==4){
 		    		//window.location.href=CUR_URLBACK+'demo/iscroll/id/'+productId+'?isShare=0&type='+type;
-		    		this.$router.push({path:'/demo/iscroll/id/'+productId+'?isShare=0&type='+ type});
+		    		console.log('/demo/iscroll/id/'+productId+'?isShare=0&type='+ type+'&recId='+recId)
+		    		this.$router.push({path:'/demo/iscroll/id/'+productId+'?isShare=0&type='+type+'&recId='+recId});
 		    	}else if(type==12){
 		    		this.$router.push({path:'/activity/newact?id='+productId});
 		    		//window.location.href=CUR_URLBACK+'activity/newact?id='+productId;
@@ -673,7 +712,7 @@
 		    		this.$router.push({path:'/coupon/getcoupon/id/'+productId});
 		    		//window.location.href=CUR_URLBACK+'/coupon/getcoupon/id/'+productId;
 		    	}else {
-		    		window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId+'&type='+type;
+		    		window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId+'&type='+type+'&recId='+recId;
 		    	}
 		    },
 		    //获取商品二维码图片
@@ -710,7 +749,9 @@
 				}else{
 					this.seachShow=true;
 					this.$refs.input1.blur();
-					
+					for(let i=0; i<data.result.length;i++){
+						this.$set(data.result[i],'selectM',false);
+					}
 					if(this.isFollowId==1){
 						if(data.result.length==0){
 							this.addClass='speFollowNone';
@@ -870,7 +911,23 @@
 	.findIndex{
 		
 		padding-bottom: 1.00rem;
-		
+		.slide-fade-enter-active {
+		 transition: opacity .5s;
+		}
+		.slide-fade-leave-active {
+		 transition: opacity .5s;
+		}
+		.slide-fade-enter, .slide-fade-leave-to
+		/* .slide-fade-leave-active for below version 2.1.8 */ {
+		  
+		  opacity: 0;
+		}
+		.fade-enter-active, .fade-leave-active {
+		  transition: opacity .5s;
+		}
+		.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+		  opacity: 0;
+		}
 		.indexTop{
 			
 			width: 100%;
@@ -920,7 +977,7 @@
 			justify-content:center;
 			-moz-box-pack:center;
 			-webkit--moz-box-pack:center;
-			font-size: .28rem;
+			font-size: .30rem;
 			color: #333;
 			font-weight: 700;
 			
@@ -1102,23 +1159,8 @@
 					.sureFollow{
 						color: #E50F72;
 						width: 1.06rem;
-						height: .46rem;
-						display: flex;
-						display:-webkit-box;
-					    display: -moz-box;
-					    display: -ms-flexbox;
-					    display: -webkit-flex;
-					    display: -moz-flex;
-					    -webkit-box-pack: center;
-					    -moz-box-pack: center;
-					    -ms-flex-align:center;
-					    -webkit-align-items: center;
-					    -moz-align-items: center;
-					    align-items: center;
-					    justify-content: center;
-				    	-moz-box-pack: center;
-				    	-webkit--moz-box-pack: center;
-						
+						text-align: center;
+						padding: .10rem 0;
 						border-radius: .08rem;
 						border: 0.01rem solid #E50F72;
 						
@@ -1352,6 +1394,7 @@
 				padding-left: 1.00rem;
 				overflow: hidden;
 				.sureGood{
+					width: 45%;
 					float: left;
 					display: flex;
 					display:-webkit-box;
@@ -1381,11 +1424,17 @@
 						line-height: .38rem;
 					}
 				}
+				.baocun{
+					padding-top: .20rem;
+					float: left;
+					font-size: .24rem;
+					color: #AAAAAA;
+				}
 				.howToShare{
 					float: right;
 					font-size: 0;
 					padding-top: .20rem;
-					width: .48rem;
+					width: 10%;
 	    			height: .38rem;
 	    			display: flex;
 					display:-webkit-box;
@@ -1484,6 +1533,57 @@
 				width: .76rem;
 				height: .76rem;
 				margin-bottom: .32rem;
+			}
+		}
+		.shareAppLink{
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 99999;
+			background: rgba(0,0,0,.5);
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: -moz-flex;
+		    -webkit-box-pack: center;
+		    -moz-box-pack: center;
+		    -ms-flex-align:center;
+		    -webkit-align-items: center;
+		    -moz-align-items: center;
+		    align-items: center;
+			.linkCOntent{
+				margin: 0 auto;
+				width: 5.70rem;
+				background: #fff;
+				border-radius: .16rem;
+				font-size: .28rem;
+				color: #333;
+				.content{
+					margin: 0 auto;
+					width: 4.00rem;
+					text-align: center;
+					padding: .40rem 0;
+					line-height: .52rem;
+					
+					
+				}
+				.linkBot{
+					display: flex;
+					display:-webkit-box;
+				    display: -moz-box;
+				    display: -ms-flexbox;
+				    display: -webkit-flex;
+				    display: -moz-flex;
+					p{
+						width: 50%;
+						text-align: center;
+						line-height: .90rem;
+					}
+				}
 			}
 		}
 		.toShare{
@@ -1591,7 +1691,7 @@
 			left: 0;
 			top: 0;
 			width: 100%;
-			min-height: 100%;
+			height: 100%;
 			z-index: 999;
 			background: rgba(0,0,0,1);
 			display: flex;
@@ -1650,6 +1750,15 @@
 		    		margin-right: .12rem;
 		    	}
 		    }
+		}
+		.tiaozhuan{
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100%;
+			z-index: 999;
+			height: 100%;
+			background: rgba(0,0,0,0);
 		}
 		.zhezhao{
 			background: #fff;

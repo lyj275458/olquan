@@ -36,7 +36,6 @@
 			</div>
 			<div class="order">
 				<span>订单留言：</span>
-				
 				<input  class="words" v-on:input ="clearinputMemo()" placeholder="对本次交易的说明,限45字" maxlength="45" v-model="inputMemo"/>
 			</div>
 			<!--<div class="order">
@@ -46,20 +45,25 @@
 		</div>
 		<div class="payment">
 			<div class="account">账户</div>
-			<!--<div class="choosestores">
+			<div class="choosestores" v-show="curObj.canUseScore==1 && curObj.score>0">
 				<div class="stores">
 					<p class="stores-l">积分<span> ({{curObj.score}}可抵现{{curObj.scoreAmount}}元)</span></p>
-					<p class="stores-r">
-						<span>-￥20.00</span>
-						<img :src="nochoseImg"/>
-					</p>
+					<div class="stores-r">
+						<span v-show="useStores>=100 && storeFeeShow">-￥{{storeFeeObj}}</span>
+						<span v-show="useStores<100 && storeFeeShow">{{storeFeeObj}}</span>
+						<div class="choosePay" @click="inputStore">
+							<img :src="nochoseImg" v-show="!storeFeeShow"/>
+							<img :src="checkImg" v-show="storeFeeShow"/>
+						</div>
+						
+					</div>
 					
 				</div>
-				<div class="usestore">
-					<input class="storeNum" pattern="[0-9]*" v-on:input ="clearNoNum()" v-model="useStores" type="number"/>
+				<div class="usestore" v-show="storeFeeShow">
+					<input class="storeNum" pattern="[0-9]*" v-on:input ="clearNoNum()" v-model="useStores"/>
 					<span>积分 <i style="font-style: normal; color: #888;font-size: .24rem;">(最低100积分)</i></span>
 				</div>
-			</div>-->
+			</div>
 			<div class="choosestores" v-show="curObj.coffers>0">
 				<div class="stores">
 					<p class="stores-l">小金库<span> ({{curObj.coffers}}元)</span></p>
@@ -100,6 +104,17 @@
 					<span>元 </span>
 				</div>
 			</div>
+			<div class="choosestores" v-if="curObj.coupons!=null && curObj.coupons!=''" @click="getCouponList">
+				<div class="stores">
+					<p class="stores-l">优惠券<span v-show="couponAmount==0"> ({{curObj.coupons[0].coupons.length}}张可用/未选择)</span></p>
+					<div class="stores-r">
+						<span v-show="couponAmount!=0">-￥{{couponAmount}}</span>
+						<img style="width:.16rem ;height: .26rem;" :src="rowMoreImg">
+					</div>
+					
+				</div>
+			
+			</div>
 		</div>
 		<div class="totalDetail">
 			<div style="font-size:.28rem;line-height: .72rem;">合计</div>
@@ -120,6 +135,14 @@
 				<div class="soloDetail" v-show="amountFeeShow">
 					<p class="solo-l">余额</p>
 					<p class="solo-r">-￥{{amountFeeObj}}</p>
+				</div>
+				<div class="soloDetail" v-show="storeFeeShow && useStores>=100">
+					<p class="solo-l">积分</p>
+					<p class="solo-r">-￥{{storeFeeObj}}</p>
+				</div>
+				<div class="soloDetail" v-show="couponAmount!=0">
+					<p class="solo-l">积分</p>
+					<p class="solo-r">-￥{{couponAmount}}</p>
 				</div>
 			</div>
 		</div>
@@ -160,7 +183,7 @@
 			<div class="orderPay">
 				<div class="moneyPay">
 					<span>应付金额 :</span>
-					<span style="color: #e61d79;">￥<i>{{finalPriceObj}}</i></span>
+					<span style="color: #e61d79;">￥<i>{{finalPriceObj<0?0:finalPriceObj}}</i></span>
 					<span>共{{curObj.totalNum}}件</span>
 					<div class="putOrder" v-show="!isOrderGet" @click="payOrder()">提交订单</div>
 					<div class="putOrder" style="background: #ddd;" v-show="isOrderGet">提交订单</div>
@@ -195,6 +218,35 @@
 				</div>
 			</div>
 		</div>
+		<div class="chooseCoupon" v-show="couponShow" >
+			<div class="couponListOut">
+				<div class="listTop">
+					<div>可用优惠券</div>
+					<img :src="colseImg" @click="colseCouponList"/>
+				</div>
+				<div class="couponList">
+					<div v-for="item in curObj.coupons">
+						<div class="couponDetail" v-for="(itemSon,index) in item.coupons" @click="getCouponDetail(index,itemSon.amount,itemSon.id)">
+							<div class="couponDescribe">
+								<div class="money"><span>￥<span style="font-size: .60rem;font-weight: 700;">{{itemSon.amount}}</span></span></div>
+								<div class="describe">
+									<div class="couponName">{{itemSon.title}}</div>
+									<div class="getCoupon">
+										<img :src="nochoseImg" v-show="itemSon.selectM==false"/>
+										<img :src="choseImg" v-show="itemSon.selectM==true"/>
+									</div>
+								</div>
+								
+							</div>
+							<div class="couponTime">
+								{{itemSon.startDate}} 至  {{itemSon.endDate}}
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -213,19 +265,25 @@
 				payforanotherImg:'/static/images/payforanother.png',
 				checkImg:'/static/images/checked.png',
 				rowMoreImg:'/static/images/rowmore.png',
+				colseImg:'/static/images/colse.png',
 				sureCheckone:true,
 				sureChecktwo:false,
 				sureCheckthree:false,
 				totalFee:'',
 				coffersFee:0,
 				amountFee:0,
+				useStoresUse:0,
 				payPassword:'',
 				payPasswordShow:false,
 				amountFeeShow:false,
 				coffersFeeShow:false,
+				storeFeeShow:false,
 				isShowPass:false,
 				isOrderGet:false,
 				showWXpay:true,
+				couponShow:false,
+				couponAmount:0,
+				useStores:0,
 				needIdcard:false,
 				needNameAndCode:'',
 				orderObj:JSON.parse(localStorage.getItem("orderObj")),
@@ -233,6 +291,7 @@
 				addressObj:[],
 				prodrctFee:0,
 				postFee:0,
+				couponId:'',
 				payMethod:1,
 				inputMemo:'',
 				payInfo:{},
@@ -266,7 +325,7 @@
 				this.sureCheckthree=false;
 				this.payMethod=4;
 			}
-			console.log(this.showWXpay)
+//			console.log(this.showWXpay)
 			this.addRecord();
 			this.$store.commit('documentTitle','确认订单');
 			this.getList();
@@ -283,6 +342,13 @@
 			coffersFeeObj(){
 				return Number(this.coffersFee);
 			},
+			storeFeeObj(){
+				if(this.useStores<100){
+					return '最低100积分';
+				}else{
+					return Number(this.useStores/100);
+				}
+			},
             finalPriceObj(){
             	if(!this.amountFeeShow){
             		this.amountFee=0;
@@ -290,13 +356,67 @@
             	if(!this.coffersFeeShow){
             		this.coffersFee=0;
             	}
-            	this.totalFee=this.curObj.totalFee-this.amountFee-this.coffersFee;
+            	if(!this.storeFeeShow){
+            		this.useStoresUse=0;
+            	}else{
+            		if(this.useStores<100){
+	            		this.useStoresUse=0;
+	            	}else{
+	            		this.useStoresUse=this.useStores/100
+	            	}
+            	}
+            	
+            	this.totalFee=this.curObj.totalFee-this.amountFee-this.coffersFee-this.useStoresUse-this.couponAmount;
 				
 				return this.totalFee.toFixed(2);
 			},
             
         },
 		methods:{
+			getCouponList(){
+				this.couponShow=true;
+			},
+			colseCouponList(){
+				this.couponShow=false;
+			},
+			getCouponDetail(index,amount,couponRecordId){
+				
+				if(this.curObj.coupons[0].coupons[index].selectM){
+					this.curObj.coupons[0].coupons[index].selectM=false;
+				}else{
+					for(let i =0 ;i<this.curObj.coupons[0].coupons.length;i++){
+						this.curObj.coupons[0].coupons[i].selectM=false;
+					}
+					this.curObj.coupons[0].coupons[index].selectM=!this.curObj.coupons[0].coupons[index].selectM;
+				}
+				if(this.curObj.coupons[0].coupons[index].selectM){
+					this.couponAmount=amount;
+					this.couponId=couponRecordId;
+				}else{
+					this.couponAmount=0;
+					this.couponId='';
+				}
+//				console.log(this.couponId)
+				if(this.amountFeeShow){
+					if(this.amountFee==this.curObj.totalFee || this.amountFee > this.curObj.totalFee-amount){
+						this.amountFee=this.curObj.totalFee-amount;
+					}
+            		
+            	}
+            	if(this.coffersFeeShow){
+            		if(this.coffersFee==this.curObj.totalFee || this.coffersFee> this.curObj.totalFee-amount){
+            			this.coffersFee=this.curObj.totalFee-amount;
+            		}
+            		
+            	}
+            	if(this.storeFeeShow){
+            		if(this.useStores==(this.curObj.totalFee)*100 ||this.useStores >(this.curObj.totalFee-amount)*100){
+            			this.useStores=(this.curObj.totalFee-amount)*100;
+            		}
+            		
+            	}
+//				console.log(this.couponAmount)
+			},
 			//添加访问记录
 			addRecord(){
   				let data = {
@@ -307,14 +427,14 @@
   			},
   			addRecordBack(data){},
 			getAddressMore(){
-				this.$router.push({path:'/payMain/address?isBuyGoods=1&isOverseasDirectMailProduct='+this.curObj.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.curObj.isCrossBorderProduct});
+				this.$router.push({path:'/payMain/address?isPinkGoods=1&isOverseasDirectMailProduct='+this.curObj.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.curObj.isCrossBorderProduct});
 			},
 			getList(){
 				let data={
 					productId:this.orderObj.productId,
 					num:this.orderObj.num,
 					normalId:this.orderObj.normalId,
-					type:4,
+					type:9,
 //					memberId:this.$route.query.memberId,
 					
 					uutype:1,
@@ -330,8 +450,14 @@
 				}else{
 					this.curObj=data.result;
 					if(data.result.receiveAddress==null){
-						this.$router.push({path:'/add/addAdress?isBuyGoods=1&isOverseasDirectMailProduct='+data.result.isOverseasDirectMailProduct+'&isCrossBorderProduct='+data.result.isCrossBorderProduct});
+						this.$router.push({path:'/add/addAdress?isPinkGoods=1&isOverseasDirectMailProduct='+data.result.isOverseasDirectMailProduct+'&isCrossBorderProduct='+data.result.isCrossBorderProduct});
 					}
+					if(data.result.coupons!=null && data.result.coupons!=''){
+						for(let i=0; i<data.result.coupons[0].coupons.length;i++){
+							this.$set(data.result.coupons[0].coupons[i],'selectM',false);
+						}
+					}
+//					console.log(this.curObj.coupons[0].coupons)
 					//console.log(this.curObj)
 					this.totalFee=this.curObj.totalFee;
 					this.prodrctFee=this.curObj.productsFee;
@@ -366,11 +492,12 @@
 			inputAmount(){
 				this.amountFeeShow=!this.amountFeeShow;
 				this.coffersFeeShow=false;
+				this.storeFeeShow=false;
 				if(this.amountFeeShow){
 					if(this.curObj.amount<=this.curObj.totalFee){
 						this.amountFee=this.curObj.amount;
 					}else{
-						this.amountFee=this.curObj.totalFee;
+						this.amountFee=(this.curObj.totalFee-this.couponAmount);
 					}
 				}else{
 					this.amountFee=0;
@@ -382,18 +509,36 @@
 				this.needIdcard=false;
 			},
 			suerAddAdress(){
-				this.$router.push({path:'/add/addAdress?isBuyGoods=1'+'&addressId='+this.addressId+'&isOverseasDirectMailProduct='+this.curObj.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.curObj.isCrossBorderProduct});
+				this.$router.push({path:'/add/addAdress?isPinkGoods=1'+'&addressId='+this.addressId+'&isOverseasDirectMailProduct='+this.curObj.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.curObj.isCrossBorderProduct});
+			},
+			//点击积分
+			inputStore(){
+				this.storeFeeShow=!this.storeFeeShow;
+				this.amountFeeShow=false;
+				this.coffersFeeShow=false;
+				
+				if(this.storeFeeShow){
+					if(this.curObj.scoreAmount<=this.curObj.totalFee){
+						console.log(this.curObj.coffers)
+						this.useStores=this.curObj.score;
+					}else{
+						console.log(this.curObj.totalFee)
+						this.useStores=(this.curObj.totalFee-this.couponAmount)*100;
+					}
+				}else{
+					this.useStores=0;
+				}
 			},
 			//点击余额
 			inputCoofers(){
 				this.coffersFeeShow=!this.coffersFeeShow;
 				this.amountFeeShow=false;
-				
+				this.storeFeeShow=false;
 				if(this.coffersFeeShow){
 					if(this.curObj.coffers<=this.curObj.totalFee){
 						this.coffersFee=this.curObj.coffers;
 					}else{
-						this.coffersFee=this.curObj.totalFee;
+						this.coffersFee=(this.curObj.totalFee-this.couponAmount);
 					}
 				}else{
 					this.coffersFee=0;
@@ -419,13 +564,14 @@
 				this.sureCheckthree=true;
 				
 			},
-			clearNoNum(){
-				this.useStores=this.useStores.replace(/\D/g,'')
-				//console.log(this.useStores)
-			},
+			
 			//提交订单
 			payOrder(){	
-					if(Number(this.amountFee)==0 && Number(this.coffersFee)==0){
+					if(this.useStores<100 && this.storeFeeShow){
+						this.$toast('最低使用100积分');
+						return;
+					}
+					if(Number(this.amountFee)==0 && Number(this.coffersFee)==0 && this.useStores==0){
 						this.isShowPass=true;
 					}else{
 						this.isShowPass=false;
@@ -466,17 +612,19 @@
 							productId:this.orderObj.productId,
 							num:this.orderObj.num,
 							normalId:this.orderObj.normalId,
-							type:4,
+							type:9,
 //							memberId:this.$route.query.memberId,
 							addressId:this.addressId,
 							payMethod:this.payMethod,
 							memo:this.inputMemo,
 							amount:Number(this.amountFee),
 							coffers:Number(this.coffersFee),
+							score:this.useStores,
 							recId:this.orderObj.recId,
+							couponRecordId:this.couponId,
 							uutype:1,
 						}
-						console.log(this.orderObj.type)
+//						console.log(data)
 						this.isOrderGet=true;
 						
 						let defaultStyle = 'fading-circle';
@@ -534,15 +682,17 @@
 						productId:this.orderObj.productId,
 						num:this.orderObj.num,
 						normalId:this.orderObj.normalId,
-						type:4,
+						type:9,
 //						memberId:this.$route.query.memberId,
 						addressId:this.addressId,
 						payMethod:this.payMethod,
 						memo:this.inputMemo,
-						payPwd:md5(this.payPassword),
+						payPassword:md5(this.payPassword),
 						amount:Number(this.amountFee),
 						coffers:Number(this.coffersFee),
+						score:this.useStores,
 						recId:this.orderObj.recId,
+						couponRecordId:this.couponId,
 						uutype:1,
 					}
 					//console.log(data)
@@ -553,6 +703,17 @@
 			clearinputMemo(){
 				var reg2=/([\u00A9\u00AE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9-\u21AA\u231A-\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA-\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614-\u2615\u2618\u261D\u2620\u2622-\u2623\u2626\u262A\u262E-\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u2660\u2663\u2665-\u2666\u2668\u267B\u267F\u2692-\u2697\u2699\u269B-\u269C\u26A0-\u26A1\u26AA-\u26AB\u26B0-\u26B1\u26BD-\u26BE\u26C4-\u26C5\u26C8\u26CE-\u26CF\u26D1\u26D3-\u26D4\u26E9-\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u2714\u2716\u271D\u2721\u2728\u2733-\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763-\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934-\u2935\u2B05-\u2B07\u2B1B-\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70-\uDD71\uDD7E-\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01-\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50-\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96-\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF])|(\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F-\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95-\uDD96\uDDA4-\uDDA5\uDDA8\uDDB1-\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDEE0-\uDEE5\uDEE9\uDEEB-\uDEEC\uDEF0\uDEF3-\uDEF6])|(\uD83E[\uDD10-\uDD1E\uDD20-\uDD27\uDD30\uDD33-\uDD3A\uDD3C-\uDD3E\uDD40-\uDD45\uDD47-\uDD4B\uDD50-\uDD5E\uDD80-\uDD91\uDDC0])/g;
 				this.inputMemo=this.inputMemo.replace(reg2, '');
+			},
+			//积分
+			clearNoNum(){
+				this.useStores=this.useStores.replace(/\D/g,'')
+				if(this.useStores >= this.curObj.score){
+					this.useStores=this.curObj.score;
+				}
+				if(this.useStores>=(this.curObj.totalFee-this.couponAmount)*100){
+					this.useStores=(this.curObj.totalFee-this.couponAmount)*100
+				}
+				//console.log(this.useStores)
 			},
 			//余额
 			clearMoreCoff(){
@@ -575,9 +736,9 @@
 			    if(Number(this.coffersFee)>=this.curObj.coffers){
 			    	this.coffersFee=this.curObj.coffers;
 			    }
-			    if(Number(this.coffersFee)>=this.curObj.totalFee){
+			    if(Number(this.coffersFee)>=(this.curObj.totalFee-this.couponAmount)){
 			    	
-			    	this.coffersFee=this.curObj.totalFee;
+			    	this.coffersFee=(this.curObj.totalFee-this.couponAmount);
 			    }
 			    
 			},
@@ -602,9 +763,9 @@
 			    	this.amountFee=this.curObj.amount;
 			    }
 			   
-			    if(this.amountFee>=this.curObj.totalFee){
+			    if(this.amountFee>=(this.curObj.totalFee-this.couponAmount)){
 			    	
-			    	this.amountFee=this.curObj.totalFee;
+			    	this.amountFee=(this.curObj.totalFee-this.couponAmount);
 			    }
 			    
 			    //console.log(this.addObj.totalFee.split("."))
@@ -793,6 +954,7 @@
 					border:none;
 					width: 77%;
 			    	padding: 0;
+			    	line-height: .84rem;
 			    	/*outline: none;*/
 				}
 			}
@@ -971,6 +1133,116 @@
 			background: rgba(0,0,0,0.5);
 			left: 0;
 			top: 0;
+		}
+		.chooseCoupon{
+			position: fixed;
+			left: 0;
+			top: 0;
+			background: rgba(0,0,0,0.5);
+			width: 100%;
+			height: 100%;
+			.couponListOut{
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				background: #fff;
+				height: 8.00rem;
+				.listTop{
+					font-size: .25rem;
+				    color: #333;
+				    line-height: .88rem;
+				    padding-left: .24rem;
+				    border-bottom: 0.01rem solid #e5e5e5;
+				    overflow: hidden;
+				    div{
+				    	float: left;
+				    }
+				    img{
+				    	float: right;
+					    display: block;
+					    height: .36rem;
+					    width: .36rem;
+					    margin-right: .24rem;
+					    margin-top: .24rem;
+				    }
+				}
+				.couponList{
+					height: 6.50rem;
+				    padding: .26rem .26rem .42rem;
+				    overflow: scroll;
+				    background: #fff;
+				    .couponDetail{
+				    	margin-bottom: .20rem;
+						background: url(../../../../static/images/dihong.png) no-repeat;
+						background-size: 7.10rem 2.33rem;
+						width: 7.10rem;
+						height: 2.33rem;
+						.couponDescribe{
+							display: flex;
+							display:-webkit-box;
+						    display: -moz-box;
+						    display: -moz-flex;
+						    display: -ms-flexbox;
+						    display: -webkit-flex;
+							-webkit-justify-content:flex-start;
+							justify-content:flex-start;
+							-moz-box-pack:flex-start;
+							-webkit--moz-box-pack:flex-start;
+							.money{
+								width: 2.00rem;
+								color: #ed0276;
+								line-height: 1.60rem;
+								font-size: .60rem;
+								text-align: center;
+								font-weight: 600;
+								span{
+									font-size: .30rem;
+									font-weight: normal;
+								}
+							}
+							.describe{
+								-webkit-box-flex: 1;
+							    -webkit-flex: 1;
+							    -ms-flex: 1;
+							    flex: 1;
+								margin-left: .20rem;
+								padding-top: .28rem;
+								font-size: .24rem;
+								.couponName{
+									color: #333;
+									width: 4.70rem;
+									line-height: .32rem;
+									height: .64rem;
+									overflow: hidden;
+								}
+								.getCoupon{
+									padding: 0;
+									
+									color: #666;
+									width:100%;
+									position: relative;
+									img{
+										display: block;
+										position: absolute;
+										right: .48rem;
+										top: 0;
+										height: .40rem;
+										width: .40rem;
+									}
+									
+								}
+							}
+						}
+						.couponTime{
+							font-size: .24rem;
+							color: #333;
+							margin-left: .24rem;
+							margin-top: 0.2rem;
+						}
+				    }
+				}
+			}
 		}
 		.changeAdd{
 			position: fixed;

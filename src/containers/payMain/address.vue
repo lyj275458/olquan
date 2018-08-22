@@ -110,6 +110,8 @@
 		    upData(id){
 		    	if(this.$route.query.isBuyGoods){
 		    		this.$router.push({path:'/add/addAdress?isBuyGoods='+this.$route.query.isBuyGoods+'&addressId='+id+'&isOverseasDirectMailProduct='+this.$route.query.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.$route.query.isCrossBorderProduct});
+		    	}else if(this.$route.query.isPinkGoods){
+		    		this.$router.push({path:'/add/addAdress?isPinkGoods='+this.$route.query.isPinkGoods+'&addressId='+id+'&isOverseasDirectMailProduct='+this.$route.query.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.$route.query.isCrossBorderProduct});
 		    	}else if(this.$route.query.getSuper){
 		    		this.$router.push({path:'/add/addAdress?getSuper='+this.$route.query.getSuper+'&addressId='+id});
 		    	}else if(this.$route.query.getPink){
@@ -127,6 +129,8 @@
 		    addNew(){
 		    	if(this.$route.query.isBuyGoods){
 		    		this.$router.push({path:'/add/addAdress?isBuyGoods='+this.$route.query.isBuyGoods+'&isOverseasDirectMailProduct='+this.$route.query.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.$route.query.isCrossBorderProduct});
+		    	}else if(this.$route.query.isPinkGoods){
+		    		this.$router.push({path:'/add/addAdress?isPinkGoods='+this.$route.query.isBuyGoods+'&isOverseasDirectMailProduct='+this.$route.query.isOverseasDirectMailProduct+'&isCrossBorderProduct='+this.$route.query.isCrossBorderProduct});
 		    	}else if(this.$route.query.getSuper){
 		    		this.$router.push({path:'/add/addAdress?getSuper='+this.$route.query.getSuper});
 		    	}else if(this.$route.query.getPink){
@@ -170,6 +174,8 @@
 		    	if(this.$route.query.isBuyGoods){
 		    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder?addressId='+id;
 		    		//this.$router.push({path:'/fightAlone/ordersure/payorder?addressId='+id});
+		    	}else if(this.$route.query.isPinkGoods){
+		    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorderPink?addressId='+id;
 		    	}else if(this.$route.query.getSuper){
 		    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/superorder?addressId='+id;
 		    		//this.$router.push({path:'/fightAlone/ordersure/superorder?addressId='+id});

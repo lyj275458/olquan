@@ -142,7 +142,7 @@ export default {
     created: function() {
 		this.$store.commit('documentTitle','收货地址管理');
 		this.getAllCity();
-		if(this.$route.query.isBuyGoods==1){
+		if(this.$route.query.isBuyGoods==1 || this.$route.query.isPinkGoods==1){
 			if(this.$route.query.isOverseasDirectMailProduct==0){
 				this.showIdCard=false;
 			}else{
@@ -344,7 +344,10 @@ export default {
     		if(this.$route.query.isBuyGoods==1){
     			window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder?addressId='+data.result;
 	    		//this.$router.push({path:'/fightAlone/ordersure/payorder?addressId='+data.result});
-	    	} else if(this.$route.query.getSuper==1){
+	    	}else if(this.$route.query.isPinkGoods==1){
+	    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorderPink?addressId='+data.result;
+	    		//this.$router.push({path:'/fightAlone/ordersure/superorder?addressId='+data.result});
+	    	}else if(this.$route.query.getSuper==1){
 	    		window.location.href=CUR_URLBACK+'fightAlone/ordersure/superorder?addressId='+data.result;
 	    		//this.$router.push({path:'/fightAlone/ordersure/superorder?addressId='+data.result});
 	    	}else if(this.$route.query.getPink==1){

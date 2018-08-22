@@ -8,7 +8,7 @@
 			<div class="sundryCount">
 				<div class="sundryTotalFind">
 					<p class="countNum">{{acountList.totalFindCount}}</p>
-					<p>素材</p>
+					<p>日记</p>
 				</div>
 				<div class="sundryTotalFind">
 					<p class="countNum">{{acountList.followCount}}</p>
@@ -84,7 +84,7 @@
 				<img :src="pinkShare" @click="ceshi"/>
 			</div>-->
 			<div class="prodtctList" v-show="item.productName!=null">
-				<div class="productDescrip" @click="getGoodsDetail(item.productType,item.productId)">
+				<div class="productDescrip" @click="getGoodsDetail(item.productType,item.productId,item.memberId)">
 					<div class="prodtctImg">
 						<img :src="item.productImage" v-if="item.productImage!=''"/>
 						<img :src="newLogoImg" v-if="item.productImage==''"/>
@@ -105,6 +105,10 @@
 				</div>
 			</div>
 			<div class="giveGood">
+				<div class="sureGood" @click="showAppLink">
+					<img :src="productComment"/>
+					<span>保存素材</span>
+				</div>
 				<div v-show="isAddGoodsSure">
 					<div class="sureGood" v-show="item.isDoGood==1" @click="addGoodsNum(index,1,item.findId)">
 						<img :src="giveUpImg"/>
@@ -172,6 +176,22 @@
 			<div><img :src="noMorefindShare"/></div>
 			<div style="width: 100%;text-align: center;">
 				没有搜索到相关内容哟~
+			</div>
+		</div>
+		<div class="shareAppLink" v-show="appLinkShow" @click="closeAppLink"  @touchmove.prevent>
+			<div class="linkCOntent">
+				<div style="width: 100%;border-bottom: 0.01em solid #E1E1E1;">
+					<div class="content" style="font-size: .26rem;">发现自动保存素材仅支持APP端，请前往下载。</div>
+				</div>
+				
+				<div class="linkBot">
+					<p @click="closeAppLink">
+						<span style="display: block;border-right: 0.01rem solid #e1e1e1;">取消</span>
+					</p>
+					<p @click="linkAppAddress">
+						<span style="color: #E50F72;">去下载</span>
+					</p>
+				</div>
 			</div>
 		</div>
 		<div class="toShare" v-show="showShare">
@@ -269,10 +289,12 @@
 				giveUp01Img:'/static/images/giveUp01.png',
 				logoImg:'/static/images/icon-logo.png',
 				newLogoImg:'https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png',
+				productComment:'/static/images/sucai.png',
 				posterNew:'',
 				videoUrl:'',
 				erweiObj:'',
 				isAddGoodsSure:true,
+				appLinkShow:false,
 				isAddFollow:true,
 				showShare:false,
 				showTop:false,
@@ -362,9 +384,18 @@
 		    this.getcartNum();
 			this.getAcountList();
 		    this.newFind();
-			this.addWeixinShare();
+			
 		},
 		methods:{
+			showAppLink(){
+				this.appLinkShow=true;
+			},
+			closeAppLink(){
+				this.appLinkShow=false;
+			},
+			linkAppAddress(){
+				window.location.href='http://a.app.qq.com/o/simple.jsp?pkgname=com.olquanapp.ttds.android';
+			},
 			getMemList(){
 				let data = {
 //					memberId:this.$route.query.memberId,
@@ -373,9 +404,9 @@
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemListBack);
 			},
 			getMemListBack(data){
-				
+				this.shareData.title='您的好友'+data.result.nickName+'在OL圈发布了一篇达人日记，快去看看吧！';
 				this.shareData.url=USE_URL+"weixin/auth?recId="+data.result.id+"&view="+encodeURIComponent(CUR_URLBACK+'index/differentIndex/id/'+this.$route.params.id);
-				
+				this.addWeixinShare();
 			},
 			//发现账号详情
 			
@@ -543,11 +574,11 @@
 		    	this.showShare=false;
 		    },
 		    //获取商品详情
-		    getGoodsDetail(type,productId){
+		    getGoodsDetail(type,productId,recId){
 		    	
 		    	if(type==9 || type==4){
 		    		//window.location.href=CUR_URLBACK+'demo/iscroll/id/'+productId+'?isShare=0&type='+type;
-		    		this.$router.push({path:'/demo/iscroll/id/'+productId+'?isShare=0&type='+ type});
+		    		this.$router.push({path:'/demo/iscroll/id/'+productId+'?isShare=0&type='+ type+'&recId='+recId});
 		    	}else if(type==12){
 		    		this.$router.push({path:'/activity/newact?id='+productId});
 		    		//window.location.href=CUR_URLBACK+'activity/newact?id='+productId;
@@ -1060,6 +1091,7 @@
 				padding-left: 1.00rem;
 				overflow: hidden;
 				.sureGood{
+					width: 45%;
 					float: left;
 					display: flex;
 					display:-webkit-box;
@@ -1093,7 +1125,7 @@
 					float: right;
 					font-size: 0;
 					padding-top: .20rem;
-					width: .48rem;
+					width: 10%;
 	    			height: .38rem;
 	    			display: flex;
 					display:-webkit-box;
@@ -1180,6 +1212,57 @@
 				width: .76rem;
 				height: .76rem;
 				margin-bottom: .32rem;
+			}
+		}
+		.shareAppLink{
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 99999;
+			background: rgba(0,0,0,.5);
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: -moz-flex;
+		    -webkit-box-pack: center;
+		    -moz-box-pack: center;
+		    -ms-flex-align:center;
+		    -webkit-align-items: center;
+		    -moz-align-items: center;
+		    align-items: center;
+			.linkCOntent{
+				margin: 0 auto;
+				width: 5.70rem;
+				background: #fff;
+				border-radius: .16rem;
+				font-size: .28rem;
+				color: #333;
+				.content{
+					margin: 0 auto;
+					width: 4.00rem;
+					text-align: center;
+					padding: .40rem 0;
+					line-height: .52rem;
+					
+					
+				}
+				.linkBot{
+					display: flex;
+					display:-webkit-box;
+				    display: -moz-box;
+				    display: -ms-flexbox;
+				    display: -webkit-flex;
+				    display: -moz-flex;
+					p{
+						width: 50%;
+						text-align: center;
+						line-height: .90rem;
+					}
+				}
 			}
 		}
 		.toShare{
@@ -1287,7 +1370,7 @@
 			left: 0;
 			top: 0;
 			width: 100%;
-			min-height: 100%;
+			height: 100%;
 			z-index: 999;
 			background: rgba(0,0,0,1);
 			display: flex;

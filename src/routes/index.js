@@ -515,13 +515,26 @@ export default [
 		}
         
         
-    },{//立即支付--
+    },{//立即试用支付--
         path: '/fightAlone/ordersure/payorder',
         
         component: resolve => {
             require.ensure(['../containers/fightAlone/ordersure/payorder.vue'], () => {
                 resolve(require('../containers/fightAlone/ordersure/payorder.vue'));
             }, 'newPayorder');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
+    },{//立即特卖支付--
+        path: '/fightAlone/ordersure/payorderPink',
+        
+        component: resolve => {
+            require.ensure(['../containers/fightAlone/ordersure/payorderPink.vue'], () => {
+                resolve(require('../containers/fightAlone/ordersure/payorderPink.vue'));
+            }, 'newPayorderPink');
         },
         meta: {
 		  keepAlive: false // 不需要缓存

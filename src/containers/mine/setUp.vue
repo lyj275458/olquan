@@ -3,13 +3,13 @@
 		<div class="topMessage">
 			<p>基本信息</p>
 		</div>
-		<div class="setMessage" style="height: 1.28rem;">
+		<div class="setMessage" style="height: 1.28rem;" @click="getFaceImg">
 			<div class="setLeft">
 				<p><img :src="seLogoImg" style="width: .28rem;height: .28rem;"/></p>
 				<p style="margin-left: .07rem;">头像</p>
 			</div>
 			<div class="setRight">
-				<img :src="memList.logo" class="memLogo" />
+				<img :src="ownImg" class="memLogo" />
 			</div>
 		</div>
 		<div class="setMessage" @click="changeNickname">
@@ -68,7 +68,7 @@
 				<p><img :src="setRowImg"/></p>
 			</div>
 		</div>
-		<div class="setMessage">
+		<div class="setMessage" @click="changeTelNum">
 			<div class="setLeft">
 				<p><img :src="bangTelImg"/></p>
 				<p style="margin-left: .14rem;">绑定手机号</p>
@@ -79,10 +79,10 @@
 				<p><img :src="setRowImg"/></p>
 			</div>
 		</div>
-		<div class="topMessage" v-show="memList.accounts.length>1">
+		<div class="topMessage" v-show="showAccountListSure">
 			<p>账户切换</p>
 		</div>
-		<div class="setMessage" @click="chooseAccountList" v-show="memList.accounts.length>1">
+		<div class="setMessage" @click="chooseAccountList" v-show="showAccountListSure">
 			<div class="setLeft">
 				<p><img :src="chooseMemImg"/></p>
 				<p style="margin-left: .14rem;">选择账号</p>
@@ -92,7 +92,7 @@
 				<p><img :src="setRowImg"/></p>
 			</div>
 		</div>
-		<div class="setMessage" v-show="memList.accounts.length>1">
+		<div class="setMessage" @click="setAccountList" v-show="showAccountListSure">
 			<div class="setLeft">
 				<p><img :src="chooseMemImg"/></p>
 				<p style="margin-left: .14rem;">设置默认账号</p>
@@ -105,7 +105,7 @@
 		<div class="topMessage">
 			<p>安全提升</p>
 		</div>
-		<div class="setMessage">
+		<div class="setMessage" @click="changePassWord">
 			<div class="setLeft">
 				<p><img :src="pasWadImg"/></p>
 				<p style="margin-left: .14rem;">支付密码设置</p>
@@ -138,6 +138,7 @@
 				<p><img :src="setRowImg"/></p>
 			</div>
 		</div>
+		
 		<div class="openPasward" v-show="changeRealNameS">
 			<div class="message">
 				<div class="messageTop">
@@ -243,6 +244,19 @@
 				</div>
 			</transition>
 		</div>
+		<div class="maskOut" v-show="setAccountShow">
+			<div class="setAccount">
+				<div class="setList" v-for="(item,index) in memList.accounts" @click="setAccountSure(index,item.account)">
+					<div>{{item.account}}</div>
+					<div class="iconList" v-show="item.isDefault==1">
+						<box>
+					    	<icon type="success-no-circle"></icon>
+					    </box>
+					</div>
+				</div>
+				<div style="border-top: 0.01rem solid #E1E1E1;" @click="cancelSetAccount">取消</div>
+			</div>
+		</div>
 		
 		
 		
@@ -251,6 +265,7 @@
 
 <script>
 	import md5 from 'js-md5';
+	import { Box, Icon } from 'vux';
 	export default{
 		data : function() {
 			return{
@@ -276,6 +291,12 @@
 				changeIDcard:false,
 				changeNickNameS:false,
 				chooseAccount:false,
+				setAccountShow:false,
+				showAccountListSure:false,
+				setAccountDefault:'',
+				setIndexAct:'',
+				nationalNore:'',
+				ownImg:'',
 				birthDay:'',//生日
 				payPassword:'',//支付密码
 				realName:'',//真实姓名
@@ -307,6 +328,10 @@
 			this.getMember();
 			this.addWeixinShare();
 		},
+		components: {
+			Box,
+    		Icon
+		},
 		mounted(){
 			
 			
@@ -316,6 +341,12 @@
             
         },
 		methods:{
+			changeTelNum(){
+				window.location.href=USE_URL+'weixin/member/boundMobile'
+			},
+			changePassWord(){
+				window.location.href=USE_URL+'weixin/member/boundMobile?type=1'
+			},
 			//选择账号
 			cancelChooseAount(){
 				this.chooseAccount=false;
@@ -323,12 +354,41 @@
 			chooseAccountList(){
 				this.chooseAccount=true;
 			},
+			setAccountList(){
+				this.setAccountShow=true;
+			},
+			cancelSetAccount(){
+				this.setAccountShow=false;
+			},
+			//设置默认账号
+			setAccountSure(index,accountNo){
+				this.setIndexAct=index;
+				this.setAccountDefault=accountNo;
+				let data ={
+					accountNo:accountNo,
+				}
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.setDefaultAccount,data,this.setAccountSureBack,this);
+			},
+			setAccountSureBack(data){
+				if(data.code!=0){
+					this.$toast(data.message,200);
+				}else{
+					this.$toast('设置成功',200);
+					for(let i=0; i<this.memList.accounts.length;i++){
+						this.$set(this.memList.accounts[i],'isDefault',0);
+					}
+					this.$set(this.memList.accounts[this.setIndexAct],'isDefault',1);
+					this.$set(this.memList,'defaultAccountNo',this.setAccountDefault);
+					this.setAccountShow=false;
+				}
+			},
+			//选择账号
 			chooseAmountList(id){
 				if(this.memList.accountNo==id){
 					this.chooseAccount=false;
 				}else{
 					let data = {
-						memberId:this.$route.query.memberId,
+//						memberId:this.$route.query.memberId,
 						accountNo:id,
 					}
 					this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.tabAcount,data,this.chooseAmountListBack,this);
@@ -376,7 +436,7 @@
 					return false;
 				}
 				let data = {
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					nickName:this.nickName,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.update,data,this.changeNickNameBack,this);
@@ -409,7 +469,7 @@
 					return false;
 				}
 				let data = {
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					realName:this.realName,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.update,data,this.changeRealNameBack,this);
@@ -430,7 +490,7 @@
 					return false;
 				}
 				let data = {
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					sex:this.sexIndex,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.update,data,this.changeSecSureBack,this);
@@ -454,7 +514,7 @@
 					return false;
 				}
 				let data = {
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					birthday:this.birthDay,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.update,data,this.setBirdBack,this);
@@ -475,7 +535,7 @@
 					return false;
 				}
 				let data = {
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					identityNo:this.IDcard,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.update,data,this.setIdcardBack,this);
@@ -492,7 +552,7 @@
 			//打开或关闭支付密码
 			changePawd(){
 				let data ={
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					payPassword:md5(this.payPassword),
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.openPayPassword,data,this.changePawdBack,this);
@@ -509,18 +569,24 @@
 			//获取会员信息
 			getMember(){
 				let data={
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
 			},
 			getMemberBack(data){
 				this.memList=data.result;
+				this.ownImg=this.memList.logo;
 //				this.time=this.memList.validTime.split("至")[1];
 				if(this.memList.enabledPayPassword==1){
 					this.isChecked=true;
 				}else{
 					this.isChecked=false;
+				}
+				if(this.memList.accounts.length>1){
+					this.showAccountListSure=true;
+				}else{
+					this.showAccountListSure=false;
 				}
 //				if(data.result.isGetStoreCommission){
 //					this.showMember=true;
@@ -528,6 +594,63 @@
 //					this.showMember=false;
 //				}
 			},
+			//修改会员logo
+			changeRealLogo(logo){
+				
+				let data = {
+//					memberId:this.$route.query.memberId,
+					logo:logo,
+				}
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.update,data,this.changeRealLogoBack,this);
+			},
+			changeRealLogoBack(data){
+				
+				if(data.code!=0){
+					this.$toast(data.message,200);
+					this.ownImg=this.memList.logo;
+				}else{
+					
+					
+				}
+			},
+			//上次logo
+		    getFaceImg(){
+		    	let _this=this;
+		    	wx.ready(function() {
+		    		wx.chooseImage({
+			            count: 1, // 默认9
+			            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+			            sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+			            success: function (res) {
+			                var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+			              	_this.ownImg=localIds;
+			              	_this.uploadImageUrl(_this.ownImg);
+			            }
+			        });
+			        
+		    	});
+		    	
+		    	
+		    },
+		    uploadImageUrl(localId){
+		    	let _this=this;
+		    	
+		    	//alert(123)
+		    	wx.uploadImage({
+					localId: localId.toString(), // 需要上传的图片的本地ID，由chooseImage接口获得
+					isShowProgressTips: 1, // 默认为1，显示进度提示
+					success: function (res) {
+					var serverId = res.serverId; // 返回图片的服务器端ID
+						_this.nationalNore=serverId;
+						_this.changeRealLogo(serverId);
+						//alert(_this.nationalNore)
+					},
+					fail:function(res){
+						//alert(JSON.stringify(res))
+					}
+				});
+				
+		    },
 			//设置地址
 			getAdress(){
 				this.$router.push({path:'/payMain/address'});
@@ -542,24 +665,39 @@
 			    
 			    this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.weixinShare,data,this.shareBack,this);			
 			  },
-			  shareBack:function(data){
-	//		  	console.log("data")
-	//		  	console.log(data)
-				if(data.result=='fail'){
-					this.shareData.share=true;
-				}
-				this.timeObj=data.result;
-		      	//console.log()
-				//调用共用的分享接口
-				//console.log(JSON.stringify(data.result))
-				
-				
-				this.wxShareFun(data.result,this.shareData);
-				
-				
-				//this.locationWx(data);
-				
-			  },
+			shareBack:function(data){
+			  	this.wxShareFun(data.result,this.shareData);
+			},
+			getImgSrc(wconfig){
+			 
+			  //alert(JSON.stringify(data))
+//			  console.log(wconfig)
+			  let _this = this;
+					wx.config({
+			        debug:false,
+			        appId:wconfig.appId,
+			        timestamp:wconfig.timestamp,
+			        nonceStr:wconfig.noncestr,
+			        signature:wconfig.sign,
+			        jsApiList: [
+			          'checkJsApi',
+			          'chooseImage',
+			          'previewImage',
+			          'uploadImage',
+			          'downloadImage',
+			          'onMenuShareTimeline',
+			          'onMenuShareAppMessage',
+			//        'onMenuShareQQ',
+			          'getLocation',
+			          'hideMenuItems',
+			          
+			        ]
+			      }); 
+			     
+			     
+			  
+			
+			},
 		}
 	}
 </script>
@@ -583,6 +721,45 @@ input[type="date"]:before{
 		  transform: translateY(100px);
 		  opacity: 0;
 		}
+		.maskOut{
+			position: fixed;
+		    z-index: 1000;
+		    width: 100%;
+		    height: 100%;
+		    top: 0;
+		    left: 0;
+		    background: rgba(0, 0, 0, 0.6);
+		    .setAccount{
+				position: fixed;
+			    z-index: 5000;
+			    width: 85%;
+			    top: 50%;
+			    left: 50%;
+			    -webkit-transform: translate(-50%, -50%);
+			    transform: translate(-50%, -50%);
+			    background-color: #FAFAFC;
+			    text-align: center;
+			    border-radius: 0.06rem;
+			    background-color: #fff;
+			    line-height: 1.2rem;
+			    font-size: .34rem;
+			    overflow: hidden;
+			    .setList{
+			    	border-top: 0.01rem solid #e1e1e1;
+				  	
+				    overflow: hidden;
+				    position: relative;
+				    .iconList{
+				    	position: absolute;
+				    	right:.20rem;
+				    	top: 0;
+				    	width: .50rem;
+				    	height: .50rem;
+				    }
+			    }
+			}
+		}
+		
 		.mask{
 			position: fixed;
 			left: 0;
@@ -809,6 +986,10 @@ input[type="date"]:before{
 				}
 			}
 		}
+		
+		
+		
+		
 		.openPasward{
 			position: fixed;
 			top: 0;

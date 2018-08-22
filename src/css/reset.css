@@ -396,4 +396,6 @@ input::-webkit-inner-spin-button{
 	width: 100%;
 	top: 0;
 }
-
+#app .weui-icon-success-no-circle{
+	font-size: 16px;
+}

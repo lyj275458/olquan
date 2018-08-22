@@ -1,6 +1,6 @@
 <template>
 	<div class="newCenter">
-		<div class="search" @click="getSearch">
+		<!--<div class="search" @click="getSearch">
 			<div class="searchIcon"></div>
 		</div>
 		<div class="topmodel">
@@ -10,25 +10,42 @@
 				<li class="listItem" v-bind:class="{ 'specialList': addSelectTwo}" @click="getFistTwo">拼团</li>
 				<li class="listItem" v-bind:class="{ 'specialList': index==addIndex}" v-for="(itemSon,index) in cateObj" @click='getDetailNex(index,itemSon.catId)'>{{itemSon.name}}</li>
 			</ul>
-		</div> 
+		</div> -->
+		<div class="indexTop">
+			<ul>
+				<li class="speLiFind">试用</li>
+				<li @click="getFist">特卖</li>
+				
+				<li @click="getFind">发现</li>
+			</ul>
+		</div>
 		<swiper loop auto :list="urlList" height='3.34rem'  dots-position='center' v-show="headlinesLength>0"></swiper>
 		<div class="fixedArea" :class="searchBarFixed == true ? 'isFixed' :''">
 			<div class="chooseTop">
 				<div class="choose" @click="getIndexGoods">
 					<img :src="jingpinChoosekImg" v-show="isChooseIndex==1"/>
-					<img :src="jingpinNoImg" v-show="isChooseIndex==2"/>
+					<img :src="jingpinNoImg" v-show="isChooseIndex==2 || isChooseIndex==3"/>
 					<p v-bind:class="{ 'pSpecial': isChooseIndex==1}">精品试用</p>
 				</div>
 				<div style="margin: 0 .30rem;">
 					<p>|</p>
 				</div>
-				<div class="choose" @click="getColckGoods">
+				<div class="choose" @click="getIndexGoodsPay">
+					<img :src="chooseYouPayImg" v-show="isChooseIndex==3"/>
+					<img :src="chooseNoYouPayImg" v-show="isChooseIndex==2 || isChooseIndex==1"/>
+					<p v-bind:class="{ 'pSpecial': isChooseIndex==3}">付邮试用</p>
+				</div>
+				<div style="margin: 0 .30rem;" v-show="memberlevel">
+					<p>|</p>
+				</div>
+				<div class="choose" @click="getColckGoods" v-show="memberlevel">
 					
 					<img :src="chooseClockImg" v-show="isChooseIndex==2"/>
-					<img :src="noChooseClockImg" v-show="isChooseIndex==1" />
+					<img :src="noChooseClockImg" v-show="isChooseIndex==1 || isChooseIndex==3" />
 					<p v-bind:class="{ 'pSpecial': isChooseIndex==2}">整点抢试</p>
 				</div>
 			</div>
+			
 			<div class="fanfanfan" v-show="isChooseIndex==2"  :class="searchBarFixedSpecial == true ? 'isFixedSpe' :''">
 				<ul class="listLess" v-show="showLength<=5">
 					<li v-for="(item,index) in timeObj" v-bind:class="{ 'speLi': selectLi==index}" @click="getTimeGoods(item.time,index)">
@@ -47,6 +64,7 @@
 				</ul>
 			</div>
 		</div>
+		
 		<!--<div class="benefit" v-show="iconObj.length>0">
 			<ul>
 				<li v-for="items in iconObj" @click='goMoreIndex(items.link,items.type)'>
@@ -216,22 +234,27 @@
 				精品试用
 			<img :src="xianImgone"/>
 		</div>-->
-		<div class="moreGoodsTry" v-for="(item,index,key) in curObj" @click="getGoods(item.productId)" v-show="isChooseIndex==1" >
-			<div class="moreGoodsImg">
-				<img :src="item.indexImage" />
-				<img class="tryOut" :src="tryOutImg" v-show="item.percent=='100%'"/>
+		<div v-bind:class="{ 'specialMoreGoods': isChooseIndex==1}">
+			
+			<div class="moreGoodsTry" v-for="(item,index,key) in curObj" @click="getGoods(item.productId)" v-show="isChooseIndex==1 || isChooseIndex==3" >
+				<div class="moreGoodsImg">
+					<img :src="item.indexImage" />
+					<img class="tryOut" :src="tryOutImg" v-show="item.percent=='100%'"/>
+				</div>
+				<div class="moreGoodsName moreGoodsNameSpe">
+					{{item.productName}}
+				</div>
+				<div class="moreGoodsDes">
+					{{item.summery}}
+				</div>
+				<div class="moreGoodsPrice">
+					<p>保证金<span>￥{{item.price}}</span></p>
+					<p style="margin-top: .04rem;">已试{{item.buyCount}}份</p>
+				</div>
 			</div>
-			<div class="moreGoodsName">
-				{{item.productName}}
-			</div>
-			<div class="moreGoodsDes">
-				{{item.summery}}
-			</div>
-			<div class="moreGoodsPrice">
-				<p>保证金<span>￥{{item.price}}</span></p>
-				<p style="margin-top: .04rem;">已试{{item.buyCount}}份</p>
-			</div>
+			
 		</div>
+		
 		<div class="timeTryGoods" v-show="isChooseIndex==2">
 			<div class="tryGoodsDetail" v-for="(item,index) in timeGoodsObj" @click="getGoods(item.productId)">
 				<div class="goodsImg">
@@ -245,11 +268,13 @@
 						<span style="font-size: .28rem;color: #333;;">{{item.productName}}</span>
 					</div>
 					<div class="goodsNum" v-show="addSelect==0">
-						<div class="progress">
-							<div class="num">已试用{{item.percent}}</div>
-							<div class="porNum"v-bind:style="{width:item.percent}"></div>
+						<div class="uesNum">仅剩{{(item.dayLimitCount-item.saleCount)<0?0:item.dayLimitCount-item.saleCount}}件</div>
+						<!--<div class="progress">
+							<div class="num">仅剩{{item.plusPercent}}</div>
+							<div class="porNum"v-bind:style="{width:item.plusPercent}"></div>
 						</div>
-						<div class="uesNum">已试{{item.buyCount}}件</div>
+						<div class="uesNum">仅剩{{item.dayLimitCount-item.saleCount}}件</div>-->
+						<div class="uesNum" style="color: #777;">已有{{item.totalBuyCount}}人试用</div>
 					</div>
 					<div class="dayTomorrow"  v-show="addSelect==1">
 						{{item.dayLimitCount}}件 | 明日{{item.dailyStartTime}}
@@ -276,6 +301,12 @@
 				</div>
 				<div class="bot" style="color: #000;">首页</div>
 			</div>
+			<div class="getIndex" @click="getShangcheng">
+				<div class="top">
+					<img :src="find1Img" />
+				</div>
+				<div class="bot">分类</div>
+			</div>
 			<div class="getIndex" @click="getOrderCate">
 				<div class="top">
 					<img :src="cartImg" />
@@ -283,12 +314,7 @@
 				<div class="bot">购物车</div>
 				<div class="cartNum" v-show="cartNum>0">{{cartNum}}</div>
 			</div>
-			<div class="getIndex" @click="getFind">
-				<div class="top">
-					<img :src="findImg" />
-				</div>
-				<div class="bot">发现</div>
-			</div>
+			
 			<div class="getIndex" @click="getkefu">
 				<div class="top">
 					<img :src="serviceImg" />
@@ -342,7 +368,7 @@
 				moreImgone:'/static/images/moreTry.png',
 				index01Img:'/static/images/icon-index02.png',
 				cartImg:'/static/images/icon-cart.png',
-				findImg:'/static/images/icon-find.png',
+				find1Img:'/static/images/shangcheng.png',
 				serviceImg:'/static/images/icon-service.png',
 				myImg:'/static/images/icon-my.png',
 				goTopImg:'/static/images/goTop.png',
@@ -350,6 +376,8 @@
 				tryOutImg:'/static/images/tryOut.png',
 				noChooseClockImg:'/static/images/noChooseClock.png',
 				chooseClockImg:'/static/images/chooseClock.png',
+				chooseYouPayImg:'/static/images/youPay.png',
+				chooseNoYouPayImg:'/static/images/youNoPay.png',
 				jingpinChoosekImg:'/static/images/jingpinChoose.png',
 				jingpinNoImg:'/static/images/jingpinNo.png',
 				tryImgone:'/static/images/tryOut.png',
@@ -374,6 +402,7 @@
 				iconObj:[],
 				showActive:false,
 				isChooseTime:false,
+				memberlevel:false,
 				avtiveObj:[],
 				urlList:[],
 				imgObj:[],
@@ -395,7 +424,7 @@
 					'title': "OL圈 试用中心",
 					'description': "试，是一种态度。每日整点限量抢试！还有更多新品、海外产品期待您来试用体验！",
 					'url': "",
-					'picURL': "http://ol-site.olquan.com/plug/mobile/img/logoo.jpg",
+					'picURL': "https://ol-quan2017.oss-cn-shanghai.aliyuncs.com/aaa.png",
 					'hide':true,
 					'share':false
 				},
@@ -412,6 +441,8 @@
 			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
 			}
+			this.getMember();
+			this.addRecord();
 			this.$store.commit('documentTitle','OL圈');
 //			this.getFreeUse();
 			this.getSpecialGoods(1);
@@ -421,7 +452,7 @@
 			this.getWholeTime();
 //			this.getAdvert();
 			this.getcartNum();
-			this.getActiveImg();
+//			this.getActiveImg();
 			
 			
 			
@@ -434,12 +465,52 @@
 			window.addEventListener('scroll', this.xuanfuScroll);
 		},
 		methods:{
+			//获取会员信息
+			getMember(){
+				let data={
+					memberId:this.$route.query.memberId,
+				}
+				//console.log(data)
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
+			},
+			getMemberBack(data){
+				this.shareData.url=USE_URL+"weixin/auth?recId="+data.result.id+"&view="+encodeURIComponent(CUR_URLBACK+"try/newCenter");
+				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/center');
+				this.addWeixinShare();//微信分享 
+				
+				if(data.result.isGetStoreCommission==1){
+					this.memberlevel=true;
+				}else{
+					this.memberlevel=false;
+				}
+				this.setCookie('memberId',data.result.id)
+			},
+			//添加访问记录
+			addRecord(){
+  				let data = {
+  					terminalType:5,
+  					pageuri:'try/newCenter'
+  				}
+  				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.addRecord,data,this.addRecordBack,this);
+  			},
+  			addRecordBack(data){},
 			//
+			getIndexGoodsPay(){
+				this.isChooseTime=false;
+				this.isChooseIndex=3;
+				this.isMore=true;
+				this.pageObj.page=1;
+				this.getSpecialGoods(5);
+				if(this.searchBarFixed || this.searchBarFixedSpecial){
+					$('html,body').animate({scrollTop:0},1000);
+				}
+			},
 			getIndexGoods(){
 				this.isChooseTime=false;
 				this.isChooseIndex=1;
 				this.isMore=true;
 				this.pageObj.page=1;
+				this.getSpecialGoods(1);
 				if(this.searchBarFixed || this.searchBarFixedSpecial){
 					$('html,body').animate({scrollTop:0},1000);
 				}
@@ -468,7 +539,7 @@
 			//获取试用首页信息
 			getFreeUse(){
 				let data={
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.freeUseNewHomePage,data,this.getFreeUseBack);
 			},
@@ -505,10 +576,8 @@
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getFreeUseProducts,data,this.getSpecialGoodsBack);
 			},
 			getSpecialGoodsBack(data){
-				this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+"try/newCenter");
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/center');
-				this.addWeixinShare();//微信分享 
-				if(this.goodsType==1){
+				
+				if(this.goodsType==1 || this.goodsType==5){
 					this.curObj=data.result;
 				}
 				if(this.curObj.length>0){
@@ -580,25 +649,33 @@
 			},
 			//悬浮
 			xuanfuScroll(){
-				var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-//			 	console.log(scrollTop)
-			  	var offsetTop = document.querySelector('.fixedArea').offsetTop;
-			  	var offsetTopNext= document.querySelector('.fanfanfan').offsetTop;
-//			    console.log(offsetTop)	
-				if(this.isChooseIndex==1){
-					if (scrollTop > offsetTop) {
-					    this.searchBarFixed = true;
-					} else {
-					    this.searchBarFixed = false;
-					}
-				}else{
-					if (scrollTop > offsetTopNext) {
-					    this.searchBarFixedSpecial = true;
-					} else {
-					    this.searchBarFixedSpecial = false;
+				if(this.memberlevel){
+					var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+	//			 	console.log(scrollTop)
+				  	var offsetTop = document.querySelector('.fixedArea').offsetTop;
+//				  	console.log(offsetTop)
+				  	var offsetTopNext= document.querySelector('.fanfanfan').offsetTop;
+//				    console.log(offsetTopNext)	
+					if(this.isChooseIndex==1){
+						if (scrollTop > offsetTop) {
+						    this.searchBarFixed = true;
+						} else {
+						    this.searchBarFixed = false;
+						}
+						if(scrollTop<198){
+							this.searchBarFixed = false;
+						}
+					}else{
+						if (scrollTop > offsetTopNext) {
+						    this.searchBarFixedSpecial = true;
+						} else {
+						    this.searchBarFixedSpecial = false;
+						}
+						if(scrollTop<256){
+							this.searchBarFixedSpecial = false;
+						}
 					}
 				}
-				
 			},
 			//获取当天整点抢试用时间
 			getWholeTime(){
@@ -621,7 +698,7 @@
 			},
 			//更多整点抢
 			getPointTry(){
-				this.$router.push({path:'/try/pointTry?memberId='+this.$route.query.memberId});
+				this.$router.push({path:'/try/pointTry'});
 			},
 			//
 			getFristGoods(){
@@ -648,7 +725,7 @@
 				}
 				let data = {
 					page:1,
-					rows:10,
+					rows:20,
 					time:time
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getWholePointFreeUseProducts,data,this.getFristGoodsBack);
@@ -669,23 +746,23 @@
 //				localStorage.setItem('bannerImg',JSON.stringify(this.newImg.image))
 //				let bannerImg=JSON.parse(localStorage.getItem("bannerImg"));
 //				console.log(bannerImg)
-				window.location.href=CUR_URLBACK+'try/severalTry/id/'+id+'?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'try/severalTry/id/'+id;
 				//this.$router.push({path:'/try/severalTry/id/'+id+'?memberId='+this.$route.query.memberId});
 			},
 			getoverseaTry(){
 				//localStorage.setItem('overSeaImg',JSON.stringify(this.overSeaImg.image))
-				window.location.href=CUR_URLBACK+'try/severalTry/id/4?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'try/severalTry/id/4';
 				//this.$router.push({path:'/try/severalTry/id/4?memberId='+this.$route.query.memberId});
 			},
 			//点击广告
   			getAdvers(id){
   				if(id!="" && id!="#"){
 					if(id.indexOf("?")!=-1){
-						console.log("YES")
-						window.location.href=id+'&memberId='+this.$route.query.memberId;
+//						console.log("YES")
+						window.location.href=id;
 					}else{
-						console.log("no")
-						window.location.href=id+'?memberId='+this.$route.query.memberId;
+//						console.log("no")
+						window.location.href=id;
 					}
 				}else{
 					console.log(1)
@@ -707,7 +784,7 @@
 		    //获取购物车产品数量
 			getcartNum(){
 				let data={
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.totalNum,data,this.getcartNumBack);
 			},
@@ -718,7 +795,7 @@
 			//查看商品详情
 			getGoods(id){
 				
-				this.$router.push({path:'/demo/iscroll/id/'+id+'?memberId='+this.$route.query.memberId+'&isShare=0'});
+				this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0&type=4'});
 			},
 		    //点击...详情
   			goMoreIndex(id,type){
@@ -727,10 +804,10 @@
   					if(id!=""){
 						if(id.indexOf("?")!=-1){
 							//console.log("YES")
-							window.location.href=USE_URL+id+'&memberId='+this.$route.query.memberId;
+							window.location.href=USE_URL+id;
 						}else{
 							//console.log("no")
-							window.location.href=USE_URL+id+'?memberId='+this.$route.query.memberId;
+							window.location.href=USE_URL+id;
 						}
 					}
   				}else if(type==29){
@@ -739,10 +816,10 @@
   					if(id!=""){
 						if(id.indexOf("?")!=-1){
 							//console.log("YES")
-							window.location.href=id+'&memberId='+this.$route.query.memberId;
+							window.location.href=id;
 						}else{
 							//console.log("no")
-							window.location.href=id+'?memberId='+this.$route.query.memberId;
+							window.location.href=id;
 						}
 					}
   				}
@@ -751,7 +828,7 @@
   			//获取试用首页轮播图
 	  		getImgtop(){
 				let data={
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.advers,data,this.getImgBack);
 			},
@@ -788,7 +865,14 @@
 			//点击特卖
   			getFist(){
   				//this.$router.push({path:'/index/pinkIndex?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'index/pinkIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/pinkIndex'
+  				
+  			},
+  			//点击特卖
+  			getFind(){
+  				//this.$router.push({path:'/index/pinkIndex?memberId='+this.$route.query.memberId});
+  				//window.location.href=CUR_URLBACK+'index/findIndex';
+		    	window.location.href=CUR_URLBACK+'index/newFindIndex';
   				
   			},
   			gotoTop(){
@@ -807,7 +891,7 @@
   			getActiveImg(){
   				
   				let data ={
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
   				}
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getDialog,data,this.getActiveImgBack);
   			},
@@ -842,54 +926,54 @@
   				this.avtiveUrl=url;
   				let data ={
   					dialogId:id,
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
   				}
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.openDialog,data,this.getActiveBack);
   			},
   			getActiveBack(data){
 				if(this.avtiveUrl.indexOf("?")!=-1){
 					console.log("YES")
-					window.location.href=this.avtiveUrl+'&memberId='+this.$route.query.memberId;
+					window.location.href=this.avtiveUrl;
 				}else{
 					console.log("no")
-					window.location.href=this.avtiveUrl+'?memberId='+this.$route.query.memberId;
+					window.location.href=this.avtiveUrl;
 				}
   			},
   			
   			//点击试用
   			getFistOne(){
   				//this.$router.push({path:'/try/moretry?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'try/newCenter';
   			},
   			//点击拼团
   			getFistTwo(){
   				//this.$router.push({path:'/index/newIndex?memberId='+this.$route.query.memberId});
-  				window.location.href=CUR_URLBACK+'index/newIndex?memberId='+this.$route.query.memberId
+  				window.location.href=CUR_URLBACK+'index/newIndex';
   			},
 			//点击分类
   			getDetailNex(index,id){
-  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id+'&memberId='+this.$route.query.memberId;
+  				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId='+id;
   				
   			},
   			getSearch(){
-  				window.location.href=USE_URL+'ol/weixin/index/search?memberId='+this.$route.query.memberId;
+  				window.location.href=USE_URL+'ol/weixin/index/search';
   			},
   			//跳转购物车
 			getIndex(){
-				window.location.href=CUR_URLBACK+'try/newCenter?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'try/newCenter';
 			},
 			getOrderCate(){
-				window.location.href=CUR_URLBACK+'shopcar/ordercar?memberId='+this.$route.query.memberId
+				window.location.href=CUR_URLBACK+'shopcar/ordercar';
 			},
-			getFind(){
-				window.location.href="http://live-weixin.olquan.cn"
+			getShangcheng(){
+				window.location.href=USE_URL+'weixin/product/productCategoryDetail?pcatId=33';
 			},
 			//点击客服
 			getkefu(){
 				window.location.href='https://kefu.easemob.com/webim/im.html?tenantId=40231&ticket=false';	
 			},
 			getMindIndex(){
-				window.location.href=USE_URL+'weixin/member/membercore'+this.$route.query.memberId;
+				window.location.href=USE_URL+'weixin/member/membercore';
 			},
 				//微信分享 
 				  addWeixinShare:function(){
@@ -925,6 +1009,40 @@
 		padding-top: .80rem;
 		padding-bottom: 1.00rem;
 		background: #F7F7F7;
+		.indexTop{
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100%;
+			z-index: 999;
+			background: #FFF;
+			color: #777;
+			font-size: .32rem;
+			ul{
+				display: flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+			    display: -moz-flex;
+				-webkit-justify-content:center;
+				justify-content:center;
+				-moz-box-pack:center;
+				-webkit--moz-box-pack:center;
+				height: .80rem;
+				border-bottom: 0.01rem solid #E1E1E1;
+				li{
+					margin: 0 .30rem;
+					line-height: .80rem;
+				}
+				.speLiFind{
+					color: #E50F72;
+					font-size: .36rem;
+					border-bottom: .05rem solid #E50F72;
+					
+				}
+			}
+		}
 		.goFortop{
 			position: fixed;
 			bottom: 1.80rem;
@@ -1065,10 +1183,15 @@
 			}
 			.isFixedSpe{
 				position: fixed;
-				padding: .38rem .60rem;
+				top: .96rem;
 				z-index: 999;
+				width: 100%;
 				left: 0;
+				overflow-x: auto;
 				top: 0.8rem;
+				ul{
+					margin-left: -1.60rem;
+				}
 			}
 		}
 		.isFixed{
@@ -1076,7 +1199,7 @@
 			width: 100%;
 			z-index: 999;
 			left: 0;
-			top: 0.80rem;
+			top: 0;
 		}
 		
 		.topmodel{
@@ -1383,6 +1506,9 @@
 				
 			}
 		}
+		.specialMoreGoods{
+			margin-top: -.30rem;
+		}
 		.moreGoodsTry{
 			background: #fff;
 			margin-bottom: .20rem;
@@ -1419,6 +1545,11 @@
 				max-height: .68rem;
 				
 			}
+			.moreGoodsNameSpe{
+				overflow: hidden;
+				text-overflow:ellipsis;
+				white-space: nowrap;
+			}
 			.moreGoodsDes{
 				font-size: .24rem;
 				color: #777777;
@@ -1454,6 +1585,7 @@
 				
 			}
 		}
+		
 		.timeTryGoods{
 			background: #fff;
 			.tryGoodsDetail{
@@ -1533,6 +1665,7 @@
 			    				height: 100%;
 			    				z-index: 222;
 			    				width: 60%;
+			    				
 			    				background: #E50F72;
 			    			}
 			    		}

@@ -103,6 +103,8 @@ const API = {
       getSearchRemind:'mobile/find/getSearchRemind',//发现搜索提示
       waitReadCount:'mobile/find/waitReadCount',//尚未阅读的关注发现数量
       tabAcount:'mobile/member/tabAcount',//切换账号
+      login:'mobile/member/login',//登录
+      setDefaultAccount:'mobile/member/setDefaultAccount',//设置默认账号
 };
 function getCookie(argument) {
     var arrCookie = document.cookie.split(";");

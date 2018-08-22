@@ -20,20 +20,28 @@
 			</ul>
 		</div>
 		<swiper loop auto :list="urlList" height='3.34rem'  dots-position='center' v-show="headlinesLength>0"></swiper>
-		<div class="fixedArea" :class="searchBarFixed == true ? 'isFixed' :''" v-show="memberlevel">
+		<div class="fixedArea" :class="searchBarFixed == true ? 'isFixed' :''">
 			<div class="chooseTop">
 				<div class="choose" @click="getIndexGoods">
 					<img :src="jingpinChoosekImg" v-show="isChooseIndex==1"/>
-					<img :src="jingpinNoImg" v-show="isChooseIndex==2"/>
+					<img :src="jingpinNoImg" v-show="isChooseIndex==2 || isChooseIndex==3"/>
 					<p v-bind:class="{ 'pSpecial': isChooseIndex==1}">精品试用</p>
 				</div>
 				<div style="margin: 0 .30rem;">
 					<p>|</p>
 				</div>
-				<div class="choose" @click="getColckGoods">
+				<div class="choose" @click="getIndexGoodsPay">
+					<img :src="chooseYouPayImg" v-show="isChooseIndex==3"/>
+					<img :src="chooseNoYouPayImg" v-show="isChooseIndex==2 || isChooseIndex==1"/>
+					<p v-bind:class="{ 'pSpecial': isChooseIndex==3}">付邮试用</p>
+				</div>
+				<div style="margin: 0 .30rem;" v-show="memberlevel">
+					<p>|</p>
+				</div>
+				<div class="choose" @click="getColckGoods" v-show="memberlevel">
 					
 					<img :src="chooseClockImg" v-show="isChooseIndex==2"/>
-					<img :src="noChooseClockImg" v-show="isChooseIndex==1" />
+					<img :src="noChooseClockImg" v-show="isChooseIndex==1 || isChooseIndex==3" />
 					<p v-bind:class="{ 'pSpecial': isChooseIndex==2}">整点抢试</p>
 				</div>
 			</div>
@@ -56,16 +64,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="fixedArea" v-show="!memberlevel">
-			<div class="chooseTop">
-				<div class="choose">
-					<img :src="jingpinChoosekImg"/>
-					<!--<img :src="jingpinNoImg" v-show="isChooseIndex==2"/>-->
-					<p>精品试用</p>
-				</div>
-				
-			</div>
-		</div>
+		
 		<!--<div class="benefit" v-show="iconObj.length>0">
 			<ul>
 				<li v-for="items in iconObj" @click='goMoreIndex(items.link,items.type)'>
@@ -235,9 +234,9 @@
 				精品试用
 			<img :src="xianImgone"/>
 		</div>-->
-		<div v-bind:class="{ 'specialMoreGoods': isChooseIndex==1}">
+		<div v-bind:class="{ 'specialMoreGoods': isChooseIndex==1 || isChooseIndex==3}">
 			
-			<div class="moreGoodsTry" v-for="(item,index,key) in curObj" @click="getGoods(item.productId)" v-show="isChooseIndex==1" >
+			<div class="moreGoodsTry" v-for="(item,index,key) in curObj" @click="getGoods(item.productId)" v-show="isChooseIndex==1 || isChooseIndex==3" >
 				<div class="moreGoodsImg">
 					<img :src="item.indexImage" />
 					<img class="tryOut" :src="tryOutImg" v-show="item.percent=='100%'"/>
@@ -269,7 +268,7 @@
 						<span style="font-size: .28rem;color: #333;;">{{item.productName}}</span>
 					</div>
 					<div class="goodsNum" v-show="addSelect==0">
-						<div class="uesNum">仅剩{{item.dayLimitCount-item.saleCount}}件</div>
+						<div class="uesNum">仅剩{{(item.dayLimitCount-item.saleCount)<0?0:item.dayLimitCount-item.saleCount}}件</div>
 						<!--<div class="progress">
 							<div class="num">仅剩{{item.plusPercent}}</div>
 							<div class="porNum"v-bind:style="{width:item.plusPercent}"></div>
@@ -377,13 +376,15 @@
 				tryOutImg:'/static/images/tryOut.png',
 				noChooseClockImg:'/static/images/noChooseClock.png',
 				chooseClockImg:'/static/images/chooseClock.png',
+				chooseYouPayImg:'/static/images/youPay.png',
+				chooseNoYouPayImg:'/static/images/youNoPay.png',
 				jingpinChoosekImg:'/static/images/jingpinChoose.png',
 				jingpinNoImg:'/static/images/jingpinNo.png',
 				tryImgone:'/static/images/tryOut.png',
 				tryRowImg:'/static/images/tryRow.png',
 				searchBarFixed:false,
 				searchBarFixedSpecial:false,
-				isChooseIndex:1,
+				isChooseIndex:3,
 				addSelect:0,
 				selectLi:-1,
 				headlinesLength:0,
@@ -444,14 +445,14 @@
 			this.addRecord();
 			this.$store.commit('documentTitle','OL圈');
 //			this.getFreeUse();
-			this.getSpecialGoods(1);
+			this.getSpecialGoods(5);
 			this.getImgtop();
 //			this.getIcon();
 			this.getFristGoods()
 			this.getWholeTime();
 //			this.getAdvert();
 			this.getcartNum();
-			this.getActiveImg();
+//			this.getActiveImg();
 			
 			
 			
@@ -467,13 +468,15 @@
 			//获取会员信息
 			getMember(){
 				let data={
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
 			},
 			getMemberBack(data){
-				
+				this.shareData.url=USE_URL+"weixin/auth?recId="+data.result.id+"&view="+encodeURIComponent(CUR_URLBACK+"try/newCenter");
+				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/center');
+				this.addWeixinShare();//微信分享 
 				
 				if(data.result.isGetStoreCommission==1){
 					this.memberlevel=true;
@@ -492,11 +495,22 @@
   			},
   			addRecordBack(data){},
 			//
+			getIndexGoodsPay(){
+				this.isChooseTime=false;
+				this.isChooseIndex=3;
+				this.isMore=true;
+				this.pageObj.page=1;
+				this.getSpecialGoods(5);
+				if(this.searchBarFixed || this.searchBarFixedSpecial){
+					$('html,body').animate({scrollTop:0},1000);
+				}
+			},
 			getIndexGoods(){
 				this.isChooseTime=false;
 				this.isChooseIndex=1;
 				this.isMore=true;
 				this.pageObj.page=1;
+				this.getSpecialGoods(1);
 				if(this.searchBarFixed || this.searchBarFixedSpecial){
 					$('html,body').animate({scrollTop:0},1000);
 				}
@@ -525,7 +539,7 @@
 			//获取试用首页信息
 			getFreeUse(){
 				let data={
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.freeUseNewHomePage,data,this.getFreeUseBack);
 			},
@@ -562,10 +576,8 @@
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getFreeUseProducts,data,this.getSpecialGoodsBack);
 			},
 			getSpecialGoodsBack(data){
-				this.shareData.url=USE_URL+"weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+"try/newCenter");
-				//this.shareData.url="http://test-mobile.olquan.cn/weixin/auth?recId="+this.getCookie("memberId")+"&view="+encodeURIComponent(CUR_URLBACK+'try/center');
-				this.addWeixinShare();//微信分享 
-				if(this.goodsType==1){
+				
+				if(this.goodsType==1 || this.goodsType==5){
 					this.curObj=data.result;
 				}
 				if(this.curObj.length>0){
@@ -644,7 +656,8 @@
 //				  	console.log(offsetTop)
 				  	var offsetTopNext= document.querySelector('.fanfanfan').offsetTop;
 //				    console.log(offsetTopNext)	
-					if(this.isChooseIndex==1){
+					if(this.isChooseIndex==1 || this.isChooseIndex==3){
+						
 						if (scrollTop > offsetTop) {
 						    this.searchBarFixed = true;
 						} else {
@@ -772,7 +785,7 @@
 		    //获取购物车产品数量
 			getcartNum(){
 				let data={
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.totalNum,data,this.getcartNumBack);
 			},
@@ -816,7 +829,7 @@
   			//获取试用首页轮播图
 	  		getImgtop(){
 				let data={
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.advers,data,this.getImgBack);
 			},
@@ -879,7 +892,7 @@
   			getActiveImg(){
   				
   				let data ={
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
   				}
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getDialog,data,this.getActiveImgBack);
   			},
@@ -914,7 +927,7 @@
   				this.avtiveUrl=url;
   				let data ={
   					dialogId:id,
-//					memberId:this.$route.query.memberId,
+					memberId:this.$route.query.memberId,
   				}
   				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.openDialog,data,this.getActiveBack);
   			},

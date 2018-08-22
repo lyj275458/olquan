@@ -328,9 +328,9 @@
 					<span style="display: block; line-height: .30rem;" class="money" v-if="needScroe==false"><b style="color: #ed0477;">{{curObj.buyNeedScore}}</b><i style="font-size: .26rem;font-style: normal;font-weight: normal;">积分</i><br /><i style="font-style: normal;font-size: .26rem;">保证金:￥{{curObj.activePriceInterval}}</i></span>
 					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice!=undefined && needScroe==true && getNomoreObj.id!=0"><i style="font-size: .28rem;font-style: normal; font-weight: normal;" v-show="curObj.type==4">保证金 : </i><b style="color: #ed0477; font-weight: normal;">￥{{getNomoreObj.salePriceView}}</b></span>
 					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice==undefined && needScroe==true || getNomoreObj.id==0"><i style="font-size: .28rem;font-style: normal; font-weight: normal;" v-show="curObj.type==4">保证金 : </i><b style="color: #ed0477; font-weight: normal;">￥{{curObj.activePriceInterval}}</b></span><br />
-					<span class="num" v-if='getNomoreObj.store!=undefined && normalId!=""'>&nbsp;库存{{getNomoreObj.store}}件</span>
+					<span class="num" v-if='getNomoreObj.store!=undefined && normalId!=""'>&nbsp;库存{{getNomoreObj.store<0?0:getNomoreObj.store}}件</span>
 					<span class="num" v-if="normalId=='' && showLength>0">&nbsp;请选择规格</span>
-					<span class="num" v-if='getNomoreObj.store==undefined && showLength==0'>&nbsp;库存{{curObj.store}}件</span>
+					<span class="num" v-if='getNomoreObj.store==undefined && showLength==0'>&nbsp;库存{{curObj.store<0?0:curObj.store}}件</span>
 					<!--<span class="num" v-else>&nbsp;库存{{curObj.store}}件</span>-->
 				</p>
 				<!--<p class="detail" v-show="curObj.type==1">
@@ -403,7 +403,7 @@
 				</div>
 			</div>
 			
-			<div class="tishi"  v-show="scroeEnt">
+			<!--<div class="tishi"  v-show="scroeEnt">
 				
 				<div class="tiCen">
 					您的积分不足
@@ -412,7 +412,7 @@
 					<p class="tiBleft" @click='getCon'>取消</p>
 					<p class="tiBright" @click="getScroe">如何获得积分</p>
 				</div>
-			</div>
+			</div>-->
 			
 		</div>
 		<div class="tishiback" v-show="levelEnt || scroeEnt"></div>
@@ -586,6 +586,7 @@
 				isHasMobile:false,
 				getVlaueOne:'',
 				getVlaueTwo:'',
+				recId:'',
 				chooseNormal:{
 					"normalValue":"规格"
 				},
@@ -607,6 +608,12 @@
 			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
 			}
+			if(this.$route.query.recId==undefined || this.$route.query.recId=='undefined' || this.$route.query.recId=='null'){
+				this.recId=''
+			}else{
+				this.recId=this.$route.query.recId;
+			}
+			console.log(this.recId)
 			this.getMember();
 			this.addRecord();
 			this.$store.commit('documentTitle','商品详情');
@@ -917,7 +924,8 @@
 							normalId:this.normalId,
 //							memberId:this.$route.query.memberId,
 							type:this.curObj.type,
-							productId:this.curObj.productId
+							productId:this.curObj.productId,
+							recId:this.recId
 						}
 						
 						localStorage.setItem('orderObj',JSON.stringify(data))
@@ -929,8 +937,10 @@
 //		  					this.$router.push({path:'/common/scroll?memberId='+this.$route.query.memberId});
 		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder';
 		  					//window.location.href=API_HOST+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&'+'memberId='+this.getCookie("memberId")+'&type='+this.curObj.type+'&productId='+this.curObj.productId
+		  				}else if(this.curObj.type==9){
+		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorderPink';
 		  				}else{
-		  					window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&type='+this.curObj.type+'&productId='+this.curObj.productId
+		  					window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&type='+this.curObj.type+'&productId='+this.curObj.productId+'&recId='+this.recId;
 		  				}
 						//console.log(data)
 						
@@ -953,7 +963,7 @@
 //				console.log(this.memList)
 				if(this.curObj.type==4){
 					if(this.curObj.isApply!=1){
-						if(this.memberlevel && this.curObj.freeUseSubType!=1 && this.curObj.type==4){
+						if(this.memberlevel && this.curObj.freeUseSubType!=1 && this.curObj.freeUseSubType!=5 && this.curObj.type==4){
 							this.scroeEnt=true;
 	//						console.log(1)
 						}else{
@@ -2099,7 +2109,7 @@
 		.tishi{
 			position: fixed;
 			width: 5.00rem;
-			height: 2.50rem;
+			/*height: 2.50rem;*/
 			background: #fff;
 			left: 50%;
 			margin-left: -2.50rem;
@@ -2275,7 +2285,7 @@
 			top: 0;
 			width: 100%;
 			height: 100%;
-			z-index: 2;
+			z-index: 223;
 			background: rgba(0,0,0,.5);
 		}
 		.rule{
@@ -2285,7 +2295,7 @@
 			width: 100%;
 			height: 9.50rem;
 			background: #fff;
-			z-index: 3;
+			z-index: 224;
 			.ruleDetail{
 				width: 100%;
 				
