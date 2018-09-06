@@ -9,7 +9,8 @@
 		    <img id="img" style="background: #fff;width:100%;display: block;" src="#" alt="">
 		    
 		</div>
-		<div v-show="isClock" @click="getIndex"> 点我</div>
+		<div @click="getIndex(goodsImg)"> 点我</div>
+		<div @click="getIndex(newGoodsImg)"> 点我2</div>
 	</div>
 	
 </template>
@@ -32,6 +33,7 @@ export default{
 			colseImg:'/static/images/colse.png',
 			rowImg:'/static/images/row.png',
 			goodsImg:'/static/images/weixingoodnew.png',
+			newGoodsImg:'/static/images/two2.png',
 			specialImg:'/static/images/weixingoodnew.png',
 			erweiImg:'/static/images/qr_cord.jpg',
 			oneImg:'/static/images/one.png',
@@ -101,24 +103,26 @@ export default{
       
     },
 	methods:{
-		getIndex(){
+		getIndex(img){
+			
 			this.isClock=false;
-			this.draw();
+			this.draw(img);
 		},
-		draw(){
+		draw(imgGoodsList){
 			
 		    var canvas = document.getElementById('canvas');
-		    
+		   
 		   
 		    var ctx = canvas.getContext("2d");
 			var imgLogo = new Image();
 		    imgLogo.src= this.logoImg;
 		    var imgGoods = new Image();
-		    imgGoods.src = this.specialImg;
+		    imgGoods.src = imgGoodsList;
+		    
 		    var img1 = new Image();
 		    img1.src = this.erweiImg;
 		   
-		   	imgGoods.onload=function(){
+		   	img1.onload=function(){
 		   		ctx.fillStyle = "#fff";
 		   		ctx.fillRect(0,0,800,1220);
 				ctx.save();
@@ -131,6 +135,7 @@ export default{
 			    ctx.clip();
 			    ctx.drawImage(imgLogo, 30, 50,d,d);
 			    ctx.restore();
+			     
 		        ctx.drawImage(imgGoods,0,202,800,750)
 		        ctx.drawImage(img1,590,981,180,180)//设置图片比例和位置,匹配手机屏幕
 		        

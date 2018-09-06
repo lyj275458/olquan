@@ -88,11 +88,11 @@
 							</p>-->
 							<div class="buyGoods" v-show="!memberlevel">立即购买</div>
 						</div>
-						<div class="getassess" v-show="memberlevel" @click="getassess(item.productId)" style="right: .98rem;" >
-							<img :src="productComment02"/>
+						<div class="getassess" v-show="memberlevel" @click="goBuy(item.productId)" style="right: 1.38rem;" >
+							<p>自购省</p>
 						</div>
-						<div class="getassess" v-show="memberlevel" @click="goBuy(item.productId)" style="right: .30rem;">
-							<img :src="productShare01"/>
+						<div class="getassess" v-show="memberlevel" @click="getassess(item.productId)" style="right: .30rem;">
+							<p style="color: #fff;background: #E5006E;">分享赚</p>
 						</div>
 						
 					</div>
@@ -738,7 +738,7 @@ export default {
 			},
   			//点击去评价
 			getassess(id){
-				window.location.href=USE_URL+'ol/commentList.html?productId='+id;
+				this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0&type=9&isShareTrue=1'});
 			},
   			//跳转购物车
 			getIndex(){
@@ -913,7 +913,7 @@ export default {
 .index{
 	background: #f7f7f7;
 	padding-bottom: 1.00rem;
-	padding-top: .80rem;
+	padding-top: .86rem;
 	img{
 		pointer-events: none;
 	}
@@ -926,20 +926,14 @@ export default {
 		background: #FFF;
 		color: #777;
 		font-size: .32rem;
+		text-align: center;
 		ul{
-			display: flex;
-			display:-webkit-box;
-		    display: -moz-box;
-		    display: -ms-flexbox;
-		    display: -webkit-flex;
-		    display: -moz-flex;
-			-webkit-justify-content:center;
-			justify-content:center;
-			-moz-box-pack:center;
-			-webkit--moz-box-pack:center;
-			height: .80rem;
+			font-size: 0;
+			height: .86rem;
 			border-bottom: 0.01rem solid #E1E1E1;
 			li{
+				display: inline-block;
+				font-size: .32rem;
 				margin: 0 .30rem;
 				line-height: .80rem;
 			}
@@ -1372,14 +1366,11 @@ export default {
 		height: .85rem;
 		padding-top: .15rem;
 		width: 100%;
+		font-size: 0;
 		z-index: 99999;
-		display: flex;
-		display:-webkit-box;
-		display: -webkit-flex;
-		display: -moz-box;
-		display: -moz-flex;
-		display: -ms-flexbox;
+		
 		.getIndex{
+			display: inline-block;
 			width: 20%;
 			font-size: .18rem;
 			text-align: center;
@@ -1468,12 +1459,19 @@ export default {
 				}
 				.getassess{
 					display: block;
-					width: .32rem;
-					height: .32rem;
+					
 					position: absolute;
 					bottom: 0.20rem;
+					font-size: .24rem;
+					
 					right: .48rem;
 					z-index: 9998;
+					p{
+						padding: .10rem;
+						border: 0.01rem solid #E5006E;
+						color: #E5006E;
+						border-radius: .06rem;
+					}
 				}
 				img{
 					display: block;

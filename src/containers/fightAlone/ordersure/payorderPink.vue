@@ -104,6 +104,25 @@
 					<span>元 </span>
 				</div>
 			</div>
+			<div class="choosestores" v-show="curObj.goldBean>0">
+				<div class="stores">
+					<p class="stores-l">金豆<span> ({{curObj.goldBean}}可抵现{{curObj.goldBeanAmount}}元)</span></p>
+					<div class="stores-r">
+						<span v-show="useGoldBean>=10 && beanFeeShow">-￥{{goldBeanFeeObj}}</span>
+						<span v-show="useGoldBean<10 && beanFeeShow">{{goldBeanFeeObj}}</span>
+						<div class="choosePay" @click="inputGoldBean">
+							<img :src="nochoseImg" v-show="!beanFeeShow"/>
+							<img :src="checkImg" v-show="beanFeeShow"/>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="usestore" v-show="beanFeeShow">
+					<input class="storeNum" pattern="[0-9]*" v-on:input ="clearNoNumBena()" v-model="useGoldBean"/>
+					<span>金豆 <i style="font-style: normal; color: #888;font-size: .24rem;">(最低10金豆)</i></span>
+				</div>
+			</div>
 			<div class="choosestores" v-if="curObj.coupons!=null && curObj.coupons!=''" @click="getCouponList">
 				<div class="stores">
 					<p class="stores-l">优惠券<span v-show="couponAmount==0"> ({{curObj.coupons[0].coupons.length}}张可用/未选择)</span></p>
@@ -140,8 +159,12 @@
 					<p class="solo-l">积分</p>
 					<p class="solo-r">-￥{{storeFeeObj}}</p>
 				</div>
+				<div class="soloDetail" v-show="beanFeeShow && useGoldBean>=10">
+					<p class="solo-l">金豆</p>
+					<p class="solo-r">-￥{{goldBeanFeeObj}}</p>
+				</div>
 				<div class="soloDetail" v-show="couponAmount!=0">
-					<p class="solo-l">积分</p>
+					<p class="solo-l">优惠券</p>
 					<p class="solo-r">-￥{{couponAmount}}</p>
 				</div>
 			</div>
@@ -269,15 +292,18 @@
 				sureCheckone:true,
 				sureChecktwo:false,
 				sureCheckthree:false,
+				useGoldBean:0,
 				totalFee:'',
 				coffersFee:0,
 				amountFee:0,
 				useStoresUse:0,
+				useBeanUse:0,
 				payPassword:'',
 				payPasswordShow:false,
 				amountFeeShow:false,
 				coffersFeeShow:false,
 				storeFeeShow:false,
+				beanFeeShow:false,
 				isShowPass:false,
 				isOrderGet:false,
 				showWXpay:true,
@@ -349,6 +375,13 @@
 					return Number(this.useStores/100);
 				}
 			},
+			goldBeanFeeObj(){
+				if(this.useGoldBean<10){
+					return '最低10金豆';
+				}else{
+					return Number(this.useGoldBean/10);
+				}
+			},
             finalPriceObj(){
             	if(!this.amountFeeShow){
             		this.amountFee=0;
@@ -365,8 +398,17 @@
 	            		this.useStoresUse=this.useStores/100
 	            	}
             	}
+            	if(!this.beanFeeShow){
+            		this.useBeanUse=0;
+            	}else{
+            		if(this.useGoldBean<10){
+	            		this.useBeanUse=0;
+	            	}else{
+	            		this.useBeanUse=this.useGoldBean/10
+	            	}
+            	}
             	
-            	this.totalFee=this.curObj.totalFee-this.amountFee-this.coffersFee-this.useStoresUse-this.couponAmount;
+            	this.totalFee=this.curObj.totalFee-this.amountFee-this.coffersFee-this.useStoresUse-this.couponAmount-this.useBeanUse;
 				
 				return this.totalFee.toFixed(2);
 			},
@@ -415,6 +457,12 @@
             		}
             		
             	}
+            	if(this.beanFeeShow){
+            		if(this.useGoldBean==(this.curObj.totalFee)*10 ||this.useStores >(this.curObj.totalFee-amount)*10){
+            			this.useGoldBean=(this.curObj.totalFee-amount)*10;
+            		}
+            		
+            	}
 //				console.log(this.couponAmount)
 			},
 			//添加访问记录
@@ -434,7 +482,7 @@
 					productId:this.orderObj.productId,
 					num:this.orderObj.num,
 					normalId:this.orderObj.normalId,
-					type:9,
+					type:this.orderObj.type,
 //					memberId:this.$route.query.memberId,
 					
 					uutype:1,
@@ -493,6 +541,7 @@
 				this.amountFeeShow=!this.amountFeeShow;
 				this.coffersFeeShow=false;
 				this.storeFeeShow=false;
+				this.beanFeeShow=false;
 				if(this.amountFeeShow){
 					if(this.curObj.amount<=this.curObj.totalFee){
 						this.amountFee=this.curObj.amount;
@@ -516,7 +565,7 @@
 				this.storeFeeShow=!this.storeFeeShow;
 				this.amountFeeShow=false;
 				this.coffersFeeShow=false;
-				
+				this.beanFeeShow=false;
 				if(this.storeFeeShow){
 					if(this.curObj.scoreAmount<=this.curObj.totalFee){
 						console.log(this.curObj.coffers)
@@ -529,11 +578,30 @@
 					this.useStores=0;
 				}
 			},
+			//点击金豆
+			inputGoldBean(){
+				this.beanFeeShow=!this.beanFeeShow;
+				this.coffersFeeShow=false;
+				this.amountFeeShow=false;
+				this.storeFeeShow=false;
+				if(this.beanFeeShow){
+					if(this.curObj.goldBeanAmount<=this.curObj.totalFee){
+						console.log(this.curObj.coffers)
+						this.useGoldBean=this.curObj.goldBean;
+					}else{
+						console.log(this.curObj.totalFee)
+						this.useGoldBean=(this.curObj.totalFee-this.couponAmount)*10;
+					}
+				}else{
+					this.useGoldBean=0;
+				}
+			},
 			//点击余额
 			inputCoofers(){
 				this.coffersFeeShow=!this.coffersFeeShow;
 				this.amountFeeShow=false;
 				this.storeFeeShow=false;
+				this.beanFeeShow=false;
 				if(this.coffersFeeShow){
 					if(this.curObj.coffers<=this.curObj.totalFee){
 						this.coffersFee=this.curObj.coffers;
@@ -571,7 +639,11 @@
 						this.$toast('最低使用100积分');
 						return;
 					}
-					if(Number(this.amountFee)==0 && Number(this.coffersFee)==0 && this.useStores==0){
+					if(this.useGoldBean<10 && this.beanFeeShow){
+						this.$toast('最低使用10金豆');
+						return;
+					}
+					if(Number(this.amountFee)==0 && Number(this.coffersFee)==0 && this.useStores==0 && this.useGoldBean==0){
 						this.isShowPass=true;
 					}else{
 						this.isShowPass=false;
@@ -612,7 +684,7 @@
 							productId:this.orderObj.productId,
 							num:this.orderObj.num,
 							normalId:this.orderObj.normalId,
-							type:9,
+							type:this.orderObj.type,
 //							memberId:this.$route.query.memberId,
 							addressId:this.addressId,
 							payMethod:this.payMethod,
@@ -620,6 +692,7 @@
 							amount:Number(this.amountFee),
 							coffers:Number(this.coffersFee),
 							score:this.useStores,
+							goldBean:this.useGoldBean,
 							recId:this.orderObj.recId,
 							couponRecordId:this.couponId,
 							uutype:1,
@@ -682,7 +755,7 @@
 						productId:this.orderObj.productId,
 						num:this.orderObj.num,
 						normalId:this.orderObj.normalId,
-						type:9,
+						type:this.orderObj.type,
 //						memberId:this.$route.query.memberId,
 						addressId:this.addressId,
 						payMethod:this.payMethod,
@@ -691,11 +764,18 @@
 						amount:Number(this.amountFee),
 						coffers:Number(this.coffersFee),
 						score:this.useStores,
+						goldBean:this.useGoldBean,
 						recId:this.orderObj.recId,
 						couponRecordId:this.couponId,
 						uutype:1,
 					}
 					//console.log(data)
+					this.isOrderGet=true;
+						
+					let defaultStyle = 'fading-circle';
+					this.$indicator.open({
+					    spinnerType: defaultStyle
+					});
 					this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.buyNowCreateOrder,data,this.payOrderBack,this);
 				
 				
@@ -714,6 +794,16 @@
 					this.useStores=(this.curObj.totalFee-this.couponAmount)*100
 				}
 				//console.log(this.useStores)
+			},
+			//金豆
+			clearNoNumBena(){
+				this.useGoldBean=this.useGoldBean.replace(/\D/g,'')
+				if(this.useGoldBean >= this.curObj.goldBean){
+					this.useGoldBean=this.curObj.goldBean;
+				}
+				if(this.useGoldBean>=(this.curObj.totalFee-this.couponAmount)*10){
+					this.useGoldBean=(this.curObj.totalFee-this.couponAmount)*10
+				}
 			},
 			//余额
 			clearMoreCoff(){

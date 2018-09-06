@@ -476,7 +476,7 @@
 							recId:this.orderObj.recId,
 							uutype:1,
 						}
-						console.log(this.orderObj.type)
+//						console.log(this.orderObj.type)
 						this.isOrderGet=true;
 						
 						let defaultStyle = 'fading-circle';
@@ -546,6 +546,12 @@
 						uutype:1,
 					}
 					//console.log(data)
+					this.isOrderGet=true;
+						
+					let defaultStyle = 'fading-circle';
+					this.$indicator.open({
+					    spinnerType: defaultStyle
+					});
 					this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.buyNowCreateOrder,data,this.payOrderBack,this);
 				
 				

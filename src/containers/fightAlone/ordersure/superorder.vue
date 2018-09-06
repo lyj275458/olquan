@@ -518,6 +518,12 @@
 						payPassword:md5(this.payPassword),
 					}
 					//console.log(data)
+					this.isOrderGet=true;
+						
+					let defaultStyle = 'fading-circle';
+					this.$indicator.open({
+					    spinnerType: defaultStyle
+					});
 					this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.newCreateOrder,data,this.payOrderBack,this);
 				
 				

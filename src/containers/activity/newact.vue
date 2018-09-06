@@ -210,12 +210,17 @@
     methods: {
     	//悬浮
 		xuanfuScroll(){
+			if(this.listObj.subassembly[this.listObj.subassembly.length-1].modelSampleCode!=='catlist1'){
+				return
+			}
+//			console.log(12);
 			let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-//			console.log(scrollTop);
+			
 			let offsetTopTe = document.querySelector('.list-top').offsetTop;
+			console.log(offsetTopTe);			
 			let oLiDom=this.$refs.addref;
 			let _self=this;
-			this.offsetTopSure=scrollTop;
+//			this.offsetTopSure=scrollTop;
 			/*Array.prototype.slice.call(oLiDom).forEach((val,index)=> {
 				console.log(val.offsetTop,index,scrollTop)
 				if(parseInt(val.offsetTop)==parseInt(scrollTop)){
@@ -241,7 +246,7 @@
 			}else{
 				this.offTopTrue = false;
 			}
-			if(scrollTop < 632){
+			if(scrollTop < oLiDom[0].offsetTop-44){
 				this.offTopTrue = false;
 			}
 		},
@@ -499,7 +504,12 @@
 					console.log(1)
 				}else{
 					if(type==2 || type==21){
-						window.location.href = url + "?type=" + productType;
+						if(productType==4 || productType==9 || productType==1){
+							this.$router.push({path:'/demo/iscroll/id/'+productId+'?isShare=0&type='+ productType});
+						}else{
+							window.location.href = url + "?type=" + productType;
+						}
+						
 					}else{
 						window.location.href = url
 					}
@@ -575,9 +585,9 @@
        /* console.log(this.indexArr)
         console.log(refArrList)*/
        if(index!=0){
-        window.scrollTo(0,refArrList[index].offsetTop-44)
+        window.scrollTo(0,refArrList[index].offsetTop-43)
        }else{
-       	window.scrollTo(0,oLi-44)
+       	window.scrollTo(0,oLi-43)
        }
 
 //        console.log(id)
@@ -606,6 +616,8 @@
 				    if(productType==4){
 						this.$router.push({path:'/demo/iscroll/id/'+productId+'?type='+productType});
 					}else if(productType==9){
+						this.$router.push({path:'/demo/iscroll/id/'+productId+'?type='+productType});
+					}else if(productType==1){
 						this.$router.push({path:'/demo/iscroll/id/'+productId+'?type='+productType});
 					}else{
 						window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+productId

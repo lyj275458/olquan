@@ -251,7 +251,7 @@
 		<div class="zhezhao" v-show="seachShow"></div>
 		<div class="tiaozhuan" v-show="qiehuanShow"></div>
 		<!--产品二维码-->
-		<div class="pinKnow" v-show="pinKnowShow" @click="showImg">
+		<div class="pinKnow" v-show="pinKnowShow" @touchmove.prevent>
 			<div style="display: none;">
 			    <canvas width="800" height="1200" id="canvas" style="background: #fff;width: 7.50rem;">
 			    	
@@ -261,7 +261,9 @@
 			    <img id="img" style="background: #fff;width:100%;display: block;" src="#" alt="">
 			    
 			</div>
-		
+			<div class="closeErweiImg" @click="showImg">
+				<img :src="colseImg" />
+			</div>
 		</div>
 		<!--<div class="pinGoods" v-show="pinKnowShow">
 			<img :src="erweiObj" class="codeImage"/>
@@ -440,7 +442,7 @@
 			},
 			getNewFollow(){
 				let data = {
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.waitReadCount,data,this.getNewFollowBack,this);
 			},
@@ -454,7 +456,7 @@
 			//获取会员信息
 			getMember(){
 				let data={
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				//console.log(data)
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getMember,data,this.getMemberBack,this);
@@ -480,7 +482,7 @@
 				this.followAccountId=accountId;
 //				console.log(this.isFollow)
 				let data = {
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					accountId:this.followAccountId
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.follow,data,this.getFollowBack);
@@ -513,7 +515,7 @@
 				this.isAddGoodsIndex=index;
 				this.isAddGoods=id;
 				let data = {
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					findId:findId
 				}
 //				console.log(data)
@@ -540,7 +542,7 @@
 		    getSearchRemind(){
 		    	
 				let data={
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					type:1,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getSearchRemind,data,this.getSearchRemindBack,this);
@@ -583,7 +585,7 @@
 			//获取购物车产品数量
 			getcartNum(){
 				let data={
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.totalNum,data,this.getcartNumBack);
 			},
@@ -620,7 +622,7 @@
 				let data={
 					keyword:this.searchCode,
 					isFollow:this.isFollowId,
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					page:1,
 	  				rows:10,
 					
@@ -746,94 +748,251 @@
 			    var imgGoods = new Image();
 			    imgGoods.setAttribute('crossOrigin', 'anonymous');
 			    imgGoods.src =productImg;
+			    
 			    var img1 = new Image();
 			    img1.setAttribute('crossOrigin', 'anonymous');
 			    img1.src = this.erweiImgNew;
-			   
-			   	window.onload=function(){
-			   		ctx.fillStyle = "#fff";
-			   		ctx.fillRect(0,0,800,1220);
-					ctx.save();
-			        var R=50;
-				    var d =2 * R;
-				    var cx =30 + R;
-				    var cy =50  + R;
-				    ctx.beginPath();
-				    ctx.arc(cx, cy,R, 0, 2 * Math.PI);
-				    ctx.clip();
-				    ctx.drawImage(imgLogo, 30, 50,d,d);
-				    ctx.restore();
-			        ctx.drawImage(imgGoods,0,202,800,750)
-			        ctx.drawImage(img1,590,981,180,180)//设置图片比例和位置,匹配手机屏幕
-			        
-	
-			        
-	//		        ctx.drawImage(imgLogo,30,40,80,65)//设置图片比例和位置,匹配手机屏幕
-					var str =productName;
-			        //绘制简单的文字
-			        ctx.fillStyle = "#333"; // black color
-			        ctx.font="30px PingFangSC-Regular";
-			        ctx.lineWidth=1; 
-			        
-			        var lineWidth = 0;
-			        var canvasWidth = 500;//计算canvas的宽度
-					var initHeight=1011;//绘制字体距离canvas顶部初始的高度
-					var lastSubStrIndex= 0; //每次开始截取的字符串的索引
-					for(let i=0;i<str.length;i++){ 
-					    lineWidth+=ctx.measureText(str[i]).width; 
-					    if(lineWidth>canvasWidth){  
-					        ctx.fillText(str.substring(lastSubStrIndex,i),30,initHeight,600);//绘制截取部分
-					        initHeight+=36;//20为字体的高度
-					        lineWidth=0;
-					        lastSubStrIndex=i;
-					       
-					    } 
-					    if(i==str.length-1){//绘制剩余部分
-					        ctx.fillText(str.substring(lastSubStrIndex,i+1),30,initHeight,600);
-					        
-					    }
-					}
-					ctx.fillStyle = "#E50F72";
-					ctx.fillText(productPrice,30,initHeight+45);
-					ctx.fillStyle = "#777";
-					ctx.font="24px PingFangSC-Regular";
-					ctx.fillText('长按识别二维码查看详情',30,initHeight+85);
-					ctx.font="28px PingFangSC-Regular";
-					ctx.fillText('小猪佩奇',150,84);
-					ctx.fillStyle = "#333333";
-					ctx.font="28px PingFangSC-Regular";
-					ctx.fillText('发现好物，与您分享！',150,132);
-			        //生成的data的路径,可以通过php生成图片存到数据库,单存data路径不合适,高清图片情况下会出现图片的残缺
-			        var srccc = canvas.toDataURL("image/png");
-			        $("#img").attr("src",srccc);
+			    let _this=this;
+			    var progress = 0;
+			    imgLogo.onload=function(){
+			    	progress += 20;
+			    	if(progress===100){
+				    	ctx.fillStyle = "#fff";
+				   		ctx.fillRect(0,0,800,1220);
+						ctx.save();
+				        var R=50;
+					    var d =2 * R;
+					    var cx =30 + R;
+					    var cy =50  + R;
+					    ctx.beginPath();
+					    ctx.arc(cx, cy,R, 0, 2 * Math.PI);
+					    ctx.clip();
+					    ctx.drawImage(imgLogo, 30, 50,d,d);
+					    ctx.restore();
+				        ctx.drawImage(imgGoods,0,202,800,750)
+				        ctx.drawImage(img1,590,981,180,180)//设置图片比例和位置,匹配手机屏幕
+				        var str =productName;
+				        //绘制简单的文字
+				        ctx.fillStyle = "#333"; // black color
+				        ctx.font="30px PingFangSC-Regular";
+				        ctx.lineWidth=1; 
+				        console.log(111)
+				        var lineWidth = 0;
+				        var canvasWidth = 500;//计算canvas的宽度
+						var initHeight=1011;//绘制字体距离canvas顶部初始的高度
+						var lastSubStrIndex= 0; //每次开始截取的字符串的索引
+						for(let i=0;i<str.length;i++){ 
+						    lineWidth+=ctx.measureText(str[i]).width; 
+						    if(lineWidth>canvasWidth){  
+						        ctx.fillText(str.substring(lastSubStrIndex,i),30,initHeight,600);//绘制截取部分
+						        initHeight+=36;//20为字体的高度
+						        lineWidth=0;
+						        lastSubStrIndex=i;
+						       
+						    } 
+						    if(i==str.length-1){//绘制剩余部分
+						        ctx.fillText(str.substring(lastSubStrIndex,i+1),30,initHeight,600);
+						        
+						    }
+						}
+						var moneyHeight=0;
+						if(initHeight==1011){
+							moneyHeight=initHeight+42+36;
+						}else{
+							moneyHeight=initHeight+45;
+						}
+						ctx.fillStyle = "#E50F72";
+						ctx.fillText('￥'+productPrice,30,moneyHeight);
+						ctx.fillStyle = "#777";
+						ctx.font="24px PingFangSC-Regular";
+						ctx.fillText('长按识别二维码查看详情',30,1150);
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText(_this.memList.nickName,150,84);
+						ctx.fillStyle = "#333333";
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText('发现好物，与您分享！',150,132);
+				        //生成的data的路径,可以通过php生成图片存到数据库,单存data路径不合适,高清图片情况下会出现图片的残缺
+				        var srccc = canvas.toDataURL("image/png");
+				        
+				        $("#img").attr("src",srccc);
+				    
+				    }
 			    }
+			    imgGoods.onload=function(){
+			    	progress += 40;
+			    	if(progress===100){
+				    	ctx.fillStyle = "#fff";
+				   		ctx.fillRect(0,0,800,1220);
+						ctx.save();
+				        var R=50;
+					    var d =2 * R;
+					    var cx =30 + R;
+					    var cy =50  + R;
+					    ctx.beginPath();
+					    ctx.arc(cx, cy,R, 0, 2 * Math.PI);
+					    ctx.clip();
+					    ctx.drawImage(imgLogo, 30, 50,d,d);
+					    ctx.restore();
+				        ctx.drawImage(imgGoods,0,202,800,750)
+				        ctx.drawImage(img1,590,981,180,180)//设置图片比例和位置,匹配手机屏幕
+				        
+		
+				        
+		//		        ctx.drawImage(imgLogo,30,40,80,65)//设置图片比例和位置,匹配手机屏幕
+						var str =productName;
+				        //绘制简单的文字
+				        ctx.fillStyle = "#333"; // black color
+				        ctx.font="30px PingFangSC-Regular";
+				        ctx.lineWidth=1; 
+				        
+				        var lineWidth = 0;
+				        var canvasWidth = 500;//计算canvas的宽度
+						var initHeight=1011;//绘制字体距离canvas顶部初始的高度
+						var lastSubStrIndex= 0; //每次开始截取的字符串的索引
+						for(let i=0;i<str.length;i++){ 
+						    lineWidth+=ctx.measureText(str[i]).width; 
+						    if(lineWidth>canvasWidth){  
+						        ctx.fillText(str.substring(lastSubStrIndex,i),30,initHeight,600);//绘制截取部分
+						        initHeight+=36;//20为字体的高度
+						        lineWidth=0;
+						        lastSubStrIndex=i;
+						       
+						    } 
+						    if(i==str.length-1){//绘制剩余部分
+						        ctx.fillText(str.substring(lastSubStrIndex,i+1),30,initHeight,600);
+						        
+						    }
+						}
+						var moneyHeight=0;
+						if(initHeight==1011){
+							moneyHeight=initHeight+42+36;
+						}else{
+							moneyHeight=initHeight+45;
+						}
+						console.log(initHeight)
+						ctx.fillStyle = "#E50F72";
+						ctx.fillText('￥'+productPrice,30,moneyHeight);
+						ctx.fillStyle = "#777";
+						ctx.font="24px PingFangSC-Regular";
+						ctx.fillText('长按识别二维码查看详情',30,1150);
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText(_this.memList.nickName,150,84);
+						ctx.fillStyle = "#333333";
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText('发现好物，与您分享！',150,132);
+				        //生成的data的路径,可以通过php生成图片存到数据库,单存data路径不合适,高清图片情况下会出现图片的残缺
+				        var srccc = canvas.toDataURL("image/png");
+				        
+				        $("#img").attr("src",srccc);
+				    
+				    }
+			    }
+			   	img1.onload=function(){
+			    	progress += 40;
+			    	if(progress===100){
+				    	ctx.fillStyle = "#fff";
+				   		ctx.fillRect(0,0,800,1220);
+						ctx.save();
+				        var R=50;
+					    var d =2 * R;
+					    var cx =30 + R;
+					    var cy =50  + R;
+					    ctx.beginPath();
+					    ctx.arc(cx, cy,R, 0, 2 * Math.PI);
+					    ctx.clip();
+					    ctx.drawImage(imgLogo, 30, 50,d,d);
+					    ctx.restore();
+				        ctx.drawImage(imgGoods,0,202,800,750)
+				        ctx.drawImage(img1,590,981,180,180)//设置图片比例和位置,匹配手机屏幕
+				        
+		
+				        
+		//		        ctx.drawImage(imgLogo,30,40,80,65)//设置图片比例和位置,匹配手机屏幕
+						var str =productName;
+				        //绘制简单的文字
+				        ctx.fillStyle = "#333"; // black color
+				        ctx.font="30px PingFangSC-Regular";
+				        ctx.lineWidth=1; 
+				        
+				        var lineWidth = 0;
+				        var canvasWidth = 500;//计算canvas的宽度
+						var initHeight=1011;//绘制字体距离canvas顶部初始的高度
+						var lastSubStrIndex= 0; //每次开始截取的字符串的索引
+						for(let i=0;i<str.length;i++){ 
+						    lineWidth+=ctx.measureText(str[i]).width; 
+						    if(lineWidth>canvasWidth){  
+						        ctx.fillText(str.substring(lastSubStrIndex,i),30,initHeight,600);//绘制截取部分
+						        initHeight+=36;//20为字体的高度
+						        lineWidth=0;
+						        lastSubStrIndex=i;
+						       
+						    } 
+						    if(i==str.length-1){//绘制剩余部分
+						        ctx.fillText(str.substring(lastSubStrIndex,i+1),30,initHeight,600);
+						        
+						    }
+						}
+						var moneyHeight=0;
+						if(initHeight==1011){
+							moneyHeight=initHeight+42+36;
+						}else{
+							moneyHeight=initHeight+45;
+						}
+						ctx.fillStyle = "#E50F72";
+						ctx.fillText('￥'+productPrice,30,moneyHeight);
+						ctx.fillStyle = "#777";
+						ctx.font="24px PingFangSC-Regular";
+						ctx.fillText('长按识别二维码查看详情',30,1150);
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText(_this.memList.nickName,150,84);
+						ctx.fillStyle = "#333333";
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText('发现好物，与您分享！',150,132);
+				        //生成的data的路径,可以通过php生成图片存到数据库,单存data路径不合适,高清图片情况下会出现图片的残缺
+				        var srccc = canvas.toDataURL("image/png");
+				        
+				        $("#img").attr("src",srccc);
+				    	
+				    }
+			    }
+			},
+			clearCanvas(){  
+			    let cxtNew=document.getElementById("canvas").getContext("2d");
+			    cxtNew.clearRect(0,0,800,1200);  
 			},
 		    //获取商品二维码图片
 		    getGoodsShareNew(type,productId,productImg,productName,productPrice){
-		    	
+		    	this.pinKnowShow=true;
 		    	this.canProductImg=productImg;
 		    	this.canProductName=productName;
 		    	this.canProductPrice=productPrice;
 				let data={
 					productId:productId,
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					type:type,
 				}
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getTwoCodeUrl,data,this.getGoodsShareBack,this);
 		    },
 		    getGoodsShareBack(data){
 //		    	this.erweiObj=data.result;
-				this.pinKnowShow=true;
-				this.draw(this.canProductImg,this.canProductName,this.canProductPrice);
+				if(data.code!=0){
+					this.$toast(data.message);
+				}else{
+					
+					this.erweiImgNew=data.result;
+					this.draw(this.canProductImg,this.canProductName,this.canProductPrice);
+				}
+				
 		    },
 		    showImg(){
 				this.pinKnowShow=false;
+				this.clearCanvas();
 			},
 		    //搜索功能
 		    searchEnterFun(){
 		    	let data={
 					keyword:this.searchCode,
-					memberId:this.$route.query.memberId,
+//					memberId:this.$route.query.memberId,
 					isFollow:this.isFollowId,
 					page:1,
 	  				rows:10,
@@ -918,7 +1077,7 @@
 	 				this.isMore=false;
 	 				let data={
 	 					keyword:this.searchCode,
-						memberId:this.$route.query.memberId,
+//						memberId:this.$route.query.memberId,
 						isFollow:this.isFollowId,
 	  					page:this.pageObj.page+1,
 	  					rows:10,
@@ -1886,8 +2045,29 @@
 			height: 100%;
 			z-index: 1000;
 			background: rgba(0,0,0,.5);
-			
-			
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -moz-flex;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+			-webkit-box-pack: center;
+		    -moz-box-pack: center;
+		    -ms-flex-align:center;/* IE 10 */
+		    -webkit-align-items: center;
+		    -moz-align-items: center;
+		    align-items: center;
+			.closeErweiImg{
+				position: absolute;
+				right: 0.24rem;
+				top: 1.00rem;
+				img{
+					
+					display: block;
+					width: .32rem;
+					height: .32rem;
+				}
+			}
 		}
 		.pinGoods{
 			width: 6.40rem;

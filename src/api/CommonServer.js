@@ -105,6 +105,8 @@ const API = {
       tabAcount:'mobile/member/tabAcount',//切换账号
       login:'mobile/member/login',//登录
       setDefaultAccount:'mobile/member/setDefaultAccount',//设置默认账号
+      getLocalCodePath:'mobile/product/getLocalCodePath',//获取产品二维码
+      exchangeGoldbean:'mobile/member/exchangeGoldbean',//兑换金豆
 };
 function getCookie(argument) {
     var arrCookie = document.cookie.split(";");

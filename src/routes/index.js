@@ -737,6 +737,19 @@ export default [
 		}
         
         
+    },{//我的新发现页
+        path: '/payMain/changeMoney',
+        
+        component: resolve => {
+            require.ensure(['../containers/payMain/changeMoney.vue'], () => {
+                resolve(require('../containers/payMain/changeMoney.vue'));
+            }, 'changeMoney');
+        },
+        meta: {
+		  keepAlive: false // 不需要缓存
+		}
+        
+        
     },{
         path: '*',
         component: map

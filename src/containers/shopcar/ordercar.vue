@@ -556,8 +556,8 @@
 			},
 			//跳转产品详情
 			getGoodsDetail(id){
-				console.log(id)
-				window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+id;
+				
+				this.$router.push({path:'/demo/iscroll/id/'+id+'?isShare=0&type=1'});
 			},
 			//跳转首页
 			getIndex(){

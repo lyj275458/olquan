@@ -13,22 +13,23 @@
 	    	
 	    	<img :src="tryImgone"  class="isSold" v-show="curObj.store==0 && curObj.type==4"/>
 	    </div>
-	    <div class="productMoney" v-show="curObj.type==9 && curObj.status!=1 && curObj.status!=2 || curObj.time==null">
+	    <div class="productMoney" v-show="curObj.type==9 && curObj.status!=1 && curObj.status!=2 || curObj.time==null && curObj.type!=4">
 	    	<div class="erwei" @click="getErwei(curObj.productId)">
 				<img :src="erweiImg" />
 			</div>
 			<div class="moneySale">
-				￥{{curObj.salePrice}}<span style="margin: 0 .05rem;font-size: .28rem;text-decoration: line-through;color: #AAAAAA;">￥{{curObj.marketPrice}}</span><span class="getMoney">{{curObj.score1}}</span>
+				￥{{curObj.salePrice}}<span style="margin: 0 .05rem;font-size: .28rem;text-decoration: line-through;color: #AAAAAA;">￥{{curObj.marketPrice}}</span><span class="getMoney" v-if="curObj.type==9">{{curObj.score1}}</span>
 			</div>
 	    	
 	    </div>
+	    
 	    <div class="productMoney" v-show="curObj.type==4  && curObj.freeUseSubType!=4 && curObj.freeUseSubType!=3 && curObj.status!=1">
 	    	<div class="erwei" @click="getErwei(curObj.productId)">
 				<img :src="erweiImg" />
 			</div>
 			<div class="moneySale" style="font-size: .24rem;color: #777777;">
 				<span style="line-height: .84rem;vertical-align: middle;">保证金 </span>
-				<span class="getMoney" style="vertical-align: middle;display:inline;line-height:.84rem;color: #E5006E; font-size: .38rem;margin-left: 0;">￥{{curObj.salePrice}}</span>
+				<span class="getMoney" style="vertical-align: middle;display:inline;line-height:.84rem;color: #000; font-size: .38rem;margin-left: 0;">￥{{curObj.salePrice}}</span>
 			</div>
 	    	
 	    </div>
@@ -38,7 +39,7 @@
 			</div>
 			<div class="moneySale" style="font-size: .24rem;color: #777777;">
 				<span style="line-height: .84rem;vertical-align: middle;">保证金 </span>
-				<span class="getMoney" style="vertical-align: middle;display:inline;line-height:.84rem;color: #E5006E; font-size: .38rem;margin-left: 0;">￥{{curObj.salePrice}}</span>
+				<span class="getMoney" style="vertical-align: middle;display:inline;line-height:.84rem;color: #000; font-size: .38rem;margin-left: 0;">￥{{curObj.salePrice}}</span>
 			</div>
 	    	
 	    </div>
@@ -56,7 +57,7 @@
 				<span class='timeEnd'><b>{{hour}}</b> : <b>{{mint}}</b> : <b>{{secon}}</b></span>
 			</div>
 		</div>
-	    <div class="todaySale" v-show="curObj.time!=null && curObj.type==9 && curObj.status==1 ||curObj.time!=null && curObj.type==9 && curObj.status==2">
+	    <div class="todaySale" v-if="curObj.time!=null && curObj.type==9 && curObj.status==1 ||curObj.time!=null && curObj.type==9 && curObj.status==2">
 	    	<div style="padding-left: .24rem;">
 	    		<span style="font-size: .30rem;">￥</span>{{curObj.salePrice}}<span class="getMoney" style="margin: 0 .05rem;text-decoration: line-through; color: #FADEE7;font-size: .28rem;">￥{{curObj.marketPrice}}</span><span class="getMoney">{{curObj.score1}}</span>
 	    	</div>
@@ -104,21 +105,34 @@
 	    	<p>{{curObj.buyNeedScore}}</p> 积分
 	    </div>
 	    
-	    <div class="moneyDetail ">
+	    <div class="moneyDetail " v-show="curObj.type!=1">
 	    	<div style="overflow: hidden;" v-bind:class="{ 'moneyDetailSpe': curObj.tags!=null}">
 	    		<div class="moneyTop">
 		    		运费: <span v-show="curObj.postFee!='包邮'">￥</span>{{curObj.postFee}}
 		    	</div>
-		    	<div class="moneyTop" style="margin-left: .40rem;" v-show="curObj.type==4 || curObj.type==8">
+		    	<div class="moneyTop" style="text-align: center;" v-show="curObj.type==4 || curObj.type==8">
 		    		试用时间: {{curObj.freeUseDays}}天
 		    	</div>
 		    	<div class="moneyBot">
-		    		仅剩{{curObj.store}}件<span v-show="curObj.type==4 || curObj.type==8"> · 已有{{curObj.soldCount}}人试用</span>
+		    		仅剩{{curObj.store}}件<span v-show="curObj.type==4 || curObj.type==8"> </span>
 		    	</div>
 	    	</div>
 	    	
 	    </div>
-	    
+	    <div class="moneyDetailType " v-show="curObj.type==1">
+	    	<div class="listDetailType">
+	    		<div v-if="curObj.score!='' && curObj.score!=null">
+		    		{{curObj.score}}
+		    	</div>
+		    	<div v-if="curObj.soldCount!='' && curObj.soldCount!=null">
+		    		已售{{curObj.soldCount}}件
+		    	</div>
+		    	<div v-if="curObj.area!='' && curObj.area!=null">
+		    		{{curObj.area}}
+		    	</div>
+	    	</div>
+	    	
+	    </div>
 	    <div class="list" v-show="curObj.tags!=null">
 	    	<p class="listSon" v-for="item in curObj.tags"><img :src='chooseImg'/>{{item}}</p>
 		</div>
@@ -171,7 +185,22 @@
 				</div>
 			</div>
 		</div>
-		
+		<div class="shareBot" v-if="curObj.score1!='' && curObj.score1!=null && curObj.type==1 && curObj.personal==1 && memList.levelCode!='white' && memList.levelCode!='golden'">
+			<div class="topMessage">
+				<p>分享奖励金豆</p>
+			</div>
+			<div class="cenMessage">
+				<p>分享好友下单成功可获得<span style="color: #E50F72;">{{curObj.score1}}</span>金豆</p>
+			</div>
+			<div class="botMessage">
+				<div style="position: relative;">
+					<p @click="getErwei(curObj.productId)" style="position: absolute;right: .30rem;">海报邀请</p>
+				</div>
+				<div style="position: relative;">
+					<p @click="shareShare" style="position: absolute;left: .30rem;">分享邀请</p>
+				</div>
+			</div>
+		</div>
 			
 		
 		<div style="width: 100%;height: .20rem;background: #f2f2f2;" v-show="curObj.type==4 || curObj.type==8"></div>
@@ -313,9 +342,27 @@
 					<p>立即购买</p>
 				</div>
 			</div>
-			<div class="trytouse" v-show="curObj.type==1">
-				<div class="addCart" @click="addGoods">加入购物车</div>
-				<div class="getGoods" @click="buyGoods">立即购买</div>
+			<div class="trytouse" v-show="curObj.type==1 && curObj.personal!=1">
+				<div class="addCart" @click="addGoods">
+					<div class="buy">
+						<p style="font-size: .32rem;">加入购物车</p>
+					</div>
+				</div>
+				<div class="getGoods" @click="buyGoods">
+					<div class="buy">
+						<p style="font-size: .32rem;">立即购买</p>
+					</div>
+				</div>
+				<!--<div class="addCart" @click="addGoods" style="background: #000;"></div>
+				<div class="getGoods" @click="buyGoods" style="background: #e50f71;"></div>-->
+			</div>
+			<div class="trytouse" v-show="curObj.type==1 && curObj.personal==1">
+				<div class="notPink"  @click="buyGoods">
+					<p>立即购买</p>
+				</div>
+				
+				<!--<div class="addCart" @click="addGoods" style="background: #000;"></div>
+				<div class="getGoods" @click="buyGoods" style="background: #e50f71;"></div>-->
 			</div>
 		</div>
 		<div class="norms" v-show="chooseNor">
@@ -325,21 +372,21 @@
 				<img :src="getNomoreObj.image"  class="productImage" v-else/>
 				
 				<p class="detail" v-show="curObj.type!=1">
-					<span style="display: block; line-height: .30rem;" class="money" v-if="needScroe==false"><b style="color: #ed0477;">{{curObj.buyNeedScore}}</b><i style="font-size: .26rem;font-style: normal;font-weight: normal;">积分</i><br /><i style="font-style: normal;font-size: .26rem;">保证金:￥{{curObj.activePriceInterval}}</i></span>
-					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice!=undefined && needScroe==true && getNomoreObj.id!=0"><i style="font-size: .28rem;font-style: normal; font-weight: normal;" v-show="curObj.type==4">保证金 : </i><b style="color: #ed0477; font-weight: normal;">￥{{getNomoreObj.salePriceView}}</b></span>
-					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice==undefined && needScroe==true || getNomoreObj.id==0"><i style="font-size: .28rem;font-style: normal; font-weight: normal;" v-show="curObj.type==4">保证金 : </i><b style="color: #ed0477; font-weight: normal;">￥{{curObj.activePriceInterval}}</b></span><br />
+					<span style="display: block; line-height: .30rem;" class="money" v-if="needScroe==false"><b style="color: #000;">{{curObj.buyNeedScore}}</b><i style="font-size: .26rem;font-style: normal;font-weight: normal;">积分</i><br /><i style="font-style: normal;font-size: .26rem;">保证金:￥{{curObj.activePriceInterval}}</i></span>
+					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice!=undefined && needScroe==true && getNomoreObj.id!=0"><i style="font-size: .28rem;font-style: normal; font-weight: normal;" v-show="curObj.type==4">保证金 : </i><b style="color: #000; font-weight: normal;">￥{{getNomoreObj.salePriceView}}</b></span>
+					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice==undefined && needScroe==true || getNomoreObj.id==0"><i style="font-size: .28rem;font-style: normal; font-weight: normal;" v-show="curObj.type==4">保证金 : </i><b style="color: #000; font-weight: normal;">￥{{curObj.activePriceInterval}}</b></span><br />
 					<span class="num" v-if='getNomoreObj.store!=undefined && normalId!=""'>&nbsp;库存{{getNomoreObj.store<0?0:getNomoreObj.store}}件</span>
 					<span class="num" v-if="normalId=='' && showLength>0">&nbsp;请选择规格</span>
 					<span class="num" v-if='getNomoreObj.store==undefined && showLength==0'>&nbsp;库存{{curObj.store<0?0:curObj.store}}件</span>
 					<!--<span class="num" v-else>&nbsp;库存{{curObj.store}}件</span>-->
 				</p>
-				<!--<p class="detail" v-show="curObj.type==1">
-					<span style="display: block; line-height: .30rem;" class="money" v-if="needScroe==false"><b style="color: #ed0477;">{{curObj.buyNeedScore}}</b><i style="font-size: .26rem;font-style: normal;font-weight: normal;">积分</i><br /><i style="font-style: normal;font-size: .26rem;">￥{{curObj.salePrice}}</i></span>
-					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice!=undefined && needScroe==true"><i style="font-size: .28rem;font-style: normal; font-weight: normal;"></i><b style="color: #ed0477; font-weight: normal;">￥{{getNomoreObj.salePriceView}}</b></span>
-					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice==undefined && needScroe==true"><i style="font-size: .28rem;font-style: normal; font-weight: normal;"></i><b style="color: #ed0477; font-weight: normal;">￥{{curObj.salePrice}}</b></span><br />
+				<p class="detail" v-show="curObj.type==1">
+					<span style="display: block; line-height: .30rem;" class="money" v-if="needScroe==false"><b style="color: #000;">{{curObj.buyNeedScore}}</b><i style="font-size: .26rem;font-style: normal;font-weight: normal;">积分</i><br /><i style="font-style: normal;font-size: .26rem;">￥{{curObj.salePrice}}</i></span>
+					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice!=undefined && needScroe==true"><i style="font-size: .28rem;font-style: normal; font-weight: normal;"></i><b style="color: #000; font-weight: normal;">￥{{getNomoreObj.salePriceView}}</b></span>
+					<span style="display: block;" class="money" v-if="getNomoreObj.salePrice==undefined && needScroe==true"><i style="font-size: .28rem;font-style: normal; font-weight: normal;"></i><b style="color: #000; font-weight: normal;">￥{{curObj.salePrice}}</b></span><br />
 					<span class="num" v-if='getNomoreObj.store!=undefined && normalId!=0'>&nbsp;库存{{getNomoreObj.store}}件</span>
 					<span class="num" v-if='getNomoreObj.store==undefined && normalId==0'>&nbsp;库存{{curObj.store}}件</span>
-				</p>-->
+				</p>
 				<!--<div class="noMores" v-for="item in curObj.normals">
 					<p class="name">
 						{{item.key}}
@@ -439,10 +486,19 @@
 				<p class="tiBright" @click="getPink">去绑定</p>
 			</div>
 		</div>
-		<div class="pinKnow" v-show="pinKnowShow" @click="showImg"></div>
-		<div class="pinGoods" v-show="pinKnowShow">
-			<img :src="erweiObj" class="codeImage"/>
-			<img :src="colseImg" class="closeImg" @click="showImg"/>
+		<div class="pinKnow" v-show="pinKnowShow" @touchmove.prevent>
+			<div style="display: none;">
+			    <canvas width="800" height="1200" id="canvas" style="background: #fff;width: 7.50rem;">
+			    	
+			    </canvas>
+			</div>
+			<div style="width: 7.50rem;position: relative;">
+			    <img id="img" style="background: #fff;width:100%;display: block;" src="#" alt="">
+			    <div class="closeErweiImg" @click="showImg">
+					<img :src="colseImg" />
+				</div>
+			</div>
+			
 		</div>
 		<!--<div class="goFortop" v-show="showTop">
 			<img :src="goTopImg" @click="gotoTop"/>
@@ -456,14 +512,18 @@
 					<div class="descript">
 						<span v-show="curObj.type!=4" style="font-size: .36rem;">赚</span>
 						<span v-show="curObj.type==4" style="font-size: .36rem;">￥</span>
-						<span v-show="curObj.type!=4" style="margin-left: -.20rem;margin-bottom: -.08rem;">{{getMoney}}</span>
+						<span v-show="curObj.type==9" style="margin-left: -.20rem;margin-bottom: -.08rem;">{{getMoney}}</span>
+						<span v-show="curObj.type==1" style="margin-left: -.20rem;margin-bottom: -.08rem;">{{curObj.score1}}</span>
 						<span v-show="curObj.type==4" style="margin-left: -.20rem;margin-bottom: -.08rem;">{{curObj.promotionAward}}</span>
 					</div>
-					<p class="moreDes" v-show="curObj.type!=4">
+					<p class="moreDes" v-show="curObj.type==9">
 						只要你的好友通过你的链接购买此商品，你就能赚到<span style="color: #E50F72;">{{getMoney}}</span>元利润哦~
 					</p>
 					<p class="moreDes" v-show="curObj.type==4">
 						邀请好友首次试用可获得<span style="color: #E50F72;">{{curObj.promotionAward}}</span>元奖励
+					</p>
+					<p class="moreDes" v-if="curObj.type==1">
+						分享好友下单成功可获得<span style="color: #E50F72;">{{curObj.score1}}</span>金豆
 					</p>
 					<div class="sureBut">确定</div>
 					
@@ -607,6 +667,11 @@
 		created: function() {
 			if(this.$route.query.memberId=='undefined'){
 				this.$route.query.memberId='';
+			}
+			if(this.$route.query.isShareTrue==1){
+				this.shareSure=true;
+			}else{
+				this.shareSure=false;
 			}
 			if(this.$route.query.recId==undefined || this.$route.query.recId=='undefined' || this.$route.query.recId=='null'){
 				this.recId=''
@@ -808,16 +873,16 @@
 				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.productDetail,data,this.getListBack,this);
 			},
 			getListBack(data){
-//				console.log(data)
-				if(data.result.type==9 || data.result.type==4){
-						//console.log(data)this.getCookie("memberId")
 					if(data.code==-1){
 						this.$toast(data.message);
 						return false;
 					}
 					this.curObj=data.result;
 	//				this.downTime=this.curObj.time;
-					this.getMoney=this.curObj.score1.split("￥")[1];
+					if(this.curObj.type==9){
+						this.getMoney=this.curObj.score1.split("￥")[1];
+					}
+					
 					
 					this.moveTime(this.curObj.time)
 					
@@ -869,11 +934,7 @@
 					//console.log(this.getNomoreObj.store)
 					this.moreWeixinShare();//微信分享 
 					
-				}else if(data.result.type==11 || data.result.type==12){
-					window.location.href=CUR_URLBACK+'index/goodsDetali/id/'+data.result.togetherId+'?isLimit=0'
-				}else{
-					window.location.href=USE_URL+'weixin/product/newProductDetail?productId='+data.result.productId+'&type='+data.result.type;
-				}
+				
 				
 			},
 			//获取二维码图片
@@ -884,10 +945,277 @@
 //					memberId:this.$route.query.memberId,
 					type:this.curObj.type,
 				}
-				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getTwoCodeUrl,data,this.getErweiBack,this);
+				this.$store.state.ajaxObj.comAjax(this.$store.state.ajaxObj.API.getLocalCodePath,data,this.getErweiBack,this);
 			},
 			getErweiBack(data){
-				this.erweiObj=data.result;
+				if(data.code!=0){
+					this.$toast(data.message);
+				}else{
+					this.pinKnowShow=true;
+					this.erweiObj=data.result;
+					this.draw(this.curObj.image,this.curObj.productName,this.curObj.activePriceInterval);
+				}
+			},
+			draw(productImg,productName,productPrice){
+				
+			    var canvas = document.getElementById('canvas');
+			    
+			   
+			    var ctx = canvas.getContext("2d");
+				var imgLogo = new Image();
+				imgLogo.setAttribute('crossOrigin', 'anonymous');
+			    imgLogo.src= this.memList.logo;
+			    var imgGoods = new Image();
+			    imgGoods.setAttribute('crossOrigin', 'anonymous');
+			    imgGoods.src =productImg;
+			    var img1 = new Image();
+			    img1.setAttribute('crossOrigin', 'anonymous');
+			    img1.src = this.erweiObj;
+			    let _this=this;
+			    var progress = 0;
+			    imgLogo.onload=function(){
+			    	progress += 20;
+			    	if(progress===100){
+				    	ctx.fillStyle = "#fff";
+				   		ctx.fillRect(0,0,800,1220);
+						ctx.save();
+				        var R=50;
+					    var d =2 * R;
+					    var cx =30 + R;
+					    var cy =50  + R;
+					    ctx.beginPath();
+					    ctx.arc(cx, cy,R, 0, 2 * Math.PI);
+					    ctx.clip();
+					    ctx.drawImage(imgLogo, 30, 50,d,d);
+					    ctx.restore();
+				        ctx.drawImage(imgGoods,0,202,800,750)
+				        ctx.drawImage(img1,590,971,200,200)//设置图片比例和位置,匹配手机屏幕
+				        var str =productName;
+				        //绘制简单的文字
+				        ctx.fillStyle = "#333"; // black color
+				        ctx.font="30px PingFangSC-Regular";
+				        ctx.lineWidth=1; 
+				        
+				        var lineWidth = 0;
+				        var canvasWidth = 500;//计算canvas的宽度
+						var initHeight=1011;//绘制字体距离canvas顶部初始的高度
+						var lastSubStrIndex= 0; //每次开始截取的字符串的索引
+						for(let i=0;i<str.length;i++){ 
+						    lineWidth+=ctx.measureText(str[i]).width; 
+						    if(lineWidth>canvasWidth){  
+						        ctx.fillText(str.substring(lastSubStrIndex,i),30,initHeight,600);//绘制截取部分
+						        initHeight+=36;//20为字体的高度
+						        lineWidth=0;
+						        lastSubStrIndex=i;
+						       
+						    } 
+						    if(i==str.length-1){//绘制剩余部分
+						        ctx.fillText(str.substring(lastSubStrIndex,i+1),30,initHeight,600);
+						        
+						    }
+						}
+						var moneyHeight=0;
+						var descriptHeight=0
+						if(initHeight==1011){
+							moneyHeight=initHeight+42+26;
+							descriptHeight=1140;
+						}else{
+							moneyHeight=initHeight+45;
+							if(initHeight==1047){
+								descriptHeight=1140;
+							}else{
+								descriptHeight=initHeight+87;
+							}
+						}
+						ctx.fillStyle = "#E50F72";
+						ctx.fillText('￥'+productPrice,30,moneyHeight);
+						ctx.fillStyle = "#777";
+						ctx.font="24px PingFangSC-Regular";
+						ctx.fillText('长按识别二维码查看详情',30,descriptHeight);
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText(_this.memList.nickName,150,84);
+						ctx.fillStyle = "#333333";
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText('发现好物，与您分享！',150,132);
+						ctx.fillStyle = "#777";
+						ctx.font="28px PingFangSC-Regular";
+						ctx.save();
+						ctx.translate(830,30);
+						ctx.rotate(90*Math.PI/180);
+						ctx.fillText("E N J O Y",10,90)
+						ctx.restore();
+				        //生成的data的路径,可以通过php生成图片存到数据库,单存data路径不合适,高清图片情况下会出现图片的残缺
+				        var srccc = canvas.toDataURL("image/png");
+				        
+				        $("#img").attr("src",srccc);
+				    
+				    }
+			    }
+			    imgGoods.onload=function(){
+			    	progress += 40;
+			    	if(progress===100){
+				    	ctx.fillStyle = "#fff";
+				   		ctx.fillRect(0,0,800,1220);
+						ctx.save();
+				        var R=50;
+					    var d =2 * R;
+					    var cx =30 + R;
+					    var cy =50  + R;
+					    ctx.beginPath();
+					    ctx.arc(cx, cy,R, 0, 2 * Math.PI);
+					    ctx.clip();
+					    ctx.drawImage(imgLogo, 30, 50,d,d);
+					    ctx.restore();
+				        ctx.drawImage(imgGoods,0,202,800,750)
+				        ctx.drawImage(img1,590,971,200,200)//设置图片比例和位置,匹配手机屏幕
+				        
+		
+				        
+		//		        ctx.drawImage(imgLogo,30,40,80,65)//设置图片比例和位置,匹配手机屏幕
+						var str =productName;
+				        //绘制简单的文字
+				        ctx.fillStyle = "#333"; // black color
+				        ctx.font="30px PingFangSC-Regular";
+				        ctx.lineWidth=1; 
+				        
+				        var lineWidth = 0;
+				        var canvasWidth = 500;//计算canvas的宽度
+						var initHeight=1011;//绘制字体距离canvas顶部初始的高度
+						var lastSubStrIndex= 0; //每次开始截取的字符串的索引
+						for(let i=0;i<str.length;i++){ 
+						    lineWidth+=ctx.measureText(str[i]).width; 
+						    if(lineWidth>canvasWidth){  
+						        ctx.fillText(str.substring(lastSubStrIndex,i),30,initHeight,600);//绘制截取部分
+						        initHeight+=36;//20为字体的高度
+						        lineWidth=0;
+						        lastSubStrIndex=i;
+						       
+						    } 
+						    if(i==str.length-1){//绘制剩余部分
+						        ctx.fillText(str.substring(lastSubStrIndex,i+1),30,initHeight,600);
+						        
+						    }
+						}
+						var moneyHeight=0;
+						var descriptHeight=0
+						if(initHeight==1011){
+							moneyHeight=initHeight+42+26;
+							descriptHeight=1140;
+						}else{
+							moneyHeight=initHeight+45;
+							if(initHeight==1047){
+								descriptHeight=1140;
+							}else{
+								descriptHeight=initHeight+87;
+							}
+						}
+						console.log(initHeight)
+						ctx.fillStyle = "#E50F72";
+						ctx.fillText('￥'+productPrice,30,moneyHeight);
+						ctx.fillStyle = "#777";
+						ctx.font="24px PingFangSC-Regular";
+						ctx.fillText('长按识别二维码查看详情',30,descriptHeight);
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText(_this.memList.nickName,150,84);
+						ctx.fillStyle = "#333333";
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText('发现好物，与您分享！',150,132);
+						ctx.fillStyle = "#777";
+						ctx.font="28px PingFangSC-Regular";
+						ctx.save();
+						ctx.translate(830,30);
+						ctx.rotate(90*Math.PI/180);
+						ctx.fillText("E N J O Y",10,90)
+						ctx.restore();
+				        //生成的data的路径,可以通过php生成图片存到数据库,单存data路径不合适,高清图片情况下会出现图片的残缺
+				        var srccc = canvas.toDataURL("image/png");
+				        
+				        $("#img").attr("src",srccc);
+				    
+				    }
+			    }
+			   	img1.onload=function(){
+			    	progress += 40;
+			    	if(progress===100){
+				    	ctx.fillStyle = "#fff";
+				   		ctx.fillRect(0,0,800,1220);
+						ctx.save();
+				        var R=50;
+					    var d =2 * R;
+					    var cx =30 + R;
+					    var cy =50  + R;
+					    ctx.beginPath();
+					    ctx.arc(cx, cy,R, 0, 2 * Math.PI);
+					    ctx.clip();
+					    ctx.drawImage(imgLogo, 30, 50,d,d);
+					    ctx.restore();
+				        ctx.drawImage(imgGoods,0,202,800,750)
+				        ctx.drawImage(img1,590,971,200,200)//设置图片比例和位置,匹配手机屏幕
+				        
+		
+				        
+		//		        ctx.drawImage(imgLogo,30,40,80,65)//设置图片比例和位置,匹配手机屏幕
+						var str =productName;
+				        //绘制简单的文字
+				        ctx.fillStyle = "#333"; // black color
+				        ctx.font="30px PingFangSC-Regular";
+				        ctx.lineWidth=1; 
+				        
+				        var lineWidth = 0;
+				        var canvasWidth = 500;//计算canvas的宽度
+						var initHeight=1011;//绘制字体距离canvas顶部初始的高度
+						var lastSubStrIndex= 0; //每次开始截取的字符串的索引
+						for(let i=0;i<str.length;i++){ 
+						    lineWidth+=ctx.measureText(str[i]).width; 
+						    if(lineWidth>canvasWidth){  
+						        ctx.fillText(str.substring(lastSubStrIndex,i),30,initHeight,600);//绘制截取部分
+						        initHeight+=36;//20为字体的高度
+						        lineWidth=0;
+						        lastSubStrIndex=i;
+						       
+						    } 
+						    if(i==str.length-1){//绘制剩余部分
+						        ctx.fillText(str.substring(lastSubStrIndex,i+1),30,initHeight,600);
+						        
+						    }
+						}
+						var moneyHeight=0;
+						var descriptHeight=0
+						if(initHeight==1011){
+							moneyHeight=initHeight+42+26;
+							descriptHeight=1140;
+						}else{
+							moneyHeight=initHeight+45;
+							if(initHeight==1047){
+								descriptHeight=1140;
+							}else{
+								descriptHeight=initHeight+87;
+							}
+						}
+						ctx.fillStyle = "#E50F72";
+						ctx.fillText('￥'+productPrice,30,moneyHeight);
+						ctx.fillStyle = "#777";
+						ctx.font="24px PingFangSC-Regular";
+						ctx.fillText('长按识别二维码查看详情',30,descriptHeight);
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText(_this.memList.nickName,150,84);
+						ctx.fillStyle = "#333333";
+						ctx.font="28px PingFangSC-Regular";
+						ctx.fillText('发现好物，与您分享！',150,132);
+						ctx.fillStyle = "#777";
+						ctx.font="28px PingFangSC-Regular";
+						ctx.save();
+						ctx.translate(830,30);
+						ctx.rotate(90*Math.PI/180);
+						ctx.fillText("E N J O Y",10,90)
+						ctx.restore();
+				        //生成的data的路径,可以通过php生成图片存到数据库,单存data路径不合适,高清图片情况下会出现图片的残缺
+				        var srccc = canvas.toDataURL("image/png");
+				        
+				        $("#img").attr("src",srccc);
+				    
+				    }
+			    }
 			},
 			shareShare(){
 				
@@ -937,7 +1265,8 @@
 //		  					this.$router.push({path:'/common/scroll?memberId='+this.$route.query.memberId});
 		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorder';
 		  					//window.location.href=API_HOST+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&'+'memberId='+this.getCookie("memberId")+'&type='+this.curObj.type+'&productId='+this.curObj.productId
-		  				}else if(this.curObj.type==9){
+		  				}else if(this.curObj.type==9 || this.curObj.type==1){
+		  					//this.$router.push({path:'/fightAlone/ordersure/payorderPink?memberId='+this.$route.query.memberId});
 		  					window.location.href=CUR_URLBACK+'fightAlone/ordersure/payorderPink';
 		  				}else{
 		  					window.location.href=USE_URL+'ol/confirmOrder1.html?num='+this.num+'&urlMark=ljgm'+'&normalId='+this.normalId+'&type='+this.curObj.type+'&productId='+this.curObj.productId+'&recId='+this.recId;
@@ -948,7 +1277,14 @@
 					
 				}
 			},
-			
+			addGoodsBack(data){
+				if(data.code==0){
+					this.closeShow();
+					this.$toast('添加成功');
+				}else{
+					this.$toast(data.message);
+				}
+			},
 			//试用商品
 			buyGoods(){
 				//console.log(id);
@@ -1407,9 +1743,31 @@
 			}
 			.moneyTop{
 				float: left;
+				width: 33.33%;
 			}
 			.moneyBot{
 				float: right;
+			}
+		}
+		.moneyDetailType{
+			font-size: .24rem;
+			line-height: .72rem;
+			color: #777;
+			padding: 0 .24rem;
+			
+			.listDetailType{
+				display: flex;
+				display:-webkit-box;
+			    display: -moz-box;
+			    display: -moz-flex;
+			    display: -ms-flexbox;
+			    display: -webkit-flex;
+				-webkit-justify-content:space-between;
+				justify-content:space-between;
+				-moz-box-pack:space-between;
+				-webkit--moz-box-pack:space-between;
+				width: 100%;
+				
 			}
 		}
 		.list{
@@ -1751,7 +2109,7 @@
 				
 				height: 100%;
 				line-height: .80rem;
-				font-size:.32rem;
+				font-size:.28rem;
 				img{
 					display: inline-block;
 					height: .60rem;
@@ -1941,7 +2299,7 @@
 			position: fixed;
 			left: 0;
 			top: 0;
-			height: 100%;
+			min-height: 100%;
 			width: 100%;
 			z-index: 999;
 			background: rgba(0,0,0,.5);
@@ -2164,6 +2522,29 @@
 			height: 100%;
 			z-index: 1000;
 			background: rgba(0,0,0,.5);
+			display: flex;
+			display:-webkit-box;
+		    display: -moz-box;
+		    display: -moz-flex;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+			-webkit-box-pack: center;
+		    -moz-box-pack: center;
+		    -ms-flex-align:center;/* IE 10 */
+		    -webkit-align-items: center;
+		    -moz-align-items: center;
+		    align-items: center;
+			.closeErweiImg{
+				position: absolute;
+				right: 0.24rem;
+				top: .24rem;
+				img{
+					
+					display: block;
+					width: .32rem;
+					height: .32rem;
+				}
+			}
 			
 			
 		}

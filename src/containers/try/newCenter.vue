@@ -248,7 +248,7 @@
 					{{item.summery}}
 				</div>
 				<div class="moreGoodsPrice">
-					<p>保证金<span>￥{{item.price}}</span></p>
+					<p>保证金<span v-bind:class="{'speSpanPrice':isChooseIndex==1}">￥{{item.price}}</span></p>
 					<p style="margin-top: .04rem;">已试{{item.buyCount}}份</p>
 				</div>
 			</div>
@@ -274,13 +274,13 @@
 							<div class="porNum"v-bind:style="{width:item.plusPercent}"></div>
 						</div>
 						<div class="uesNum">仅剩{{item.dayLimitCount-item.saleCount}}件</div>-->
-						<div class="uesNum" style="color: #777;">已有{{item.totalBuyCount}}人试用</div>
+						<!--<div class="uesNum" style="color: #777;">已有{{item.totalBuyCount}}人试用</div>-->
 					</div>
 					<div class="dayTomorrow"  v-show="addSelect==1">
 						{{item.dayLimitCount}}件 | 明日{{item.dailyStartTime}}
 					</div>
 					<div class="goodsMoney">
-						保证金:<span>￥{{item.price}}</span>
+						保证金:<span style="color: #000000;">￥{{item.price}}</span>
 					</div>
 				</div>
 				<div class="getGoods" v-show="addSelect==0 && item.isStarted==1">
@@ -1581,6 +1581,9 @@
 					span{
 						font-size: .34rem;
 						color: #E5006E;
+					}
+					.speSpanPrice{
+						color: #000;
 					}
 				}
 				
